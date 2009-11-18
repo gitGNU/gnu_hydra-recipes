@@ -30,6 +30,7 @@ let
           flex
           gettext
           git
+          gnum4  # this should be a propagated build input of Autotools
           texinfo
         ] ++ buildInputsFrom pkgs;
 
