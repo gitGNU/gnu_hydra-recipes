@@ -2,7 +2,7 @@
 let
   pkgs = import nixpkgs {};
 
-  buildInputs = pkgs: with pkgs; [
+  buildInputsFrom = pkgs: with pkgs; [
     readline 
     libtool 
     gmp 
@@ -31,7 +31,7 @@ let
           gettext
           flex
           texinfo
-        ] ++ buildInputs;
+        ] ++ buildInputsFrom pkgs;
       };
 
     build =
@@ -44,7 +44,7 @@ let
       releaseTools.nixBuild rec {
         name = "guile" ;
         src = tarball;
-        buildInputs = buildInputs pkgs;
+        buildInputs = buildInputsFrom pkgs;
       };
 
     coverage =
@@ -56,7 +56,7 @@ let
       releaseTools.coverageAnalysis {
         name = "guile-coverage";
         src = tarball;
-        buildInputs = buildInputs pkgs;
+        buildInputs = buildInputsFrom pkgs;
         patches = [
           "${nixpkgs}/pkgs/development/interpreters/guile/disable-gc-sensitive-tests.patch" 
         ];

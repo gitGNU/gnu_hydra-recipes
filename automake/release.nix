@@ -2,7 +2,7 @@
 let
   pkgs = import nixpkgs {};
 
-  buildInputs = pkgs: with pkgs; [
+  buildInputsFrom = pkgs: with pkgs; [
     perl
     help2man
     autoconf
@@ -23,7 +23,7 @@ let
 
         buildInputs = [
           texinfo
-        ] ++ buildInputs pkgs;
+        ] ++ buildInputsFrom pkgs;
       };
 
     build =
@@ -33,10 +33,10 @@ let
 
       let pkgs = import nixpkgs {inherit system;};
       in with pkgs;
-      releaseTools.nixBuild rec {
+      releaseTools.nixBuild {
         name = "automake" ;
         src = tarball;
-        buildInputs = buildInputs pkgs;
+        buildInputs = buildInputsFrom pkgs;
       };
 
   };

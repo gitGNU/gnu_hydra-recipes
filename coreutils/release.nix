@@ -4,7 +4,7 @@ let
 
   gnulib = (import ../gnulib.nix) pkgs;
 
-  buildInputs = pkgs: with pkgs; [
+  buildInputsFrom = pkgs: with pkgs; [
     perl
   ];
 
@@ -30,7 +30,7 @@ let
           rsync
           cvs
           xz
-        ] ++ buildInputs pkgs;
+        ] ++ buildInputsFrom pkgs;
 
         dontBuild = false;         
         preConfigurePhases = "preAutoconfPhase autoconfPhase"; 
@@ -50,11 +50,11 @@ let
       }:
 
       let pkgs = import nixpkgs {inherit system;};
-      in with pkgs;
-      releaseTools.nixBuild rec {
+      in 
+      pkgs.releaseTools.nixBuild {
         name = "coreutils" ;
         src = tarball;
-        buildInputs = buildInputs pkgs;
+        buildInputs = buildInputsFrom pkgs;
       };
 
     coverage =
@@ -66,7 +66,7 @@ let
       releaseTools.coverageAnalysis {
         name = "coreutils-coverage";
         src = tarball;
-        buildInputs = buildInputs pkgs;
+        buildInputs = buildInputsFrom pkgs;
       };
 
   };
