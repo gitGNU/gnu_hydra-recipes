@@ -26,7 +26,7 @@ let
         buildInputs = [
           texinfo
           help2man
-        ] ++ buildInputs pkgs;
+        ] ++ buildInputsFrom pkgs;
       };
 
     build =
