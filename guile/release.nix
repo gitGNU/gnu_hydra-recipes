@@ -44,7 +44,7 @@ let
       releaseTools.nixBuild rec {
         name = "guile" ;
         src = tarball;
-        inherit buildInputs;
+        buildInputs = buildInputs pkgs;
       };
 
     coverage =
@@ -56,7 +56,7 @@ let
       releaseTools.coverageAnalysis {
         name = "guile-coverage";
         src = tarball;
-        inherit buildInputs;
+        buildInputs = buildInputs pkgs;
         patches = [
           "${nixpkgs}/pkgs/development/interpreters/guile/disable-gc-sensitive-tests.patch" 
         ];
