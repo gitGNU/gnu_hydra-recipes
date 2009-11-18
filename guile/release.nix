@@ -32,6 +32,12 @@ let
           flex
           texinfo
         ] ++ buildInputsFrom pkgs;
+
+        preConfigurePhases = "preAutoconfPhase autoconfPhase";
+        preAutoconfPhase = ''
+          sed "s|/usr/bin/m4|${m4}/bin/m4|" -i autogen.sh
+        '';
+
       };
 
     build =
