@@ -37,9 +37,11 @@ let
         preConfigurePhases = "preAutoconfPhase autoconfPhase";
 
         preAutoconfPhase =
-          # Add a Git descriptor in the version number.
+          # Add a Git descriptor in the version number and tell Automake not
+          # to check whether `NEWS' is up to date wrt. the version number.
           '' sed -i "GUILE-VERSION" \
                  -es"/^\(GUILE_VERSION=.*\)/\1-$(git describe)/g"
+             sed -i "configure.ac" -es"/check-news//g"
           '';
         patches = [ ./disable-version-test.patch ];
       };
