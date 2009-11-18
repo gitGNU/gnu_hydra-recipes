@@ -29,6 +29,7 @@ let
           autoconf
           flex
           gettext
+          git
           gnum4  # this should be a propagated build input of Autotools
           texinfo
         ] ++ buildInputsFrom pkgs;
@@ -36,11 +37,12 @@ let
         preConfigurePhases = "preAutoconfPhase autoconfPhase";
 
         preAutoconfPhase =
-          # Add a Git descriptor in the version number, assuming Hydra
-          # created a `.git-version' file upon checkout.  Tell Automake not
-          # to check whether `NEWS' is up to date wrt. that version number.
+          # Add a Git descriptor in the version number and tell Automake not
+          # to check whether `NEWS' is up to date wrt. the version number.
+          # The assumption is that `nix-prefetch-git' left the `.git'
+          # directory in there.
           '' sed -i "GUILE-VERSION" \
-                 -es"/^\(GUILE_VERSION=.*\)/\1-$(cat .git-version || echo git)/g"
+                 -es"/^\(GUILE_VERSION=.*\)/\1-$(git describe || echo git)/g"
              sed -i "configure.ac" -es"/check-news//g"
           '';
         patches = [ ./disable-version-test.patch ];
