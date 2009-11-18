@@ -2,7 +2,7 @@
 let
   pkgs = import nixpkgs {};
 
-  buildInputs = with pkgs; [
+  buildInputs = pkgs: with pkgs; [
     readline 
     libtool 
     gmp 
@@ -39,8 +39,8 @@ let
       , system ? "x86_64-linux"
       }:
 
-      with import nixpkgs {inherit system;};
-
+      let pkgs = import nixpkgs {inherit system;};
+      in with pkgs;
       releaseTools.nixBuild rec {
         name = "guile" ;
         src = tarball;
