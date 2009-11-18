@@ -23,7 +23,7 @@ let
 
         buildInputs = [
           texinfo
-        ] ++ buildInputs;
+        ] ++ buildInputs pkgs;
       };
 
     build =

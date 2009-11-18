@@ -2,13 +2,9 @@
 let
   pkgs = import nixpkgs {};
 
-  gnulib = pkgs.fetchgit {
-    url = git://git.savannah.gnu.org/gnulib.git;
-    rev = "6038ee4b827caaf05fa37dbb2304fedb9d0cd6c7";
-    sha256 = "8d13d4dcd6cde4ca5f91fa6aff90205ded691cfaa30d436348389a2280018b11";
-  };
+  gnulib = (import ../gnulib.nix) pkgs;
 
-  buildInputs = with pkgs; [
+  buildInputs = pkgs: with pkgs; [
     perl
   ];
 
@@ -34,7 +30,7 @@ let
           rsync
           cvs
           xz
-        ] ++ buildInputs;
+        ] ++ buildInputs pkgs;
 
         dontBuild = false;         
         preConfigurePhases = "preAutoconfPhase autoconfPhase"; 
@@ -53,12 +49,12 @@ let
       , system ? "x86_64-linux"
       }:
 
-      with import nixpkgs {inherit system;};
-
+      let pkgs = import nixpkgs {inherit system;};
+      in with pkgs;
       releaseTools.nixBuild rec {
         name = "coreutils" ;
         src = tarball;
-        inherit buildInputs;
+        buildInputs = buildInputs pkgs;
       };
 
     coverage =
@@ -70,7 +66,7 @@ let
       releaseTools.coverageAnalysis {
         name = "coreutils-coverage";
         src = tarball;
-        inherit buildInputs;
+        buildInputs = buildInputs pkgs;
       };
 
   };
