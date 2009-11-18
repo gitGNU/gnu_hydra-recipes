@@ -2,7 +2,7 @@
 let
   pkgs = import nixpkgs {};
 
-  buildInputs = with pkgs; [
+  buildInputs = pkgs: with pkgs; [
     perl 
     m4
   ];
@@ -26,7 +26,7 @@ let
         buildInputs = [
           texinfo
           help2man
-        ] ++ buildInputs;
+        ] ++ buildInputs pkgs;
       };
 
     build =
@@ -34,12 +34,12 @@ let
       , system ? "x86_64-linux"
       }:
 
-      with import nixpkgs {inherit system;};
-
+      let pkgs = import nixpkgs {inherit system;};
+      in with pkgs;
       releaseTools.nixBuild rec {
         name = "autoconf" ;
         src = tarball;
-        inherit buildInputs;
+        buildInputs = buildInputs pkgs;
       };
 
   };
