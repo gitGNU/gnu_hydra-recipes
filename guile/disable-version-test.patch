@@ -1,0 +1,13 @@
+Disable `version.test' since we mangle $GUILE_VERSION so that
+it contains the output of "git describe".
+
+--- a/test-suite/tests/version.test
++++ b/test-suite/tests/version.test
+@@ -20,6 +20,7 @@
+ (use-modules (test-suite lib))
+ 
+ (pass-if "version reporting works"
++         (throw 'unresolved)
+ 	 (and (string? (major-version))
+ 	      (string? (minor-version))
+ 	      (string? (micro-version))

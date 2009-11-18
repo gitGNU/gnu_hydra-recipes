@@ -24,20 +24,23 @@ let
       pkgs.releaseTools.makeSourceTarball {
         name = "guile-tarball";
         src = guileSrc;
-        dontBuild = false ;
         buildInputs = [
           automake
           autoconf
-          gettext
           flex
+          gettext
+          git
           texinfo
         ] ++ buildInputsFrom pkgs;
 
         preConfigurePhases = "preAutoconfPhase autoconfPhase";
-        preAutoconfPhase = ''
-          sed "s|/usr/bin/m4|${m4}/bin/m4|" -i autogen.sh
-        '';
 
+        preAutoconfPhase =
+          # Add a Git descriptor in the version number.
+          '' sed -i "GUILE-VERSION" \
+                 -es"/^\(GUILE_VERSION=.*\)/\1-$(git describe)/g"
+          '';
+        patches = [ ./disable-version-test.patch ];
       };
 
     build =
