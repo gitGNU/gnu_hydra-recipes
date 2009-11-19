@@ -23,6 +23,10 @@ let
           cvs
           texinfo
           bison
+          man 
+          rsync
+          perl
+          cpio
         ] ++ buildInputsFrom pkgs;
       };
 
