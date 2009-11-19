@@ -1,8 +1,6 @@
 {nixpkgs ? ../../nixpkgs}:
 let
   pkgs = import nixpkgs {};
-  gnulib = (import ../gnulib.nix) pkgs;
-  paxutils = (import ../paxutils.nix) pkgs;
 
   buildInputsFrom = pkgs: with pkgs; [
   ];
@@ -11,6 +9,8 @@ let
 
     tarball =
       { cpioSrc ? {outPath = ../../cpio;}
+      , paxutils ? {outPath = ../../paxutils;}
+      , gnulib ? {outPath = ../../gnulib;}
       }:
 
       with pkgs;
