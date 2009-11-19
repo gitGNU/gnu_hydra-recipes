@@ -20,12 +20,13 @@ let
         src = autoconfSrc;
         preConfigurePhases = "preAutoconfPhase autoconfPhase"; 
         preAutoconfPhase = ''
-          echo -n "2.65" > .tarball-version
+          echo -n "$(git describe)" > .tarball-version
         '';
 
         buildInputs = [
           texinfo
           help2man
+          git
         ] ++ buildInputsFrom pkgs;
       };
 
