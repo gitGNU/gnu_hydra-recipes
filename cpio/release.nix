@@ -1,7 +1,6 @@
 {nixpkgs ? ../../nixpkgs}:
 let
   pkgs = import nixpkgs {};
-
   gnulib = (import ../gnulib.nix) pkgs;
   paxutils = (import ../paxutils.nix) pkgs;
 
@@ -11,14 +10,14 @@ let
   jobs = rec {
 
     tarball =
-      { gnutarSrc ? {outPath = ../../gnutar;}
+      { cpioSrc ? {outPath = ../../cpio;}
       }:
 
       with pkgs;
 
       pkgs.releaseTools.makeSourceTarball {
-        name = "gnutar-tarball";
-        src = gnutarSrc;
+        name = "cpio-tarball";
+        src = cpioSrc;
 
         autoconfPhase = ''
           cp -Rv ${gnulib} ../gnulib
@@ -34,11 +33,10 @@ let
           gettext
           cvs
           texinfo
-          bison
-          man 
+          man
           rsync
-          perl
-          cpio
+          gnum4
+          bison
         ] ++ buildInputsFrom pkgs;
       };
 
@@ -50,12 +48,11 @@ let
       let pkgs = import nixpkgs {inherit system;};
       in with pkgs;
       releaseTools.nixBuild {
-        name = "gnutar" ;
+        name = "cpio" ;
         src = tarball;
         buildInputs = buildInputsFrom pkgs;
       };
 
   };
 
-  
 in jobs
