@@ -8,7 +8,7 @@ let
   jobs = rec {
 
     tarball =
-      { gnutarSrc ? {outPath = ../../gnutar;}
+      { tarSrc ? {outPath = ../../tar;}
       , paxutils ? {outPath = ../../paxutils;}
       , gnulib ? {outPath = ../../gnulib;}
       }:
@@ -16,8 +16,8 @@ let
       with pkgs;
 
       pkgs.releaseTools.makeSourceTarball {
-        name = "gnutar-tarball";
-        src = gnutarSrc;
+        name = "tar-tarball";
+        src = tarSrc;
 
         autoconfPhase = ''
           cp -Rv ${gnulib} ../gnulib
@@ -49,7 +49,7 @@ let
       let pkgs = import nixpkgs {inherit system;};
       in with pkgs;
       releaseTools.nixBuild {
-        name = "gnutar" ;
+        name = "tar" ;
         src = tarball;
         buildInputs = buildInputsFrom pkgs;
       };
