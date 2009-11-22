@@ -57,6 +57,18 @@ let
         buildInputs = buildInputsFrom pkgs;
       };
 
+    coverage =
+      { tarball ? jobs.tarball {}
+      }:
+
+      with pkgs;
+
+      releaseTools.coverageAnalysis {
+        name = "tar-coverage";
+        src = tarball;
+        buildInputs = buildInputsFrom pkgs;
+      };
+
   };
 
   
