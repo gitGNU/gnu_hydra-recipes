@@ -21,11 +21,15 @@ let
         src = automakeSrc;
         dontBuild = false;
 
+        /* XXX: Automake says "version is incorrect" if you try to check its
+           version number as is done below.  That's unfortunate.
+
         preConfigurePhases = "preAutoconfPhase autoconfPhase";
         preAutoconfPhase =
           ''sed -i "configure.ac" \
                 -e "s/^AC_INIT(\([^,]\+\), \[\([^,]\+\)\]/AC_INIT(\1, [\2-$(git describe || echo git)]/g"
           '';
+         */
 
         buildInputs = [
           texinfo
