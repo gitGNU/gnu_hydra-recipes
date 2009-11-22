@@ -17,31 +17,30 @@ let
       with pkgs;
 
       pkgs.releaseTools.makeSourceTarball {
-        name = "coreutils-tarball";
-        src = coreutilsSrc;
+	name = "coreutils-tarball";
+	src = coreutilsSrc;
 
-        buildInputs = [
-          automake111x
-          bison
-          gettext
-          git
-          gperf
-          texinfo
-          rsync
-          cvs
-          xz
-        ] ++ buildInputsFrom pkgs;
+	buildInputs = [
+	  automake111x
+	  bison
+	  gettext
+	  git
+	  gperf
+	  texinfo
+	  rsync
+	  cvs
+	  xz
+	] ++ buildInputsFrom pkgs;
 
-        dontBuild = false;         
-        preConfigurePhases = "preAutoconfPhase autoconfPhase"; 
-        preAutoconfPhase = ''
-          cp -Rv ${gnulib}/* gnulib/
-          export GNULIB_SRCDIR="`pwd`/gnulib"
-          chmod -R 777 *
+	dontBuild = false;
 
-
-          sed 's|/usr/bin/perl|${perl}/bin/perl|' -i src/wheel-gen.pl
+        autoconfPhase = ''
+          ./bootstrap --gnulib-srcdir="${gnulib}" --skip-po
         '';
+
+	preAutoconfPhase = ''
+	  sed 's|/usr/bin/perl|${perl}/bin/perl|' -i src/wheel-gen.pl
+	'';
       };
 
     build =
@@ -50,11 +49,11 @@ let
       }:
 
       let pkgs = import nixpkgs {inherit system;};
-      in 
+      in
       pkgs.releaseTools.nixBuild {
-        name = "coreutils" ;
-        src = tarball;
-        buildInputs = buildInputsFrom pkgs;
+	name = "coreutils" ;
+	src = tarball;
+	buildInputs = buildInputsFrom pkgs;
       };
 
     coverage =
@@ -64,12 +63,12 @@ let
       with pkgs;
 
       releaseTools.coverageAnalysis {
-        name = "coreutils-coverage";
-        src = tarball;
-        buildInputs = buildInputsFrom pkgs;
+	name = "coreutils-coverage";
+	src = tarball;
+	buildInputs = buildInputsFrom pkgs;
       };
 
   };
 
-  
+
 in jobs
