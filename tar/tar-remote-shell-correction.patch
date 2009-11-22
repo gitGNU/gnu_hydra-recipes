@@ -1,0 +1,16 @@
+diff --git a/src/tar.c b/src/tar.c
+index a1185f6..8662bf4 100644
+--- a/src/tar.c
++++ b/src/tar.c
+@@ -907,9 +907,9 @@ format_default_settings (void)
+ 	    archive_format_string (DEFAULT_ARCHIVE_FORMAT), 
+ 	    DEFAULT_ARCHIVE, DEFAULT_BLOCKING,              
+ 	    quoting_style_args[DEFAULT_QUOTING_STYLE],
+-	    DEFAULT_RMT_COMMAND,
++	    DEFAULT_RMT_COMMAND
+ #ifdef REMOTE_SHELL
+-	    REMOTE_SHELL
++	    ,REMOTE_SHELL
+ #endif
+ 	    );
+ }

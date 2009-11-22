@@ -28,6 +28,9 @@ let
           ./bootstrap --gnulib-srcdir=../gnulib --paxutils-srcdir=../paxutils --skip-po --copy
         '';
 
+        # apply patch until it get's accepted upstream (http://www.mail-archive.com/bug-tar@gnu.org/msg02390.html)
+        patches = [./tar-remote-shell-correction.patch]; 
+
         buildInputs = [
           git
           gettext
