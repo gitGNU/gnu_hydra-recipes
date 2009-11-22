@@ -43,6 +43,18 @@ let
         buildInputs = buildInputsFrom pkgs;
       };
 
+    coverage =
+      { tarball ? jobs.tarball {}
+      }:
+
+      with pkgs;
+
+      releaseTools.coverageAnalysis {
+        name = "autoconf-coverage";
+        src = tarball;
+        buildInputs = buildInputsFrom pkgs;
+      };
+
   };
 
   

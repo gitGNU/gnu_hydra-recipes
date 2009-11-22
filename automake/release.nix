@@ -39,6 +39,18 @@ let
         buildInputs = buildInputsFrom pkgs;
       };
 
+    coverage =
+      { tarball ? jobs.tarball {}
+      }:
+
+      with pkgs;
+
+      releaseTools.coverageAnalysis {
+        name = "automake-coverage";
+        src = tarball;
+        buildInputs = buildInputsFrom pkgs;
+      };
+
   };
 
   
