@@ -37,6 +37,10 @@ let
         name = "automake" ;
         src = tarball;
         buildInputs = buildInputsFrom pkgs;
+
+        # Disable indented log output from Make, otherwise "make.test" will
+        # fail.
+        preCheck = "unset NIX_INDENT_MAKE";
       };
 
     coverage =
