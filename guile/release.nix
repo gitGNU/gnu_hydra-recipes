@@ -34,6 +34,9 @@ let
           texinfo
         ] ++ buildInputsFrom pkgs;
 
+        # make dist fails without this, so for now do make, make dist..
+        dontBuild = false;
+
         preConfigurePhases = "preAutoconfPhase autoconfPhase";
 
         preAutoconfPhase =
