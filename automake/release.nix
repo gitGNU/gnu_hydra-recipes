@@ -21,8 +21,14 @@ let
         src = automakeSrc;
         dontBuild = false;
 
+        preAutoconfPhase =
+          ''sed -i "configure.ac"
+                -e "s/^AC_INIT(\([^,]\+\), \[\([^,]\+\)\]/AC_INIT(\1, [\2-$(git describe || echo git)]/g"
+          '';
+
         buildInputs = [
           texinfo
+          git
         ] ++ buildInputsFrom pkgs;
       };
 
