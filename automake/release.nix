@@ -42,20 +42,6 @@ let
         # fail.
         preCheck = "unset NIX_INDENT_MAKE";
       };
-
-    coverage =
-      { tarball ? jobs.tarball {}
-      }:
-
-      with pkgs;
-
-      releaseTools.coverageAnalysis {
-        name = "automake-coverage";
-        src = tarball;
-        buildInputs = buildInputsFrom pkgs;
-      };
-
   };
 
-  
 in jobs
