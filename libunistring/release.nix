@@ -3,11 +3,14 @@
 let
   pkgs = import nixpkgs {};
 
+  # XXX: Fetching Gnulib is quite expensive, so just use that fixed
+  # expression for now.
+  gnulib = (import ../gnulib.nix) pkgs;
+
   jobs = with pkgs; rec {
 
     tarball =
       { libunistringSrc ? { outPath = ../../libunistring; }
-      , gnulib ? { outPath = ../../gnulib; }
       }:
 
       pkgs.releaseTools.makeSourceTarball {
