@@ -35,7 +35,7 @@ let
 	dontBuild = false;
 
         autoconfPhase = ''
-          ./bootstrap --gnulib-srcdir="${gnulib}" --skip-po
+          ./bootstrap --gnulib-srcdir="${gnulib}" --copy --skip-po
         '';
 
 	preAutoconfPhase = ''
