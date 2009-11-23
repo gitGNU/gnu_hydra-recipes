@@ -46,7 +46,15 @@ let
           # directory in there.
           '' sed -i "GUILE-VERSION" \
                  -es"/^\(GUILE_VERSION=.*\)/\1-$(git describe || echo git)/g"
-             sed -i "configure.ac" -es"/check-news//g"
+
+             # In `branch_release-1-8' we still use the old name.
+             if test -f "configure.ac"
+             then
+                 configure_ac="configure.ac"
+             else
+                 configure_ac="configure.in"
+             fi
+             sed -i "$configure_ac" -es"/check-news//g"
           '';
         patches = [ ./disable-version-test.patch ];
       };
