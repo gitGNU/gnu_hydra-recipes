@@ -18,15 +18,21 @@ let
 	src = libunistringSrc;
 
 	autoconfPhase = ''
-	  GNULIB_TOOL="${gnulib}/gnulib-tool" ./autogen.sh
+	  export GNULIB_TOOL="../gnulib/gnulib-tool"
+          cp -Rv ${gnulib} ../gnulib
+          chmod -R 755 ../gnulib 
+          ./autogen.sh
 	'';
 
 	buildInputs = [
           autoconf
-          automake
+          automake111x
           git
           libtool
           texinfo
+          wget
+          perl
+          gperf
 	];
       };
 
