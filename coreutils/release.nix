@@ -35,12 +35,14 @@ let
 	dontBuild = false;
 
         autoconfPhase = ''
-          ./bootstrap --gnulib-srcdir="${gnulib}" --copy --skip-po
+          cp -Rv ${gnulib} ../gnulib
+          chmod -R 755 ../gnulib
+
+	  sed 's|/usr/bin/perl|${perl}/bin/perl|' -i src/wheel-gen.pl
+
+          ./bootstrap --gnulib-srcdir=../gnulib --copy 
         '';
 
-	preAutoconfPhase = ''
-	  sed 's|/usr/bin/perl|${perl}/bin/perl|' -i src/wheel-gen.pl
-	'';
       };
 
     build =
