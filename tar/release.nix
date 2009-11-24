@@ -1,6 +1,8 @@
 {nixpkgs ? ../../nixpkgs}:
 let
-  pkgs = import nixpkgs {};
+  # Build tarball and coverage analysis on i686, 
+  # because x86_64 build fails at the moment.
+  pkgs = import nixpkgs { system = "i686-linux"; };
 
   buildInputsFrom = pkgs: with pkgs; [
   ];
