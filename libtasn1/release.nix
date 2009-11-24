@@ -23,10 +23,11 @@ let
             sed -i "doc/gdoc" -e"s|/usr/bin/perl|${perl}/bin/perl|g"
 	  '';
 
-	autoconfPhase = "make";
+	autoconfPhase = "autoreconf -vfi";
 
         # "make dist" wants `src/asn1Parser' built.
         dontBuild = false;
+        configureFlags = [ "--enable-gtk-doc" ];
 
 	buildInputs = (deps pkgs) ++ [
 	  autoconf
