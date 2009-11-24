@@ -3,6 +3,8 @@
 let
   pkgs = import nixpkgs {};
 
+  deps = with pkgs; [ gnome.gtkdoc pkgconfig ];
+
   jobs = with pkgs; rec {
 
     tarball =
@@ -20,11 +22,13 @@ let
 
 	autoconfPhase = "make";
 
-	buildInputs = [
+        # "make dist" wants `src/asn1Parser' built.
+        dontBuild = false;
+
+	buildInputs = deps ++ [
 	  autoconf
 	  automake111x
 	  git
-	  gnome.gtkdoc
 	  libtool
 	  texinfo
 	];
@@ -38,7 +42,7 @@ let
       releaseTools.nixBuild {
 	name = "libtasn1" ;
 	src = tarball;
-	buildInputs = [ gnome.gtkdoc ];
+	buildInputs = deps;
       };
 
     coverage =
