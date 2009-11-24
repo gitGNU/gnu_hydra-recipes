@@ -3,7 +3,11 @@
 let
   pkgs = import nixpkgs {};
 
-  deps = pkgs: with pkgs; [ gnome.gtkdoc pkgconfig perl ];
+  deps = pkgs: with pkgs;
+    [ gnome.gtkdoc pkgconfig perl texLive
+      help2man docbook_xsl
+      libxml2 /* for the setup hook */
+    ];
 
   jobs = with pkgs; rec {
 
