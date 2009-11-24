@@ -3,7 +3,7 @@
 let
   pkgs = import nixpkgs {};
 
-  deps = with pkgs; [ gnome.gtkdoc pkgconfig ];
+  deps = pkgs: with pkgs; [ gnome.gtkdoc pkgconfig ];
 
   jobs = with pkgs; rec {
 
@@ -25,7 +25,7 @@ let
         # "make dist" wants `src/asn1Parser' built.
         dontBuild = false;
 
-	buildInputs = deps ++ [
+	buildInputs = (deps pkgs) ++ [
 	  autoconf
 	  automake111x
 	  git
@@ -42,7 +42,7 @@ let
       releaseTools.nixBuild {
 	name = "libtasn1" ;
 	src = tarball;
-	buildInputs = deps;
+	buildInputs = (deps ((import nixpkgs) { inherit system; }));
       };
 
     coverage =
