@@ -3,7 +3,7 @@
 let
   pkgs = import nixpkgs {};
 
-  deps = pkgs: with pkgs; [ gnome.gtkdoc pkgconfig ];
+  deps = pkgs: with pkgs; [ gnome.gtkdoc pkgconfig perl ];
 
   jobs = with pkgs; rec {
 
@@ -18,6 +18,7 @@ let
 	preAutoconfPhase =
 	  ''sed -i "configure.ac" \
 		-e "s/^AC_INIT(\([^,]\+\), \[\([^,]\+\)\]/AC_INIT(\1, [\2-$(git describe || echo git)]/g"
+            sed -i "doc/gdoc" -e"s|/usr/bin/perl|${perl}/bin/perl|g"
 	  '';
 
 	autoconfPhase = "make";
@@ -42,6 +43,10 @@ let
       releaseTools.nixBuild {
 	name = "libtasn1" ;
 	src = tarball;
+        patchPhase =
+          '' sed -i "doc/gdoc" -e"s|#!.*/bin/perl|${perl}/bin/perl|g"
+          '';
+
 	buildInputs = (deps ((import nixpkgs) { inherit system; }));
       };
 
