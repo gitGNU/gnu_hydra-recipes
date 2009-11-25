@@ -54,7 +54,7 @@ let
           '' sed -i "doc/gdoc" -e"s|#!.*/bin/perl|${perl}/bin/perl|g"
           '';
 
-	buildInputs = (deps ((import nixpkgs) { inherit system; }));
+	buildInputs = deps ((import nixpkgs) { inherit system; });
       };
 
     coverage =
@@ -64,7 +64,7 @@ let
       releaseTools.coverageAnalysis {
 	name = "libtasn1-coverage";
 	src = tarball;
-	buildInputs = [ gnome.gtkdoc ];
+	buildInputs = deps ((import nixpkgs) {});
       };
 
   };
