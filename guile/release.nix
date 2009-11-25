@@ -128,7 +128,7 @@ let
         installPhase = "make -C doc/ref install-html install-pdf";
         postInstall  =
           '' ensureDir "$out/nix-support"
-             echo "doc manual $out/share/doc/guile/index.html" >> "$out/nix-support/hydra-build-products"
+             echo "doc manual $out/share/doc/guile/guile.html/index.html" >> "$out/nix-support/hydra-build-products"
              echo "doc-pdf manual $out/share/doc/guile/guile.pdf" >> "$out/nix-support/hydra-build-products"
           '';
       };
