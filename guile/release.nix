@@ -66,7 +66,7 @@ let
         buildInputs = [
           automake
           autoconf
-          flex
+          flex2535
           gettext
           git
           gnum4  # this should be a propagated build input of Autotools
