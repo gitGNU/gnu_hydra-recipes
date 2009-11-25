@@ -113,6 +113,25 @@ let
         ];
       };
 
+    manual =
+      { tarball ? jobs.tarball {}
+      }:
+
+      with pkgs;
+
+      releaseTools.nixBuild {
+        name = "guile-manual";
+        src = tarball;
+        buildInputs = buildInputsFrom pkgs ++ [ pkgs.texinfo pkgs.texLive ];
+
+        buildPhase   = "make -C doc/ref html pdf";
+        installPhase = "make -C doc/ref install-html install-pdf";
+        postInstall  =
+          '' ensureDir "$out/nix-support"
+             echo "doc manual $out/share/doc/guile/index.html" >> "$out/nix-support/hydra-build-products"
+             echo "doc-pdf manual $out/share/doc/guile/guile.pdf" >> "$out/nix-support/hydra-build-products"
+          '';
+      };
   }
 
   //
