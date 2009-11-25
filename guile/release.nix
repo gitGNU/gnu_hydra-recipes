@@ -13,6 +13,45 @@ let
     boehmgc
   ];
 
+  /* Return a name/value attribute set where the value is a function suitable
+     as a Hydra build function.  */
+  makeBuild = configureFlags:
+    let
+      shortFlags = with builtins;
+        (map (flag: substring 2 (stringLength flag) flag)
+             configureFlags);
+      name = pkgs.lib.concatStringsSep "-" ([ "guile" ] ++ shortFlags);
+      attrName = pkgs.lib.replaceChars ["-"] ["_"]
+        (pkgs.lib.concatStringsSep "-" ([ "build" ] ++ shortFlags));
+    in
+      pkgs.lib.nameValuePair
+        (builtins.trace ("build attribute `" + attrName
+                         + "', derivation `" + name + "'")
+                        attrName)
+
+        ({ tarball ? jobs.tarball {}
+         , system ? "x86_64-linux"
+         }:
+
+         let pkgs = import nixpkgs { inherit system; };
+         in
+           with pkgs;
+           releaseTools.nixBuild rec {
+             inherit name configureFlags;
+             src = tarball;
+             buildInputs = buildInputsFrom pkgs;
+           });
+
+  /* The configuration space under test.  */
+  configurationSpace =
+    [ [] # the default build, no `configure' arguments
+      [ "--without-threads" ]
+      [ "--disable-deprecated" ]
+      [ "--disable-deprecated" "--disable-discouraged" ]
+      [ "--disable-networking" ]
+      [ "--enable-guile-debug" ]
+    ];
+
   jobs = rec {
 
     tarball =
@@ -59,19 +98,6 @@ let
         patches = [ ./disable-version-test.patch ];
       };
 
-    build =
-      { tarball ? jobs.tarball {}
-      , system ? "x86_64-linux"
-      }:
-
-      let pkgs = import nixpkgs {inherit system;};
-      in with pkgs;
-      releaseTools.nixBuild rec {
-        name = "guile" ;
-        src = tarball;
-        buildInputs = buildInputsFrom pkgs;
-      };
-
     coverage =
       { tarball ? jobs.tarball {}
       }:
@@ -87,7 +113,10 @@ let
         ];
       };
 
-  };
+  }
 
-  
+  //
+
+  (builtins.listToAttrs (builtins.map makeBuild configurationSpace));
+
 in jobs
