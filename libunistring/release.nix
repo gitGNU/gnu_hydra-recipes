@@ -3,14 +3,11 @@
 let
   pkgs = import nixpkgs {};
 
-  # XXX: Fetching Gnulib is quite expensive, so just use that fixed
-  # expression for now.
-  gnulib = (import ../gnulib.nix) pkgs;
-
   jobs = with pkgs; rec {
 
     tarball =
       { libunistringSrc ? { outPath = ../../libunistring; }
+      , gnulibSrc ? { outPath = ../../gnulib; }
       }:
 
       pkgs.releaseTools.makeSourceTarball {
@@ -19,8 +16,8 @@ let
 
 	autoconfPhase = ''
 	  export GNULIB_TOOL="../gnulib/gnulib-tool"
-          cp -Rv ${gnulib} ../gnulib
-          chmod -R 755 ../gnulib 
+          cp -Rv "${gnulibSrc}" ../gnulib
+          chmod -R 755 ../gnulib
           ./autogen.sh
 	'';
 
