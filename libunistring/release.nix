@@ -56,6 +56,27 @@ let
         buildInputs = [];
       };
 
+    manual =
+      { tarball ? jobs.tarball {}
+      }:
+
+      with pkgs;
+
+      releaseTools.nixBuild {
+        name = "libunistring-manual";
+        src = tarball;
+        buildInputs = buildInputsFrom pkgs ++ [ pkgs.texinfo pkgs.texLive ];
+
+        buildPhase = "make -C doc html pdf";
+        installPhase =
+          '' make -C doc install-html install-pdf
+
+             ensureDir "$out/nix-support"
+             echo "doc manual $out/share/doc/libunistring/libunistring.html/index.html" >> "$out/nix-support/hydra-build-products"
+             echo "doc-pdf manual $out/share/doc/libunistring/libunistring.pdf" >> "$out/nix-support/hydra-build-products"
+          '';
+      };
+
   };
 
 in jobs
