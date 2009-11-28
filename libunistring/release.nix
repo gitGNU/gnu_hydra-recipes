@@ -38,11 +38,18 @@ let
       , system ? "x86_64-linux"
       }:
 
-      releaseTools.nixBuild {
-	name = "libunistring" ;
-	src = tarball;
-	buildInputs = [];
-      };
+      let pkgs = (import nixpkgs) { inherit system; };
+      in
+        with pkgs;
+        releaseTools.nixBuild {
+          name = "libunistring" ;
+          src = tarball;
+          buildInputs = [];
+          propagatedBuildInputs =
+            stdenv.lib.optional (stdenv.isDarwin
+                                 || stdenv.system == "i686-cygwin")
+              libiconv;
+        };
 
     coverage =
       { tarball ? jobs.tarball {}
