@@ -77,6 +77,25 @@ let
           '';
       };
 
+    debian50_i386 = makeDeb_i686 (diskImages: diskImages.debian50i386);
+    debian50_x86_64 = makeDeb_x86_64 (diskImages: diskImages.debian50x86_64);
   };
+
+  makeDeb_i686 = makeDeb "i686-linux";
+  makeDeb_x86_64 = makeDeb "x86_64-linux";
+
+  makeDeb =
+    system: selectDiskImage:
+    { tarball ? jobs.tarball {}
+    }:
+
+    with import nixpkgs { inherit system; };
+
+    releaseTools.debBuild {
+      name = "libunistring-deb";
+      src = tarball;
+      diskImage = selectDiskImage vmTools.diskImages;
+      meta.schedulingPriority = "5";  # low priority
+    };
 
 in jobs
