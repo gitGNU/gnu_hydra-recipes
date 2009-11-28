@@ -65,7 +65,7 @@ let
       releaseTools.nixBuild {
         name = "libunistring-manual";
         src = tarball;
-        buildInputs = [ texinfo texLive ];
+        buildInputs = [ perl texinfo texLive ];
 
         buildPhase = "make -C doc html pdf";
         installPhase =
