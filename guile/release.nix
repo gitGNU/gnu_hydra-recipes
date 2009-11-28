@@ -96,6 +96,15 @@ let
              sed -i "$configure_ac" -es"/check-news//g"
           '';
         patches = [ ./disable-version-test.patch ];
+
+        buildPhase =
+          '' make
+
+             # Arrange so that we don't end up, with profiling builds, with a
+             # file named `<stdout>.gcov' since that confuses lcov.
+             sed -i "libguile/c-tokenize.c" \
+                 -e's/"<stdout>"/"c-tokenize.c"/g'
+          '';
       };
 
     coverage =
