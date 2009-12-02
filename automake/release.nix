@@ -2,19 +2,14 @@
 let
   pkgs = import nixpkgs {};
 
-  buildInputsFrom = pkgs: with pkgs; [
-    perl
-    help2man
-    autoconf
-  ];
+  buildInputsFrom = pkgs: with pkgs; [ perl help2man ];
 
   jobs = rec {
 
     tarball =
-      { automakeSrc ? {outPath = ../../automake;}
+      { automakeSrc ? { outPath = ../../automake; }
+      , autoconf ? pkgs.autoconf
       }:
-
-      with pkgs;
 
       pkgs.releaseTools.makeSourceTarball {
         name = "automake-tarball";
@@ -31,28 +26,27 @@ let
           '';
          */
 
-        buildInputs = [
-          texinfo
-          git
-        ] ++ buildInputsFrom pkgs;
+        buildInputs = (with pkgs; [ texinfo git ])
+          ++ [ autoconf ] ++ (buildInputsFrom pkgs);
       };
 
     build =
       { tarball ? jobs.tarball {}
       , system ? "x86_64-linux"
+      , autoconf ? pkgs.autoconf
       }:
 
       let pkgs = import nixpkgs {inherit system;};
-      in with pkgs;
-      releaseTools.nixBuild {
-        name = "automake" ;
-        src = tarball;
-        buildInputs = buildInputsFrom pkgs;
+      in
+        releaseTools.nixBuild {
+          name = "automake" ;
+          src = tarball;
+          buildInputs = [ autoconf ] ++ (buildInputsFrom pkgs);
 
-        # Disable indented log output from Make, otherwise "make.test" will
-        # fail.
-        preCheck = "unset NIX_INDENT_MAKE";
-      };
+          # Disable indented log output from Make, otherwise "make.test" will
+          # fail.
+          preCheck = "unset NIX_INDENT_MAKE";
+        };
   };
 
 in jobs
