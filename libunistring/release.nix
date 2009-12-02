@@ -3,7 +3,7 @@
 let
   pkgs = import nixpkgs {};
 
-  jobs = with pkgs; rec {
+  jobs = rec {
 
     tarball =
       { libunistringSrc ? { outPath = ../../libunistring; }
@@ -21,15 +21,9 @@ let
           ./autogen.sh
 	'';
 
-	buildInputs = [
-          autoconf
-          automake111x
-          git
-          libtool
-          texinfo
-          wget
-          perl
-          gperf
+	buildInputs = with pkgs; [
+          autoconf automake111x libtool texinfo git
+          wget perl gperf
 	];
       };
 
@@ -38,9 +32,8 @@ let
       , system ? "x86_64-linux"
       }:
 
-      let pkgs = (import nixpkgs) { inherit system; };
+      let pkgs = import nixpkgs { inherit system; };
       in
-        with pkgs;
         releaseTools.nixBuild {
           name = "libunistring" ;
           src = tarball;
@@ -48,14 +41,12 @@ let
           propagatedBuildInputs =
             stdenv.lib.optional (stdenv.isDarwin
                                  || stdenv.system == "i686-cygwin")
-              libiconv;
+              pkgs.libiconv;
         };
 
     coverage =
       { tarball ? jobs.tarball {}
       }:
-
-      with pkgs;
 
       releaseTools.coverageAnalysis {
         name = "libunistring-coverage";
@@ -67,12 +58,10 @@ let
       { tarball ? jobs.tarball {}
       }:
 
-      with pkgs;
-
       releaseTools.nixBuild {
         name = "libunistring-manual";
         src = tarball;
-        buildInputs = [ perl texinfo texLive ];
+        buildInputs = with pkgs; [ perl texinfo texLive ];
 
         buildPhase = "make -C doc html pdf";
         installPhase =

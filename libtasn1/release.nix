@@ -9,7 +9,7 @@ let
       libxml2 /* for the setup hook */
     ];
 
-  jobs = with pkgs; rec {
+  jobs = rec {
 
     tarball =
       { libtasn1Src ? { outPath = ../../libtasn1; }
@@ -33,13 +33,10 @@ let
         dontBuild = false;
         configureFlags = [ "--enable-gtk-doc" ];
 
-	buildInputs = (deps pkgs) ++ [
-	  autoconf
-	  automake111x
-	  git
-	  libtool
-	  texinfo
-	];
+	buildInputs = (deps pkgs) ++ (with pkgs; [
+	  autoconf automake111x libtool
+	  git texinfo
+	]);
       };
 
     build =
@@ -54,7 +51,7 @@ let
           '' sed -i "doc/gdoc" -e"s|#!.*/bin/perl|${perl}/bin/perl|g"
           '';
 
-	buildInputs = deps ((import nixpkgs) { inherit system; });
+	buildInputs = deps (import nixpkgs { inherit system; });
       };
 
     coverage =
@@ -64,7 +61,7 @@ let
       releaseTools.coverageAnalysis {
 	name = "libtasn1-coverage";
 	src = tarball;
-	buildInputs = deps ((import nixpkgs) {});
+	buildInputs = deps (import nixpkgs {});
       };
 
   };
