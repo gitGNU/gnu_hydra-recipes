@@ -133,7 +133,9 @@ let
         src = tarball;
         buildInputs = buildInputsFrom pkgs ++ [ pkgs.texinfo pkgs.texLive ];
 
-        buildPhase = "make -C doc/ref html pdf";
+        # XXX: Hydra can't display HTML documents that span multiple files so
+        # generate a single-page HTML manual.
+        buildPhase = "make -C doc/ref html pdf MAKEINFOFLAGS=--no-split";
         installPhase =
           '' make -C doc/ref install-html install-pdf
 
