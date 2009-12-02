@@ -3,6 +3,8 @@
 let
   pkgs = import nixpkgs {};
 
+  inherit (pkgs) releaseTools;
+
   jobs = rec {
 
     tarball =
@@ -10,7 +12,7 @@ let
       , gnulibSrc ? { outPath = ../../gnulib; }
       }:
 
-      pkgs.releaseTools.makeSourceTarball {
+      releaseTools.makeSourceTarball {
 	name = "libunistring-tarball";
 	src = libunistringSrc;
 

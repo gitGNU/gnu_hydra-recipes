@@ -3,6 +3,8 @@
 let
   pkgs = import nixpkgs {};
 
+  inherit (pkgs) releaseTools;
+
   deps = pkgs: with pkgs;
     [ gnome.gtkdoc pkgconfig perl texLive
       help2man docbook_xsl
@@ -15,7 +17,7 @@ let
       { libtasn1Src ? { outPath = ../../libtasn1; }
       }:
 
-      pkgs.releaseTools.makeSourceTarball {
+      releaseTools.makeSourceTarball {
 	name = "libtasn1-tarball";
 	src = libtasn1Src;
 
@@ -24,7 +26,7 @@ let
 	preAutoconfPhase =
 	  ''sed -i "configure.ac" \
 		-e "s/^AC_INIT(\([^,]\+\), \[\([^,]\+\)\]/AC_INIT(\1, [\2-$(git describe || echo git)]/g"
-            sed -i "doc/gdoc" -e"s|/usr/bin/perl|${perl}/bin/perl|g"
+            sed -i "doc/gdoc" -e"s|/usr/bin/perl|${pkgs.perl}/bin/perl|g"
 	  '';
 
 	autoconfPhase = "autoreconf -vfi";
@@ -48,7 +50,7 @@ let
 	name = "libtasn1" ;
 	src = tarball;
         patchPhase =
-          '' sed -i "doc/gdoc" -e"s|#!.*/bin/perl|${perl}/bin/perl|g"
+          '' sed -i "doc/gdoc" -e"s|#!.*/bin/perl|${pkgs.perl}/bin/perl|g"
           '';
 
 	buildInputs = deps (import nixpkgs { inherit system; });
