@@ -2,6 +2,8 @@
 let
   pkgs = import nixpkgs {};
 
+  inherit (pkgs) releaseTools;
+
   buildInputsFrom = pkgs: with pkgs; [ perl help2man ];
 
   jobs = rec {
@@ -11,7 +13,7 @@ let
       , autoconf ? pkgs.autoconf
       }:
 
-      pkgs.releaseTools.makeSourceTarball {
+      releaseTools.makeSourceTarball {
         name = "automake-tarball";
         src = automakeSrc;
         dontBuild = false;
