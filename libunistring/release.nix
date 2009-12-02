@@ -40,10 +40,10 @@ let
           name = "libunistring" ;
           src = tarball;
           buildInputs = [];
-          propagatedBuildInputs =
+          propagatedBuildInputs = with pkgs;
             stdenv.lib.optional (stdenv.isDarwin
                                  || stdenv.system == "i686-cygwin")
-              pkgs.libiconv;
+              libiconv;
         };
 
     coverage =
