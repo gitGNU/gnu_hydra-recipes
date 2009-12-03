@@ -36,7 +36,7 @@ let
 
       let pkgs = import nixpkgs { inherit system; };
       in
-        releaseTools.nixBuild {
+        pkgs.releaseTools.nixBuild {
           name = "libunistring" ;
           src = tarball;
           buildInputs = [];

@@ -46,15 +46,17 @@ let
       , system ? "x86_64-linux"
       }:
 
-      releaseTools.nixBuild {
-	name = "libtasn1" ;
-	src = tarball;
-        patchPhase =
-          '' sed -i "doc/gdoc" -e"s|#!.*/bin/perl|${pkgs.perl}/bin/perl|g"
-          '';
+      let pkgs = import nixpkgs { inherit system; };
+      in
+        pkgs.releaseTools.nixBuild {
+          name = "libtasn1" ;
+          src = tarball;
+          patchPhase =
+            '' sed -i "doc/gdoc" -e"s|#!.*/bin/perl|${pkgs.perl}/bin/perl|g"
+            '';
 
-	buildInputs = deps (import nixpkgs { inherit system; });
-      };
+          buildInputs = deps pkgs;
+        };
 
     coverage =
       { tarball ? jobs.tarball {}

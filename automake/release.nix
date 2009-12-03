@@ -38,9 +38,9 @@ let
       , autoconf ? pkgs.autoconf
       }:
 
-      let pkgs = import nixpkgs {inherit system;};
+      let pkgs = import nixpkgs { inherit system; };
       in
-        releaseTools.nixBuild {
+        pkgs.releaseTools.nixBuild {
           name = "automake" ;
           src = tarball;
           buildInputs = [ autoconf ] ++ (buildInputsFrom pkgs);
