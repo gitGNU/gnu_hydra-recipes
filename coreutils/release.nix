@@ -2,16 +2,13 @@
 let
   pkgs = import nixpkgs {};
 
-  gnulib = (import ../gnulib.nix) pkgs;
-
-  buildInputsFrom = pkgs: with pkgs; [
-    perl
-  ];
+  buildInputsFrom = pkgs: with pkgs; [ perl ];
 
   jobs = rec {
 
     tarball =
       { coreutilsSrc ? {outPath = ../../coreutils;}
+      , gnulibSrc ? (import ../gnulib.nix) pkgs
       }:
 
       with pkgs;
@@ -35,12 +32,12 @@ let
 	dontBuild = false;
 
         autoconfPhase = ''
-          cp -Rv ${gnulib} ../gnulib
+          cp -Rv "${gnulibSrc}" ../gnulib
           chmod -R 755 ../gnulib
 
 	  sed 's|/usr/bin/perl|${perl}/bin/perl|' -i src/wheel-gen.pl
 
-          ./bootstrap --gnulib-srcdir=../gnulib --copy 
+          ./bootstrap --gnulib-srcdir=../gnulib --copy
         '';
 
       };
