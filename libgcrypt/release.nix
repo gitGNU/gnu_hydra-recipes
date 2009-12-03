@@ -65,6 +65,7 @@ let
           ++ [ pkgs.texinfo pkgs.texLive ];
 
         buildPhase = "make -C doc html pdf";
+        doCheck = false;
         installPhase =
           '' make -C doc install-html install-pdf
 
