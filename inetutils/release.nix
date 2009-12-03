@@ -26,7 +26,7 @@ let
         '';
 
 	buildInputs = (buildInputsFrom pkgs)
-          ++ (with pkgs; [ autoconf automake111x bison git texinfo ]);
+          ++ (with pkgs; [ autoconf automake111x bison perl git texinfo ]);
       };
 
     # XXX: Compile `--with-shishi'.
