@@ -50,7 +50,7 @@ let
         pkgs.releaseTools.nixBuild {
           name = "libtool";
           src = tarball;
-          bootstrapBuildInputs = [ autoconf automake ];
+          buildInputs = [ autoconf automake ];
 
           preCheck =
             # Avoid interference from the ld wrapper.
@@ -71,8 +71,10 @@ let
       releaseTools.nixBuild {
         name = "libtool-manual";
         src = tarball;
-        bootstrapBuildInputs = [ autoconf automake ];
-        buildInputs = [ pkgs.texinfo pkgs.texLive ];
+        buildInputs =
+          [ autoconf automake
+            pkgs.texinfo pkgs.texLive
+          ];
 
         buildPhase = "make html pdf";
         doCheck = false;

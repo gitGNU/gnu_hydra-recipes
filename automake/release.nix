@@ -28,6 +28,8 @@ let
           '';
          */
 
+        preConfigurePhases = "preAutoconfPhase autoconfPhase";
+        preAutoconfPhase = "autoconf --version";
         bootstrapBuildInputs = [ autoconf ];
         buildInputs = (with pkgs; [ texinfo git ]) ++ (buildInputsFrom pkgs);
       };
@@ -43,8 +45,9 @@ let
         pkgs.releaseTools.nixBuild {
           name = "automake" ;
           src = tarball;
-          bootstrapBuildInputs = [ autoconf ];
-          buildInputs = buildInputsFrom pkgs;
+          buildInputs = [ autoconf ] ++ (buildInputsFrom pkgs);
+
+          preConfigure = "autoconf --version";
 
           # Disable indented log output from Make, otherwise "make.test" will
           # fail.  Ask for verbose test suite output.
