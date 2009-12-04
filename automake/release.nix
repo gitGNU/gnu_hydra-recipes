@@ -46,8 +46,8 @@ let
           buildInputs = [ autoconf ] ++ (buildInputsFrom pkgs);
 
           # Disable indented log output from Make, otherwise "make.test" will
-          # fail.
-          preCheck = "unset NIX_INDENT_MAKE";
+          # fail.  Ask for verbose test suite output.
+          preCheck = "unset NIX_INDENT_MAKE ; export VERBOSE=yes";
         };
   };
 
