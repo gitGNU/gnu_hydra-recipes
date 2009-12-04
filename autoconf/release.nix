@@ -20,6 +20,7 @@ let
           echo -n "$(git describe)" > .tarball-version
         '';
 
+        bootstrapBuildInputs = [];
         buildInputs = [
           texinfo
           help2man
@@ -37,6 +38,7 @@ let
       releaseTools.nixBuild {
         name = "autoconf" ;
         src = tarball;
+        bootstrapBuildInputs = [];
         buildInputs = buildInputsFrom pkgs;
       };
 
@@ -44,9 +46,10 @@ let
       { tarball ? jobs.tarball {}
       }:
 
-      releaseTools.nixBuild {
+      pkgs.releaseTools.nixBuild {
         name = "autoconf-manual";
         src = tarball;
+        bootstrapBuildInputs = [];
         buildInputs = [ pkgs.texinfo pkgs.texLive ];
 
         buildPhase = "make html pdf";
