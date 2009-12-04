@@ -50,7 +50,7 @@ let
         name = "autoconf-manual";
         src = tarball;
         bootstrapBuildInputs = [];
-        buildInputs = [ pkgs.texinfo pkgs.texLive ];
+        buildInputs = [ pkgs.texinfo pkgs.texLive ] ++ (buildInputsFrom pkgs);
 
         buildPhase = "make html pdf";
         doCheck = false;
