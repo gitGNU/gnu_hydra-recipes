@@ -14,9 +14,13 @@ let
       , gnulibSrc ? (import ../gnulib.nix) pkgs
       }:
 
-      releaseTools.makeSourceTarball {
+      releaseTools.sourceTarball {
 	name = "inetutils-tarball";
 	src = inetutilsSrc;
+
+        # Somehow "make dist" alone fails.
+        dontBuild = false;
+        doCheck = false;
 
         autoconfPhase = ''
           cp -Rv "${gnulibSrc}" ../gnulib
