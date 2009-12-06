@@ -12,7 +12,7 @@ let
 
       with pkgs;
 
-      pkgs.releaseTools.makeSourceTarball {
+      pkgs.releaseTools.sourceTarball {
         name = "autoconf-tarball";
         src = autoconfSrc;
         preConfigurePhases = "preAutoconfPhase autoconfPhase";
@@ -20,7 +20,8 @@ let
           echo -n "$(git describe)" > .tarball-version
         '';
 
-        bootstrapBuildInputs = [];
+        # Autoconf needs a version of itself to bootstrap.
+        bootstrapBuildInputs = [ autoconf ];
         buildInputs = [
           texinfo
           help2man
@@ -38,7 +39,6 @@ let
       releaseTools.nixBuild {
         name = "autoconf" ;
         src = tarball;
-        bootstrapBuildInputs = [];
         buildInputs = buildInputsFrom pkgs;
       };
 
@@ -49,7 +49,6 @@ let
       pkgs.releaseTools.nixBuild {
         name = "autoconf-manual";
         src = tarball;
-        bootstrapBuildInputs = [];
         buildInputs = [ pkgs.texinfo pkgs.texLive ] ++ (buildInputsFrom pkgs);
 
         buildPhase = "make html pdf";
