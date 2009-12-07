@@ -30,7 +30,10 @@ let
         '';
 
 	buildInputs = (buildInputsFrom pkgs)
-          ++ (with pkgs; [ autoconf automake111x bison perl git texinfo ]);
+          ++ (with pkgs;
+              [ autoconf automake111x bison perl git
+                texinfo help2man
+              ]);
       };
 
     # XXX: Compile `--with-shishi'.
