@@ -5,7 +5,7 @@ let
 
   inherit (pkgs) releaseTools;
 
-  buildInputsFrom = pkgs: with pkgs; [];
+  buildInputsFrom = pkgs: with pkgs; [ ncurses ];
 
   jobs = rec {
 
