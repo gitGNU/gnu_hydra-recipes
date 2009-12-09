@@ -22,6 +22,8 @@ let
         dontBuild = false;
         doCheck = false;
 
+        configureFlags = "--with-ncurses-include-dir=${pkgs.ncurses}/include";
+
         autoconfPhase = ''
           cp -Rv "${gnulibSrc}" ../gnulib
           chmod -R 755 ../gnulib
@@ -48,6 +50,7 @@ let
           name = "inetutils";
           src = tarball;
           buildInputs = buildInputsFrom pkgs;
+          configureFlags = "--with-ncurses-include-dir=${pkgs.ncurses}/include";
         };
 
     coverage =
@@ -57,7 +60,8 @@ let
       releaseTools.coverageAnalysis {
 	name = "inetutils-coverage";
 	src = tarball;
-	buildInputs = buildInputsFrom (import nixpkgs {});
+	buildInputs = buildInputsFrom pkgs;
+        configureFlags = "--with-ncurses-include-dir=${pkgs.ncurses}/include";
       };
 
     manual =
