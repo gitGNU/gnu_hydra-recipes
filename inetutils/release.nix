@@ -1,6 +1,22 @@
 { nixpkgs ? ../../nixpkgs }:
 
 let
+  meta = {
+    description = "GNU Inetutils, a collection of common network programs";
+
+    longDescription = ''
+      GNU Inetutils is a collection of common network programs,
+      including telnet, FTP, RSH, rlogin and TFTP clients and servers,
+      among others.
+    '';
+
+    homepage = http://www.gnu.org/software/inetutils/;
+    license = "GPLv3+";
+
+    # Email notifications are sent to maintainers.
+    maintainers = [ "build-inetutils@gnu.org" ];
+  };
+
   pkgs = import nixpkgs {};
 
   inherit (pkgs) releaseTools;
@@ -36,6 +52,8 @@ let
               [ autoconf automake111x bison perl git
                 texinfo help2man
               ]);
+
+        inherit meta;
       };
 
     # XXX: Compile `--with-shishi'.
@@ -51,6 +69,7 @@ let
           src = tarball;
           buildInputs = buildInputsFrom pkgs;
           configureFlags = "--with-ncurses-include-dir=${pkgs.ncurses}/include";
+          inherit meta;
         };
 
     coverage =
@@ -62,6 +81,7 @@ let
 	src = tarball;
 	buildInputs = buildInputsFrom pkgs;
         configureFlags = "--with-ncurses-include-dir=${pkgs.ncurses}/include";
+        inherit meta;
       };
 
     manual =
@@ -83,6 +103,7 @@ let
              echo "doc manual $out/share/doc/inetutils/inetutils.html index.html" >> "$out/nix-support/hydra-build-products"
              echo "doc-pdf manual $out/share/doc/inetutils/inetutils.pdf" >> "$out/nix-support/hydra-build-products"
           '';
+        inherit meta;
       };
   };
 
