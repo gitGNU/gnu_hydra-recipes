@@ -132,6 +132,7 @@ let
         name = "guile-manual";
         src = tarball;
         buildInputs = buildInputsFrom pkgs ++ [ pkgs.texinfo pkgs.texLive ];
+        doCheck = false;
 
         buildPhase = "make -C doc/ref html pdf";
         installPhase =
