@@ -34,8 +34,6 @@ let
 	name = "inetutils-tarball";
 	src = inetutilsSrc;
 
-        # Somehow "make dist" alone fails.
-        dontBuild = false;
         doCheck = false;
 
         configureFlags = "--with-ncurses-include-dir=${pkgs.ncurses}/include";
