@@ -53,15 +53,6 @@ let
 	name = "coreutils" ;
 	src = tarball;
 	buildInputs = buildInputsFrom pkgs ++ [ pkgs.texinfo pkgs.texLive ];
-        installPhase =
-          '' make install
-
-             echo "installing the HTML and PDF manual..."
-             make install-html install-pdf -C doc
-             ensureDir "$out/nix-support"
-             echo "doc manual $out/share/doc/coreutils/coreutils.html" >> "$out/nix-support/hydra-build-products"
-             echo "doc-pdf manual $out/share/doc/coreutils/coreutils.pdf" >> "$out/nix-support/hydra-build-products"
-          '';
       };
 
     coverage =
@@ -81,6 +72,27 @@ let
           '';
       };
 
+    manual =
+      { tarball ? jobs.tarball {}
+      }:
+
+      with pkgs;
+
+      releaseTools.nixBuild {
+        name = "coreutils-manual";
+        src = tarball;
+        buildInputs = buildInputsFrom pkgs ++ [ pkgs.texinfo pkgs.texLive ];
+        doCheck = false;
+
+        buildPhase = "make -C doc html pdf";
+        installPhase =
+          '' make -C doc install-html install-pdf
+
+             ensureDir "$out/nix-support"
+             echo "doc manual $out/share/doc/coreutils/coreutils.html" >> "$out/nix-support/hydra-build-products"
+             echo "doc-pdf manual $out/share/doc/coreutils/coreutils.pdf" >> "$out/nix-support/hydra-build-products"
+          '';
+      };
   };
 
 
