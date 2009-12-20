@@ -76,7 +76,9 @@ let
 	buildInputs = buildInputsFrom pkgs;
         postCheck =
           # Remove the file that confuses lcov.
-          "rm -fv 'src/<built-in>.'*";
+          '' rm -fv 'src/<built-in>.'*
+             rm -fv src/getlimits.gc*
+          '';
       };
 
   };
