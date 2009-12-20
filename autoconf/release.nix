@@ -20,8 +20,9 @@ let
           echo -n "$(git describe)" > .tarball-version
         '';
 
-        # Autoconf needs a version of itself to bootstrap.
-        bootstrapBuildInputs = [ autoconf ];
+        # Autoconf needs a version of itself to bootstrap, along with
+        # `aclocal' from Automake.
+        bootstrapBuildInputs = [ autoconf automake ];
         buildInputs = [
           texinfo
           help2man
