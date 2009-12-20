@@ -65,6 +65,9 @@ let
 	name = "coreutils-coverage";
 	src = tarball;
 	buildInputs = buildInputsFrom pkgs;
+        postCheck =
+          # Remove the file that confuses lcov.
+          "rm -v 'src/<built-in>.gcov'"
       };
 
   };
