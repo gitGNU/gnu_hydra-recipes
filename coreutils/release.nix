@@ -1,5 +1,22 @@
 {nixpkgs ? ../../nixpkgs}:
 let
+  meta = {
+    homepage = http://www.gnu.org/software/coreutils/;
+    description = "The basic file, shell and text manipulation utilities of the GNU operating system";
+
+    longDescription = ''
+      The GNU Core Utilities are the basic file, shell and text
+      manipulation utilities of the GNU operating system.  These are
+      the core utilities which are expected to exist on every
+      operating system.
+    '';
+
+    license = "GPLv3+";
+
+    # Those who will receive email notifications.
+    maintainers = [ "Jim Meyering <jim@meyering.net>" ];
+  };
+
   pkgs = import nixpkgs {};
 
   buildInputsFrom = pkgs: with pkgs; [ perl ];
@@ -40,6 +57,7 @@ let
           ./bootstrap --gnulib-srcdir=../gnulib --copy
         '';
 
+        inherit meta;
       };
 
     build =
@@ -53,6 +71,7 @@ let
 	name = "coreutils" ;
 	src = tarball;
 	buildInputs = buildInputsFrom pkgs ++ [ pkgs.texinfo pkgs.texLive ];
+        inherit meta;
       };
 
     coverage =
@@ -70,6 +89,7 @@ let
           '' rm -fv 'src/<built-in>.'*
              rm -fv src/getlimits.gc*
           '';
+        inherit meta;
       };
 
     manual =
@@ -92,6 +112,7 @@ let
              echo "doc manual $out/share/doc/coreutils/coreutils.html" >> "$out/nix-support/hydra-build-products"
              echo "doc-pdf manual $out/share/doc/coreutils/coreutils.pdf" >> "$out/nix-support/hydra-build-products"
           '';
+        inherit meta;
       };
   };
 
