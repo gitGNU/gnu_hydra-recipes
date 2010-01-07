@@ -17,6 +17,9 @@ let
     maintainers = [ "build-inetutils@gnu.org" ];
   };
 
+  # Work around `AM_SILENT_RULES'.
+  preBuild = "export V=99";
+
   pkgs = import nixpkgs {};
 
   inherit (pkgs) releaseTools;
@@ -51,7 +54,7 @@ let
                 texinfo help2man
               ]);
 
-        inherit meta;
+        inherit preBuild meta;
       };
 
     # XXX: Compile `--with-shishi'.
@@ -67,7 +70,7 @@ let
           src = tarball;
           buildInputs = buildInputsFrom pkgs;
           configureFlags = "--with-ncurses-include-dir=${pkgs.ncurses}/include";
-          inherit meta;
+          inherit preBuild meta;
         };
 
     coverage =
@@ -79,7 +82,7 @@ let
 	src = tarball;
 	buildInputs = buildInputsFrom pkgs;
         configureFlags = "--with-ncurses-include-dir=${pkgs.ncurses}/include";
-        inherit meta;
+        inherit preBuild meta;
       };
 
     manual =
@@ -101,7 +104,7 @@ let
              echo "doc manual $out/share/doc/inetutils/inetutils.html index.html" >> "$out/nix-support/hydra-build-products"
              echo "doc-pdf manual $out/share/doc/inetutils/inetutils.pdf" >> "$out/nix-support/hydra-build-products"
           '';
-        inherit meta;
+        inherit preBuild meta;
       };
   };
 
