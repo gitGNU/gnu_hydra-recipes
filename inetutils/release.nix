@@ -37,6 +37,10 @@ let
 	name = "inetutils-tarball";
 	src = inetutilsSrc;
 
+        # "make dist" alone won't work, so run "make" before.
+        # http://lists.gnu.org/archive/html/bug-inetutils/2010-01/msg00004.html
+        dontBuild = false;
+
         doCheck = false;
 
         configureFlags = "--with-ncurses-include-dir=${pkgs.ncurses}/include";
