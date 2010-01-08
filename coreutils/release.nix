@@ -14,7 +14,10 @@ let
     license = "GPLv3+";
 
     # Those who will receive email notifications.
-    maintainers = [ "Jim Meyering <jim@meyering.net>" ];
+    maintainers =
+      [ "Jim Meyering <jim@meyering.net>"
+        "Pádraig Brady <P@draigBrady.com>"
+      ];
   };
 
   pkgs = import nixpkgs {};
