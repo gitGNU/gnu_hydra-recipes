@@ -76,15 +76,14 @@ let
         # make dist fails without this, so for now do make, make dist..
         dontBuild = false;
 
-        preConfigurePhases = "preAutoconfPhase autoconfPhase";
-
-        preAutoconfPhase =
+        preAutoconf =
           # Add a Git descriptor in the version number and tell Automake not
           # to check whether `NEWS' is up to date wrt. the version number.
           # The assumption is that `nix-prefetch-git' left the `.git'
           # directory in there.
-          '' sed -i "GUILE-VERSION" \
-                 -es"/^\(GUILE_VERSION=.*\)/\1-$(git describe || echo git)/g"
+          '' version_string="$((git describe || echo git) | sed -es/release_//g | tr - .)"
+             sed -i "GUILE-VERSION" \
+                 -es"/^\(GUILE_VERSION=\).*$/\1-$version_string/g"
 
              # In `branch_release-1-8' we still use the old name.
              if test -f "configure.ac"
