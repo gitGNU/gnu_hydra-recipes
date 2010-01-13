@@ -1,6 +1,27 @@
 { nixpkgs ? ../../nixpkgs }:
 
 let
+  meta = {
+    description = "The GNU Scientific Library, a large numerical library";
+
+    longDescription = ''
+      The GNU Scientific Library (GSL) is a numerical library for C
+      and C++ programmers.  It is free software under the GNU General
+      Public License.
+
+      The library provides a wide range of mathematical routines such
+      as random number generators, special functions and least-squares
+      fitting.  There are over 1000 functions in total with an
+      extensive test suite.
+    '';
+
+    homepage = http://www.gnu.org/software/gsl/;
+    license = "GPLv3+";
+
+    # Those who will receive email notifications.
+    maintainers = [ "bug-gsl@gnu.org" ];
+  };
+
   pkgs = import nixpkgs {};
 
   inherit (pkgs) releaseTools;
@@ -23,6 +44,8 @@ let
 	buildInputs =
           with pkgs;
             [ autoconf automake111x git texinfo];
+
+        inherit meta;
       };
 
     build =
@@ -35,6 +58,7 @@ let
         pkgs.releaseTools.nixBuild {
           name = "gsl";
           src = tarball;
+          inherit meta;
         };
 
     coverage =
@@ -44,6 +68,7 @@ let
       releaseTools.coverageAnalysis {
 	name = "gsl-coverage";
 	src = tarball;
+        inherit meta;
       };
 
     manual =
@@ -64,6 +89,7 @@ let
              echo "doc manual $out/share/doc/gsl/gsl-ref.html index.html" >> "$out/nix-support/hydra-build-products"
              echo "doc-pdf manual $out/share/doc/gsl/gsl-ref.pdf" >> "$out/nix-support/hydra-build-products"
           '';
+        inherit meta;
       };
   };
 
