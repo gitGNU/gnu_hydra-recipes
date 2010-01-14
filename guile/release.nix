@@ -1,5 +1,24 @@
 {nixpkgs ? ../../nixpkgs}:
 let
+  meta = {
+    description = "GNU Guile 1.9, an embeddable Scheme implementation";
+
+    longDescription = ''
+      GNU Guile is an implementation of the Scheme programming language, with
+      support for many SRFIs, packaged for use in a wide variety of
+      environments.  In addition to implementing the R5RS Scheme standard,
+      Guile includes a module system, full access to POSIX system calls,
+      networking support, multiple threads, dynamic linking, a foreign
+      function call interface, and powerful string processing.
+    '';
+
+    homepage = http://www.gnu.org/software/guile/;
+    license = "LGPLv3+";
+
+    # Those who will receive email notifications.
+    maintainers = [ "guile-commits@gnu.org" ];
+  };
+
   pkgs = import nixpkgs {};
 
   buildInputsFrom = pkgs: with pkgs; [
@@ -40,6 +59,7 @@ let
              inherit name configureFlags;
              src = tarball;
              buildInputs = buildInputsFrom pkgs;
+             inherit meta;
            });
 
   /* The configuration space under test.  */
@@ -104,6 +124,8 @@ let
              sed -i "libguile/c-tokenize.c" \
                  -e's/"<stdout>"/"c-tokenize.c"/g'
           '';
+
+        inherit meta;
       };
 
     coverage =
@@ -119,6 +141,7 @@ let
         patches = [
           "${nixpkgs}/pkgs/development/interpreters/guile/disable-gc-sensitive-tests.patch" 
         ];
+        inherit meta;
       };
 
     manual =
@@ -141,6 +164,7 @@ let
              echo "doc manual $out/share/doc/guile/guile.html index.html" >> "$out/nix-support/hydra-build-products"
              echo "doc-pdf manual $out/share/doc/guile/guile.pdf" >> "$out/nix-support/hydra-build-products"
           '';
+        inherit meta;
       };
   }
 
