@@ -22,7 +22,8 @@ let
 
   pkgs = import nixpkgs {};
 
-  buildInputsFrom = pkgs: with pkgs; [ perl ];
+  buildInputsFrom = pkgs:
+    with pkgs; [ perl gmp ] ++ (stdenv.lib.optional stdenv.isLinux acl);
 
   jobs = rec {
 
