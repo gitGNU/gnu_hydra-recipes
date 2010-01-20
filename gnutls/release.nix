@@ -26,7 +26,7 @@ let
         dontBuild = false;
 
         patchPhase =
-          # Remove occurrences of /usr/bin/perl.
+          # Remove occurrences of /usr/bin/perl and /bin/bash.
           '' for i in                           \
                 tests/nist-pkits/build-chain    \
                 doc/scripts/sort2.pl            \
@@ -36,6 +36,15 @@ let
              do
                echo "patching \`/usr/bin/perl' in \`$i'..."
                sed -i "$i" -e's|/usr/bin/perl|${pkgs.perl}/bin/perl|g'
+             done
+
+             for i in "tests/"*"/"*
+             do
+               if grep -q /bin/bash "$i"
+               do
+                 echo "patching \`/bin/bash' in \`$i'..."
+                 sed -i "$i" -e's|/bin/bash|/bin/sh|g'
+               done
              done
           '';
 
