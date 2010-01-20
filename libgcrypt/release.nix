@@ -38,7 +38,8 @@ let
         pkgs.releaseTools.nixBuild {
           name = "libgcrypt";
           src = tarball;
-          buildInputs = (buildInputsFrom pkgs) ++ [ libgpgerror ];
+          buildInputs = (buildInputsFrom pkgs);
+          propagatedBuildInputs = [ libgpgerror ];
         };
 
     coverage =
