@@ -44,7 +44,7 @@ let
                do
                  echo "patching \`/bin/bash' in \`$i'..."
                  sed -i "$i" -e's|/bin/bash|/bin/sh|g'
-               done
+               fi
              done
           '';
 
@@ -118,7 +118,7 @@ let
           '' make -C doc install-html install-pdf
 
              ensureDir "$out/nix-support"
-             echo "doc manual $out/share/doc/gnutls/gnutls.html index.html" >> "$out/nix-support/hydra-build-products"
+             echo "doc manual $out/share/doc/gnutls/gnutls.html" >> "$out/nix-support/hydra-build-products"
              echo "doc-pdf manual $out/share/doc/gnutls/gnutls.pdf" >> "$out/nix-support/hydra-build-products"
           '';
       };
