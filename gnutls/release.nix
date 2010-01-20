@@ -41,7 +41,7 @@ let
              for i in "tests/"*"/"*
              do
                if grep -q /bin/bash "$i"
-               do
+               then
                  echo "patching \`/bin/bash' in \`$i'..."
                  sed -i "$i" -e's|/bin/bash|/bin/sh|g'
                fi
