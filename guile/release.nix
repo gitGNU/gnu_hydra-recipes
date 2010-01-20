@@ -55,9 +55,11 @@ let
          let pkgs = import nixpkgs { inherit system; };
          in
            with pkgs;
-           releaseTools.nixBuild rec {
-             inherit name configureFlags;
+           releaseTools.nixBuild {
+             inherit name meta;
              src = tarball;
+             configureFlags =
+               [ "--enable-error-on-warning" ] ++ configureFlags;
              buildInputs = buildInputsFrom pkgs;
              inherit meta;
            });
