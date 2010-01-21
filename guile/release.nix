@@ -59,7 +59,8 @@ let
              inherit name meta;
              src = tarball;
              configureFlags =
-               [ "--enable-error-on-warning" ] ++ configureFlags;
+               (stdenv.lib.optional stdenv.isLinux ["--enable-error-on-warning" ])
+               ++ configureFlags;
              buildInputs = buildInputsFrom pkgs;
            });
 
