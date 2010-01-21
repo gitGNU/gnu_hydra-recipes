@@ -61,7 +61,6 @@ let
              configureFlags =
                [ "--enable-error-on-warning" ] ++ configureFlags;
              buildInputs = buildInputsFrom pkgs;
-             inherit meta;
            });
 
   /* The configuration space under test.  */
