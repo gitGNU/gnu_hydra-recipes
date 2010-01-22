@@ -1,6 +1,30 @@
 { nixpkgs ? ../../nixpkgs }:
 
 let
+  meta = {
+    description = "The GNU Transport Layer Security Library";
+
+    longDescription = ''
+       GnuTLS is a project that aims to develop a library which
+       provides a secure layer, over a reliable transport
+       layer. Currently the GnuTLS library implements the proposed
+       standards by the IETF's TLS working group.
+
+       Quoting from the TLS protocol specification:
+
+       "The TLS protocol provides communications privacy over the
+       Internet. The protocol allows client/server applications to
+       communicate in a way that is designed to prevent eavesdropping,
+       tampering, or message forgery."
+    '';
+
+    homepage = http://www.gnu.org/software/gnutls/;
+    license = "LGPLv2.1+";
+
+    # Where notification emails go.
+    maintainers = [ "gnutls-commits@gnu.org" ];
+  };
+
   pkgs = import nixpkgs {};
 
   inherit (pkgs) releaseTools;
@@ -64,6 +88,8 @@ let
                 libxml2 # for its setup-hook
                 texinfo texLive
               ]);
+
+        inherit meta;
       };
 
     build =
@@ -81,6 +107,7 @@ let
           configureFlags =
             "--with-lzo --with-libtasn1-prefix=${libtasn1} --enable-guile";
           buildInputs = (buildInputsFrom pkgs) ++ [ libtasn1 libgcrypt ];
+          inherit meta;
         };
 
     coverage =
@@ -95,6 +122,7 @@ let
         configureFlags =
           "--with-lzo --with-libtasn1-prefix=${libtasn1} --enable-guile";
         buildInputs = (buildInputsFrom pkgs) ++ [ libtasn1 libgcrypt ];
+        inherit meta;
       };
 
     manual =
@@ -121,6 +149,7 @@ let
              echo "doc manual $out/share/doc/gnutls/gnutls.html" >> "$out/nix-support/hydra-build-products"
              echo "doc-pdf manual $out/share/doc/gnutls/gnutls.pdf" >> "$out/nix-support/hydra-build-products"
           '';
+        inherit meta;
       };
   };
 
