@@ -28,9 +28,15 @@ let
         patches = [ ./mono-without-binfmt_misc.patch ];
 
 	autoconfPhase =
-	  '' version_string="$((git describe || echo git) | sed -es/libidn-//g | tr - .)"
-             sed -i "configure.ac" \
-		 -e "s/^AC_INIT(\([^,]\+\), \[\([^,]\+\)\]/AC_INIT(\1, [$version_string]/g"
+	  '' # If `git describe' doesn't work, keep the default version
+             # string since otherwise the `stringprep_check_version' tests
+             # fail.
+             if git describe > /dev/null
+             then
+                 version_string="$(git describe | sed -es/libidn-//g | tr - .)"
+                 sed -i "configure.ac" \
+                     -e "s/^AC_INIT(\([^,]\+\), \[\([^,]\+\)\]/AC_INIT(\1, [$version_string]/g"
+             fi
 
              sed -i "doc/gdoc" -e"s|/usr/bin/perl|${pkgs.perl}/bin/perl|g"
 
