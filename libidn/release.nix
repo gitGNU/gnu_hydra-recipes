@@ -9,8 +9,10 @@ let
     [ gnome.gtkdoc pkgconfig perl texLive
       help2man docbook_xsl docbook_xml_dtd_412
       libxml2 /* for the setup hook */
-      gcj mono
-    ];
+    ]
+
+    # The GCJ and Mono packages aren't available on non-GNU platforms.
+    ++ stdenv.lib.optionals stdenv.isLinux [ gcj mono ];
 
   jobs = rec {
 
@@ -81,7 +83,7 @@ let
           patchPhase =
             '' sed -i "doc/gdoc" -e"s|#!.*/bin/perl|${pkgs.perl}/bin/perl|g"
             '';
-          preConfigure = "export JAR=gjar";
+          preConfigure = "export JAR=gjar MONO_SHARED_DIR=$TMPDIR";
           configureFlags = "--enable-java";
           buildInputs = buildInputsFrom pkgs;
         };
@@ -96,7 +98,7 @@ let
         patchPhase =
           '' sed -i "doc/gdoc" -e"s|#!.*/bin/perl|${pkgs.perl}/bin/perl|g"
           '';
-        preConfigure = "export JAR=gjar";
+        preConfigure = "export JAR=gjar MONO_SHARED_DIR=$TMPDIR";
         configureFlags = "--enable-java";
 	buildInputs = buildInputsFrom (import nixpkgs {});
       };
