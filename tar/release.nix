@@ -1,11 +1,8 @@
 {nixpkgs ? ../../nixpkgs}:
 let
-  # Build tarball and coverage analysis on i686, 
-  # because x86_64 build fails at the moment.
-  pkgs = import nixpkgs { system = "i686-linux"; };
+  pkgs = import nixpkgs {};
 
-  buildInputsFrom = pkgs: with pkgs; [
-  ];
+  buildInputsFrom = pkgs: [ pkgs.gettext ];
 
   jobs = rec {
 
@@ -30,17 +27,11 @@ let
           ./bootstrap --gnulib-srcdir=../gnulib --paxutils-srcdir=../paxutils --skip-po --copy
         '';
 
-        buildInputs = [
-          git
-          gettext
-          cvs
-          texinfo
-          bison
-          man 
-          rsync
-          perl
-          cpio
-        ] ++ buildInputsFrom pkgs;
+        buildInputs =
+         [ git texinfo bison
+           cvs # for `autopoint'
+           man rsync perl cpio
+         ] ++ buildInputsFrom pkgs;
       };
 
     build =
@@ -66,9 +57,9 @@ let
         name = "tar-coverage";
         src = tarball;
         buildInputs = buildInputsFrom pkgs;
+        schedulingPriority = 50;
       };
 
   };
 
-  
 in jobs
