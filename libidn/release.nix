@@ -6,13 +6,13 @@ let
   inherit (pkgs) releaseTools;
 
   buildInputsFrom = pkgs: with pkgs;
-    [ gnome.gtkdoc pkgconfig perl texLive
+    [ pkgconfig perl texLive
       help2man docbook_xsl docbook_xml_dtd_412
       libxml2 /* for the setup hook */
     ]
 
-    # The GCJ and Mono packages aren't available on non-GNU platforms.
-    ++ stdenv.lib.optionals stdenv.isLinux [ gcj mono ];
+    # The following packages aren't available on non-GNU platforms.
+    ++ stdenv.lib.optionals stdenv.isLinux [ gcj mono gnome.gtkdoc ];
 
   jobs = rec {
 
