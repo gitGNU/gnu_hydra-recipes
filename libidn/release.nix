@@ -77,14 +77,15 @@ let
 
       let pkgs = import nixpkgs { inherit system; };
       in
-        pkgs.releaseTools.nixBuild {
+        with pkgs;
+        releaseTools.nixBuild {
           name = "libidn" ;
           src = tarball;
           patchPhase =
-            '' sed -i "doc/gdoc" -e"s|#!.*/bin/perl|${pkgs.perl}/bin/perl|g"
+            '' sed -i "doc/gdoc" -e"s|#!.*/bin/perl|${perl}/bin/perl|g"
             '';
           preConfigure = "export JAR=gjar MONO_SHARED_DIR=$TMPDIR";
-          configureFlags = "--enable-java";
+          configureFlags = stdenv.lib.optional stdenv.isLinux "--enable-java";
           buildInputs = buildInputsFrom pkgs;
         };
 
