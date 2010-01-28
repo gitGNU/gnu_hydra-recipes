@@ -22,14 +22,8 @@ let
   pkgs = import nixpkgs {};
 
   buildInputsFrom = pkgs: with pkgs; [
-    readline 
-    libtool 
-    gmp 
-    gawk 
-    makeWrapper
-    libunistring 
-    pkgconfig 
-    boehmgc
+    readline libtool gmp gawk makeWrapper
+    libunistring pkgconfig boehmgc libffi
   ];
 
   /* Return a name/value attribute set where the value is a function suitable
