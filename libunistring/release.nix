@@ -23,9 +23,9 @@ let
           cp -Rv "${gnulibSrc}" ../gnulib
           chmod -R 755 ../gnulib
 
-          # Remove Libtool-provided macros to avoid any conflicts with the
+          # Remove Libtool-provided files to avoid any conflicts with the
           # version we're using here.
-          rm -fv m4/libtool* m4/lt*
+          rm -fv m4/libtool* m4/lt* libtool build-aux/lt*
 
           ./autogen.sh
 	'';
