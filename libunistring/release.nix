@@ -16,6 +16,8 @@ let
 	name = "libunistring-tarball";
 	src = libunistringSrc;
 
+        patches = [ ./tar-should-not-expect-a-root-user.patch ];
+
 	autoconfPhase = ''
 	  export GNULIB_TOOL="../gnulib/gnulib-tool"
           cp -Rv "${gnulibSrc}" ../gnulib
