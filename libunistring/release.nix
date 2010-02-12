@@ -22,6 +22,11 @@ let
 	  export GNULIB_TOOL="../gnulib/gnulib-tool"
           cp -Rv "${gnulibSrc}" ../gnulib
           chmod -R 755 ../gnulib
+
+          # Remove Libtool-provided macros to avoid any conflicts with the
+          # version we're using here.
+          rm -fv m4/libtool* m4/lt*
+
           ./autogen.sh
 	'';
 
