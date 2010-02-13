@@ -26,6 +26,7 @@ let
           # Remove Libtool-provided files to avoid any conflicts with the
           # version we're using here.
           rm -fv m4/libtool* m4/lt* libtool build-aux/lt*
+          libtoolize --install --force
 
           ./autogen.sh
 	'';
