@@ -1,6 +1,24 @@
 { nixpkgs ? ../../nixpkgs }:
 
 let
+  meta = {
+    description = "GNU MyServer, a powerful and easy to configure web server";
+
+    longDescription = ''
+      GNU MyServer is a powerful and easy to configure web server.  Its
+      multi-threaded architecture makes it extremely scalable and usable in
+      large scale sites as well as in small networks, it has a lot of
+      built-in features.  Share your files in minutes!
+    '';
+
+    homepage = http://www.gnu.org/software/myserver/;
+
+    license = "GPLv3+";
+
+    # Those who will receive notifications.
+    maintainers = [ "myserver-commit@gnu.org" ];
+  };
+
   pkgs = import nixpkgs {};
   gnulibSrc = (import ../gnulib.nix) pkgs;
 
@@ -35,6 +53,8 @@ let
 	buildInputs = (buildInputsFrom pkgs)
           ++ (with pkgs;
               [ autoconf automake111x perl git ]);
+
+        inherit meta;
       };
 
     build =
@@ -48,6 +68,7 @@ let
           name = "myserver";
           src = tarball;
           buildInputs = buildInputsFrom pkgs;
+          inherit meta;
         };
 
     coverage =
@@ -59,6 +80,7 @@ let
 	src = tarball;
 	buildInputs = buildInputsFrom pkgs;
         configureFlags = "--with-ncurses-include-dir=${pkgs.ncurses}/include";
+        inherit meta;
       };
 
     manual =
@@ -80,6 +102,7 @@ let
              echo "doc manual $out/share/doc/myserver/myserver.html index.html" >> "$out/nix-support/hydra-build-products"
              echo "doc-pdf manual $out/share/doc/myserver/myserver.pdf" >> "$out/nix-support/hydra-build-products"
           '';
+        inherit meta;
       };
   };
 
