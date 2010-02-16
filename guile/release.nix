@@ -26,6 +26,21 @@ let
     libunistring pkgconfig boehmgc libffi
   ];
 
+  /* Return the default configuration flags.  */
+  defaultConfigureFlags = pkgs:
+     with pkgs;
+     (stdenv.lib.optional stdenv.isLinux ["--enable-error-on-warning" ])
+
+     # The `--with' flags below aren't strictly needed, except on Cygwin
+     # where the added `-L' linker flags help Libtool find the dlls, which in
+     # turn allows it to produce dlls.
+     ++ [ "--with-libreadline-prefix=${readline}"
+          "--with-libunistring-prefix=${libunistring}"
+          "--with-libgmp-prefix=${gmp}"
+        ]
+     ++ (stdenv.lib.optionals (! (stdenv ? glibc ))
+        [ "--with-libiconv-prefix=${libiconv}" ]);
+
   /* Return a name/value attribute set where the value is a function suitable
      as a Hydra build function.  */
   makeBuild = configureFlags:
@@ -53,8 +68,7 @@ let
              inherit name meta;
              src = tarball;
              configureFlags =
-               (stdenv.lib.optional stdenv.isLinux ["--enable-error-on-warning" ])
-               ++ configureFlags;
+               (defaultConfigureFlags pkgs) ++ configureFlags;
              buildInputs = buildInputsFrom pkgs;
            });
 
