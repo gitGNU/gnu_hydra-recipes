@@ -62,7 +62,6 @@ let
   configurationSpace =
     [ [] # the default build, no `configure' arguments
       [ "--without-threads" ]
-      [ "--disable-deprecated" ]
       [ "--disable-deprecated" "--disable-discouraged" ]
       [ "--disable-networking" ]
       [ "--enable-guile-debug" ]
