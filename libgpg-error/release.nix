@@ -17,8 +17,6 @@ let
 	name = "libgpgerror-tarball";
 	src = libgpgerrorSrc;
 
-        dontBuild = true;
-
 	buildInputs = (buildInputsFrom pkgs) ++ (with pkgs; [
 	  autoconf automake111x libtool
 	  subversion texinfo
