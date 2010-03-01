@@ -1,6 +1,6 @@
 {nixpkgs ? ../../nixpkgs}:
 let
-  pkgs = import nixpkgs {};
+  pkgs = import nixpkgs { system = "i686-linux"; };
 
   buildInputsFrom = pkgs: [ pkgs.gettext ];
 
