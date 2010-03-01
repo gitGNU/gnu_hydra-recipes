@@ -30,7 +30,7 @@ let
         buildInputs =
          [ git texinfo bison
            cvs # for `autopoint'
-           man rsync perl cpio
+           man rsync perl cpio automake111x
          ] ++ buildInputsFrom pkgs;
       };
 
