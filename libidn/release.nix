@@ -17,8 +17,7 @@ let
   jobs = rec {
 
     tarball =
-      { libidnSrc ? { outPath = /data/src/libidn; }
-      }:
+      { libidnSrc }:
 
       releaseTools.sourceTarball {
 	name = "libidn-tarball";
@@ -71,9 +70,7 @@ let
       };
 
     build =
-      { tarball ? jobs.tarball {}
-      , system ? "x86_64-linux"
-      }:
+      { tarball, system }:
 
       let pkgs = import nixpkgs { inherit system; };
       in
@@ -90,8 +87,7 @@ let
         };
 
     coverage =
-      { tarball ? jobs.tarball {}
-      }:
+      { tarball }:
 
       releaseTools.coverageAnalysis {
 	name = "libidn-coverage";
