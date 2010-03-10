@@ -47,7 +47,10 @@ let
   makeBuild = configureFlags:
     let
       shortFlags = with builtins;
-        (map (flag: substring 2 (stringLength flag) flag)
+        (map (flag:
+               if (substring 0 2 flag == "--")
+               then substring 2 (stringLength flag) flag
+               else flag)
              configureFlags);
       name = pkgs.lib.concatStringsSep "-" ([ "guile" ] ++ shortFlags);
       attrName = pkgs.lib.replaceChars ["-"] ["_"]
@@ -84,6 +87,7 @@ let
       [ "--disable-deprecated" "--disable-discouraged" ]
       [ "--disable-networking" ]
       [ "--enable-guile-debug" ]
+      [ "CPPFLAGS=-DSCM_DEBUG=1" ]
     ];
 
   jobs = rec {
