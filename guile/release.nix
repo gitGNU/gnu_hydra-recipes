@@ -62,7 +62,11 @@ let
          , system ? "x86_64-linux"
          }:
 
-         let pkgs = import nixpkgs { inherit system; };
+         # Build the exotic configurations only on GNU/Linux.
+         let pkgs =
+               (if configureFlags == []
+                then import nixpkgs { inherit system; }
+                else import nixpkgs { system = "x86_64-linux"; });
          in
            with pkgs;
            releaseTools.nixBuild {
