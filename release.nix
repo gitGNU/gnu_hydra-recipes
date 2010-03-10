@@ -1,43 +1,43 @@
 /* Builds of variants of the GNU System using the latest GNU packages
    straight from their repository.  */
 
-{
-/* Source trees of NixOS and Nixpkgs.  */
-  nixos ? { outPath = ../nixos; rev = 0; }
-, nixpkgs ? { outPath = ../nixpkgs; rev = 0; }
-
-/* Source tarballs of the latest GNU packages.  */
-, cpio ? { outPath = ./cpio-2.10.91.tar.bz2; }
-, tar ? null }:
+{ nixpkgs ? ../nixpkgs }:
 
 let
-  latestGNUPackages = origPkgs: {
-    cpio = origPkgs.lib.overrideDerivation origPkgs.cpio (origAttrs: {
-      src = cpio;
-      patches = [];
-    });
-
-    /* Stuff in stdenv...
-
-    gnutar = pkgs.lib.overrideDerivation origPkgs.gnutar (origAttrs: {
-      src = tar;
-      patches = [];
-    });
-
-    */
-  };
-
   makeIso =
     { module, description, maintainers ? [ "ludo@gnu.org" ]}:
-    { system ? "i686-linux" }:
+    { system ? "i686-linux"
+
+       /* Source tree of NixOS.  */
+    , nixos ? { outPath = ../nixos; rev = 0; }
+
+      /* Source tarballs of the latest GNU packages.  */
+    , cpio ? { outPath = ./cpio-2.10.91.tar.bz2; }
+    , tar ? null }:
 
     let
       version = "0.0-pre${toString nixos.rev}";
       versionModule = { system.nixosVersion = version; };
 
+      latestGNUPackages = origPkgs: {
+        cpio = origPkgs.lib.overrideDerivation origPkgs.cpio (origAttrs: {
+          src = cpio;
+          patches = [];
+        });
+
+        /* Stuff in stdenv...
+
+        gnutar = pkgs.lib.overrideDerivation origPkgs.gnutar (origAttrs: {
+          src = tar;
+          patches = [];
+        });
+
+        */
+      };
+
       config = (import "${nixos}/lib/eval-config.nix" {
 	inherit system nixpkgs;
-	modules = [ module versionModule ];
+	modules = [ "${nixos}/modules/${module}" versionModule ];
       }).config // { packageOverrides = latestGNUPackages; };
       pkgs = import nixpkgs {};
 
@@ -64,7 +64,7 @@ in
 
   rec {
     iso_minimal = makeIso {
-      module = "${nixos}/modules/installer/cd-dvd/installation-cd-minimal.nix";
+      module = "installer/cd-dvd/installation-cd-minimal.nix";
       description = "minimal";
     };
   }
