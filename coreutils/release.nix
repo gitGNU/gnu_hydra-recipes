@@ -58,7 +58,11 @@ let
 
 	  sed 's|/usr/bin/perl|${perl}/bin/perl|' -i src/wheel-gen.pl
 
-          ./bootstrap --gnulib-srcdir=../gnulib --copy
+          # By default `bootstrap' tries to download `.po' files from the
+          # net, which doesn't work in chroots.  Skip that for now and
+          # provide an empty `LINGUAS' file.
+          touch po/LINGUAS
+          ./bootstrap --gnulib-srcdir=../gnulib --copy --skip-po
         '';
 
         inherit meta;
