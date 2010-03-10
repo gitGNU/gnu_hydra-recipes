@@ -1,7 +1,9 @@
 /* Builds of variants of the GNU System using the latest GNU packages
    straight from their repository.  */
 
-{ nixosSrc ? { outPath = ../nixos; rev = 0; }
+{
+/* Source trees of NixOS and Nixpkgs.  */
+  nixos ? { outPath = ../nixos; rev = 0; }
 , nixpkgs ? { outPath = ../nixpkgs; rev = 0; }
 
 /* Source tarballs of the latest GNU packages.  */
@@ -30,10 +32,10 @@ let
     { system ? "i686-linux" }:
 
     let
-      version = "0.0-pre${toString nixosSrc.rev}";
+      version = "0.0-pre${toString nixos.rev}";
       versionModule = { system.nixosVersion = version; };
 
-      config = (import "${nixosSrc}/lib/eval-config.nix" {
+      config = (import "${nixos}/lib/eval-config.nix" {
 	inherit system nixpkgs;
 	modules = [ module versionModule ];
       }).config // { packageOverrides = latestGNUPackages; };
@@ -62,7 +64,7 @@ in
 
   rec {
     iso_minimal = makeIso {
-      module = "${nixosSrc}/modules/installer/cd-dvd/installation-cd-minimal.nix";
+      module = "${nixos}/modules/installer/cd-dvd/installation-cd-minimal.nix";
       description = "minimal";
     };
   }
