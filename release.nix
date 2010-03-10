@@ -12,8 +12,7 @@ let
     , nixos ? { outPath = ../nixos; rev = 0; }
 
       /* Source tarballs of the latest GNU packages.  */
-    , cpio ? { outPath = ./cpio-2.10.91.tar.bz2; }
-    , tar ? null }:
+    , cpio, tar }:
 
     let
       version = "0.0-pre${toString nixos.rev}";
@@ -25,14 +24,10 @@ let
           patches = [];
         });
 
-        /* Stuff in stdenv...
-
         gnutar = pkgs.lib.overrideDerivation origPkgs.gnutar (origAttrs: {
           src = tar;
           patches = [];
         });
-
-        */
       };
 
       config = (import "${nixos}/lib/eval-config.nix" {
