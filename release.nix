@@ -5,7 +5,7 @@
 
 let
   makeIso =
-    { module, description, maintainers ? [ "ludo@gnu.org" ]}:
+    { module, description, maintainers ? [ "ludo" ]}:
     { system ? "i686-linux"
 
        /* Source tree of NixOS.  */
