@@ -43,24 +43,38 @@ let
     , nixos ? { outPath = ../nixos; rev = 0; }
 
       /* Source tarballs of the latest GNU packages.  */
-    , coreutils, cpio, tar, guile }:
+    , cpio ? ./cpio.tar.gz }:
+    #, coreutils, cpio, tar, guile }:
 
     let
       pkgs = import nixpkgs { inherit system; };
 
       version = "0.0-pre${toString nixos.rev}";
 
+      # `makeSourceTarball' puts tarballs in $out/tarballs, so look there.
+      preUnpack =
+        ''
+          if test -d $src/tarballs; then
+              src=$(ls $src/tarballs/*.tar.bz2 $src/tarballs/*.tar.gz | sort | head -1)
+          fi
+        ''; # */
+        
       latestGNUPackages = origPkgs: {
+        /*
         coreutils = origPkgs.lib.overrideDerivation origPkgs.coreutils (origAttrs: {
           src = coreutils;
           patches = [];
         });
+        */
 
         cpio = origPkgs.lib.overrideDerivation origPkgs.cpio (origAttrs: {
+          # name = cpio.<something>
           src = cpio;
           patches = [];
+          inherit preUnpack;
         });
 
+        /*
         gnutar = pkgs.lib.overrideDerivation origPkgs.gnutar (origAttrs: {
           src = tar;
           patches = [];
@@ -70,6 +84,7 @@ let
           src = guile;
           patches = [];
         });
+        */
       };
 
       gnuModule = {
@@ -84,9 +99,9 @@ let
       };
 
       config = (import "${nixos}/lib/eval-config.nix" {
-	inherit system nixpkgs;
-	modules = [ "${nixos}/modules/${module}" gnuModule ];
-      });
+        inherit system nixpkgs;
+        modules = [ "${nixos}/modules/${module}" gnuModule ];
+      }).config;
 
       iso = config.system.build.isoImage;
 
