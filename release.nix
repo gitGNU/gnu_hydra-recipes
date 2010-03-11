@@ -39,7 +39,7 @@ let
     { module, description, maintainers ? [ "ludo" ]}:
     { system ? "i686-linux"
 
-       /* Source tree of NixOS.  */
+      /* Source tree of NixOS.  */
     , nixos ? { outPath = ../nixos; rev = 0; }
 
       /* Source tarballs of the latest GNU packages.  */
@@ -75,7 +75,7 @@ let
       gnuModule = {
         gnu = true;
         system.nixosVersion = version;
-        packageOverrides = latestGNUPackages;
+        nixpkgs.config.packageOverrides = latestGNUPackages;
         installer.basePackages = gnuSystemPackages pkgs;
 
         # Don't build the GRUB menu builder script, since we don't need it
