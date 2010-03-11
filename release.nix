@@ -49,15 +49,6 @@ let
       pkgs = import nixpkgs { inherit system; };
 
       version = "0.0-pre${toString nixos.rev}";
-      gnuModule = {
-        gnu = true;
-        system.nixosVersion = version;
-        installer.basePackages = gnuSystemPackages pkgs;
-
-        # Don't build the GRUB menu builder script, since we don't need it
-        # here and it causes a cyclic dependency.
-        boot.loader.grub.enable = pkgs.lib.mkOverride 0 {} false;
-      };
 
       latestGNUPackages = origPkgs: {
         coreutils = origPkgs.lib.overrideDerivation origPkgs.coreutils (origAttrs: {
@@ -81,10 +72,21 @@ let
         });
       };
 
+      gnuModule = {
+        gnu = true;
+        system.nixosVersion = version;
+        packageOverrides = latestGNUPackages;
+        installer.basePackages = gnuSystemPackages pkgs;
+
+        # Don't build the GRUB menu builder script, since we don't need it
+        # here and it causes a cyclic dependency.
+        boot.loader.grub.enable = pkgs.lib.mkOverride 0 {} false;
+      };
+
       config = (import "${nixos}/lib/eval-config.nix" {
 	inherit system nixpkgs;
 	modules = [ "${nixos}/modules/${module}" gnuModule ];
-      }).config // { packageOverrides = latestGNUPackages; };
+      });
 
       iso = config.system.build.isoImage;
 
