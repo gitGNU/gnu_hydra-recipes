@@ -4,6 +4,37 @@
 { nixpkgs ? ../nixpkgs }:
 
 let
+  gnuSystemPackages = pkgs:
+    [ pkgs.subversion # for nixos-checkout
+      pkgs.w3m # needed for the manual
+      pkgs.grub2
+      pkgs.fdisk
+      pkgs.parted
+      pkgs.ddrescue
+      pkgs.screen
+
+      # Networking tools.
+      pkgs.inetutils
+      pkgs.lsh
+      pkgs.netcat
+      pkgs.wpa_supplicant # !!! should use the wpa module
+
+      # Hardware-related tools.
+      pkgs.sdparm
+      pkgs.hdparm
+      pkgs.dmraid
+
+      # Compression tools.
+      pkgs.xz
+
+      # Editors.
+      pkgs.emacs
+      pkgs.zile
+
+      # Last but not least...
+      pkgs.guile_1_9
+    ];
+
   makeIso =
     { module, description, maintainers ? [ "ludo" ]}:
     { system ? "i686-linux"
@@ -12,11 +43,21 @@ let
     , nixos ? { outPath = ../nixos; rev = 0; }
 
       /* Source tarballs of the latest GNU packages.  */
-    , cpio, tar }:
+    , cpio ? null, tar ? null }:
 
     let
+      pkgs = import nixpkgs { inherit system; };
+
       version = "0.0-pre${toString nixos.rev}";
-      versionModule = { system.nixosVersion = version; };
+      gnuModule = {
+        gnu = true;
+        system.nixosVersion = version;
+        installer.basePackages = gnuSystemPackages pkgs;
+
+        # Don't build the GRUB menu builder script, since we don't need it
+        # here and it causes a cyclic dependency.
+        boot.loader.grub.enable = pkgs.lib.mkOverride 0 {} false;
+      };
 
       latestGNUPackages = origPkgs: {
         cpio = origPkgs.lib.overrideDerivation origPkgs.cpio (origAttrs: {
@@ -32,9 +73,8 @@ let
 
       config = (import "${nixos}/lib/eval-config.nix" {
 	inherit system nixpkgs;
-	modules = [ "${nixos}/modules/${module}" versionModule ];
+	modules = [ "${nixos}/modules/${module}" gnuModule ];
       }).config // { packageOverrides = latestGNUPackages; };
-      pkgs = import nixpkgs {};
 
       iso = config.system.build.isoImage;
 
