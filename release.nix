@@ -43,8 +43,7 @@ let
     , nixos ? { outPath = ../nixos; rev = 0; }
 
       /* Source tarballs of the latest GNU packages.  */
-    , cpio ? ./cpio.tar.gz }:
-    #, coreutils, cpio, tar, guile }:
+    , coreutils, cpio, tar, guile }:
 
     let
       pkgs = import nixpkgs { inherit system; };
@@ -60,12 +59,11 @@ let
         ''; # */
         
       latestGNUPackages = origPkgs: {
-        /*
         coreutils = origPkgs.lib.overrideDerivation origPkgs.coreutils (origAttrs: {
           src = coreutils;
           patches = [];
+          inherit preUnpack;
         });
-        */
 
         cpio = origPkgs.lib.overrideDerivation origPkgs.cpio (origAttrs: {
           # name = cpio.<something>
@@ -74,17 +72,17 @@ let
           inherit preUnpack;
         });
 
-        /*
         gnutar = pkgs.lib.overrideDerivation origPkgs.gnutar (origAttrs: {
           src = tar;
           patches = [];
+          inherit preUnpack;
         });
 
         guile_1_9 = pkgs.lib.overrideDerivation origPkgs.gnutar (origAttrs: {
           src = guile;
           patches = [];
+          inherit preUnpack;
         });
-        */
       };
 
       gnuModule = {
