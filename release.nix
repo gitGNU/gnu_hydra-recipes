@@ -43,7 +43,7 @@ let
     , nixos ? { outPath = ../nixos; rev = 0; }
 
       /* Source tarballs of the latest GNU packages.  */
-    , cpio ? null, tar ? null }:
+    , coreutils, cpio, tar, guile }:
 
     let
       pkgs = import nixpkgs { inherit system; };
@@ -60,6 +60,11 @@ let
       };
 
       latestGNUPackages = origPkgs: {
+        coreutils = origPkgs.lib.overrideDerivation origPkgs.coreutils (origAttrs: {
+          src = coreutils;
+          patches = [];
+        });
+
         cpio = origPkgs.lib.overrideDerivation origPkgs.cpio (origAttrs: {
           src = cpio;
           patches = [];
@@ -67,6 +72,11 @@ let
 
         gnutar = pkgs.lib.overrideDerivation origPkgs.gnutar (origAttrs: {
           src = tar;
+          patches = [];
+        });
+
+        guile_1_9 = pkgs.lib.overrideDerivation origPkgs.gnutar (origAttrs: {
+          src = guile;
           patches = [];
         });
       };
