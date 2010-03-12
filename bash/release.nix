@@ -23,7 +23,7 @@ let
           # Bash doesn't use Automake.  The makefile says one should use the
           # `support/mkdist' script but that script doesn't exist.
           ''
-             version="4.1-$(cat .git/refs/heads/master | cut -c 1-8)"
+             version="4.1-$(cat .git/refs/remotes/origin/master | cut -c 1-8)"
 
              mkdir "bash-$version"
              for dir in `cat MANIFEST |grep -v '^#' | grep -v '[[:blank:]]\+f' | sed -es'/[[:blank:]]\+d.*//g'`
