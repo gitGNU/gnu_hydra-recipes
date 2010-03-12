@@ -19,6 +19,9 @@ let
         src = tarSrc;
 
         autoconfPhase = ''
+          # Disable Automake's `check-news' so that "make dist" always works.
+          sed -i "configure.ac" -es/check-news//g
+
           cp -Rv ${gnulib} ../gnulib
           chmod -R 755 ../gnulib
           cp -Rv ${paxutils} ../paxutils
