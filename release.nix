@@ -132,4 +132,13 @@ in
       module = "installer/cd-dvd/installation-cd-minimal.nix";
       description = "minimal";
     };
+
+    tests =
+      { nixos ? { outPath = ../nixos; rev = 0; } }:
+
+      import ./tests {
+        inherit nixpkgs nixos;
+        services = "${nixos}/services";
+        system = "i686-linux";
+      };
   }
