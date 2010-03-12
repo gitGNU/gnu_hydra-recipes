@@ -51,32 +51,35 @@ let
       # `makeSourceTarball' puts tarballs in $out/tarballs, so look there.
       preUnpack =
         ''
-          if test -d $src/tarballs; then
-              src=$(ls $src/tarballs/*.tar.bz2 $src/tarballs/*.tar.gz | sort | head -1)
+          if test -d "$src/tarballs"; then
+              src=$(ls -1 "$src/tarballs/"*.tar.bz2 "$src/tarballs/"*.tar.gz | sort | head -1)
           fi
-        ''; # */
-        
+        '';
+
       latestGNUPackages = origPkgs: {
         coreutils = origPkgs.lib.overrideDerivation origPkgs.coreutils (origAttrs: {
+          name = "coreutils-${coreutils.version}";
           src = coreutils;
           patches = [];
           inherit preUnpack;
         });
 
         cpio = origPkgs.lib.overrideDerivation origPkgs.cpio (origAttrs: {
-          # name = cpio.<something>
+          name = "cpio-${cpio.version}";
           src = cpio;
           patches = [];
           inherit preUnpack;
         });
 
         gnutar = origPkgs.lib.overrideDerivation origPkgs.gnutar (origAttrs: {
+          name = "tar-${tar.version}";
           src = tar;
           patches = [];
           inherit preUnpack;
         });
 
         guile_1_9 = origPkgs.lib.overrideDerivation origPkgs.guile_1_9 (origAttrs: {
+          name = "guile-${guile.version}";
           src = guile;
           patches = [];
           inherit preUnpack;
