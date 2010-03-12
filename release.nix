@@ -46,8 +46,6 @@ let
     , coreutils, cpio, tar, guile }:
 
     let
-      pkgs = import nixpkgs { inherit system; };
-
       version = "0.0-pre${toString nixos.rev}";
 
       # `makeSourceTarball' puts tarballs in $out/tarballs, so look there.
@@ -72,39 +70,43 @@ let
           inherit preUnpack;
         });
 
-        gnutar = pkgs.lib.overrideDerivation origPkgs.gnutar (origAttrs: {
+        gnutar = origPkgs.lib.overrideDerivation origPkgs.gnutar (origAttrs: {
           src = tar;
           patches = [];
           inherit preUnpack;
         });
 
-        guile_1_9 = pkgs.lib.overrideDerivation origPkgs.gnutar (origAttrs: {
+        guile_1_9 = origPkgs.lib.overrideDerivation origPkgs.guile_1_9 (origAttrs: {
           src = guile;
           patches = [];
           inherit preUnpack;
         });
       };
 
-      gnuModule = {
-        gnu = true;
-        system.nixosVersion = version;
-        nixpkgs.config.packageOverrides = latestGNUPackages;
-        installer.basePackages = gnuSystemPackages pkgs;
+      gnuModule =
+        { pkgs, ... }:
+        {
+          gnu = true;
+          system.nixosVersion = version;
+          nixpkgs.config.packageOverrides = latestGNUPackages;
+          installer.basePackages = gnuSystemPackages pkgs;
 
-        # Don't build the GRUB menu builder script, since we don't need it
-        # here and it causes a cyclic dependency.
-        boot.loader.grub.enable = pkgs.lib.mkOverride 0 {} false;
-      };
+          # Don't build the GRUB menu builder script, since we don't need it
+          # here and it causes a cyclic dependency.
+          boot.loader.grub.enable = pkgs.lib.mkOverride 0 {} false;
+        };
 
-      config = (import "${nixos}/lib/eval-config.nix" {
+      c = (import "${nixos}/lib/eval-config.nix" {
         inherit system nixpkgs;
         modules = [ "${nixos}/modules/${module}" gnuModule ];
-      }).config;
+      });
+
+      config = c.config;
 
       iso = config.system.build.isoImage;
 
     in
-      with pkgs;
+      with c.pkgs;
 
       # Declare the ISO as a build product so that it shows up in Hydra.
       runCommand "gnu-on-linux-iso-${version}"
