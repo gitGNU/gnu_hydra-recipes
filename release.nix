@@ -4,6 +4,58 @@
 { nixpkgs ? ../nixpkgs }:
 
 let
+  latestGNUPackageNames =
+    # A mapping from the name of the attributes passed to the build job
+    # (e.g., the `tar' attribute points to the latest tarball of GNU tar)
+    # to the attribute corresponding to that package in Nixpkgs (e.g.,
+    # `gnutar' in Nixpkgs is the attribute name for GNU tar build).
+    [ [ "coreutils" "coreutils" ]
+      [ "cpio"      "cpio" ]
+      [ "tar"       "gnutar" ]
+      [ "guile"     "guile_1_9" ]
+    ];
+
+  latestGNUPackages =
+    # Return an attribute set that overrides `origPkgs' with the packages
+    # listed in `latestGNUPackages'.  The tarballs for the latest GNU
+    # packages are taken from the `gnuPackages' attribute set.
+    gnuPackages: origPkgs:
+
+    let
+      lib = (import nixpkgs {}).lib;
+
+      # `makeSourceTarball' puts tarballs in $out/tarballs, so look there.
+      preUnpack =
+        ''
+          if test -d "$src/tarballs"; then
+              src=$(ls -1 "$src/tarballs/"*.tar.bz2 "$src/tarballs/"*.tar.gz | sort | head -1)
+          fi
+        '';
+    in
+      with lib; with builtins;
+      fold (pkg: latestPkgs:
+             let
+               pkgName = head pkg;
+               attrName = head (tail pkg);
+               origPkg = getAttr attrName origPkgs;
+               latestPkgSrc = getAttr pkgName gnuPackages;
+               pkgFullName = "${pkgName}-${latestPkgSrc.version}";
+             in
+               latestPkgs
+               //
+               (trace "overriding package `${pkgFullName}', attribute `${attrName}'..."
+                  listToAttrs [ {
+                    name = attrName;
+                    value = origPkgs.lib.overrideDerivation origPkg (origAttrs: {
+                      name = pkgFullName;
+                      src = latestPkgSrc;
+                      patches = [];
+                      inherit preUnpack;
+                    });
+                  } ]))
+           {}
+           latestGNUPackageNames;
+
   gnuSystemPackages = pkgs:
     [ pkgs.subversion # for nixos-checkout
       pkgs.w3m # needed for the manual
@@ -43,55 +95,17 @@ let
     , nixos ? { outPath = ../nixos; rev = 0; }
 
       /* Source tarballs of the latest GNU packages.  */
-    , coreutils, cpio, tar, guile }:
+    , ... }@args:
 
     let
       version = "0.0-pre${toString nixos.rev}";
-
-      # `makeSourceTarball' puts tarballs in $out/tarballs, so look there.
-      preUnpack =
-        ''
-          if test -d "$src/tarballs"; then
-              src=$(ls -1 "$src/tarballs/"*.tar.bz2 "$src/tarballs/"*.tar.gz | sort | head -1)
-          fi
-        '';
-
-      latestGNUPackages = origPkgs: {
-        coreutils = origPkgs.lib.overrideDerivation origPkgs.coreutils (origAttrs: {
-          name = "coreutils-${coreutils.version}";
-          src = coreutils;
-          patches = [];
-          inherit preUnpack;
-        });
-
-        cpio = origPkgs.lib.overrideDerivation origPkgs.cpio (origAttrs: {
-          name = "cpio-${cpio.version}";
-          src = cpio;
-          patches = [];
-          inherit preUnpack;
-        });
-
-        gnutar = origPkgs.lib.overrideDerivation origPkgs.gnutar (origAttrs: {
-          name = "tar-${tar.version}";
-          src = tar;
-          patches = [];
-          inherit preUnpack;
-        });
-
-        guile_1_9 = origPkgs.lib.overrideDerivation origPkgs.guile_1_9 (origAttrs: {
-          name = "guile-${guile.version}";
-          src = guile;
-          patches = [];
-          inherit preUnpack;
-        });
-      };
 
       gnuModule =
         { pkgs, ... }:
         {
           gnu = true;
           system.nixosVersion = version;
-          nixpkgs.config.packageOverrides = latestGNUPackages;
+          nixpkgs.config.packageOverrides = latestGNUPackages args;
           installer.basePackages = gnuSystemPackages pkgs;
 
           # Don't build the GRUB menu builder script, since we don't need it
