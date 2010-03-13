@@ -4,6 +4,34 @@
 { nixpkgs ? ../nixpkgs }:
 
 let
+  # Override GNU packages in `origPkgs' so that they use bleeding-edge
+  # tarballs from `gnuPackages'.
+  latestGNUPackages = gnuPackages: origPkgs:
+    let
+      override = pkgName: origPkg: latestPkg:
+        origPkgs.lib.overrideDerivation origPkg (origAttrs: {
+          name = "${pkgName}-${latestPkg.version}";
+          src = latestPkg;
+          patches = [];
+
+          # `makeSourceTarball' puts tarballs in $out/tarballs, so look there.
+          preUnpack =
+            ''
+              if test -d "$src/tarballs"; then
+                  src=$(ls -1 "$src/tarballs/"*.tar.bz2 "$src/tarballs/"*.tar.gz | sort | head -1)
+              fi
+            '';
+        });
+     in
+       with gnuPackages;
+       {
+         coreutils = override "coreutils" origPkgs.coreutils coreutils;
+         cpio = override "cpio" origPkgs.cpio cpio;
+         gnutar = override "tar" origPkgs.gnutar tar;
+         guile_1_9 = override "guile" origPkgs.guile_1_9 guile;
+       };
+
+  # List of base packages for the ISO.
   gnuSystemPackages = pkgs:
     [ pkgs.subversion # for nixos-checkout
       pkgs.w3m # needed for the manual
@@ -48,36 +76,14 @@ let
     let
       version = "0.0-pre${toString nixos.rev}";
 
-      # `makeSourceTarball' puts tarballs in $out/tarballs, so look there.
-      preUnpack =
-        ''
-          if test -d "$src/tarballs"; then
-              src=$(ls -1 "$src/tarballs/"*.tar.bz2 "$src/tarballs/"*.tar.gz | sort | head -1)
-          fi
-        '';
-
-      latestGNUPackages = origPkgs:
-        let
-          override = pkgName: origPkg: latestPkg:
-            origPkgs.lib.overrideDerivation origPkg (origAttrs: {
-              name = "${pkgName}-${latestPkg.version}";
-              src = latestPkg;
-              patches = [];
-              inherit preUnpack;
-            });
-         in {
-           coreutils = override "coreutils" origPkgs.coreutils coreutils;
-           cpio = override "cpio" origPkgs.cpio cpio;
-           gnutar = override "tar" origPkgs.gnutar tar;
-           guile_1_9 = override "guile" origPkgs.guile_1_9 guile;
-         };
-
       gnuModule =
         { pkgs, ... }:
         {
           gnu = true;
           system.nixosVersion = version;
-          nixpkgs.config.packageOverrides = latestGNUPackages;
+          nixpkgs.config.packageOverrides = latestGNUPackages {
+            inherit coreutils cpio tar guile;
+          };
           installer.basePackages = gnuSystemPackages pkgs;
 
           # Don't build the GRUB menu builder script, since we don't need it
@@ -120,11 +126,14 @@ in
     };
 
     tests =
-      { nixos ? { outPath = ../nixos; rev = 0; } }:
+      { system, nixos
+      , coreutils, cpio, tar, guile }:
 
       import ./tests {
-        inherit nixpkgs nixos;
+        inherit nixpkgs nixos system;
         services = "${nixos}/services";
-        system = "i686-linux";
+        gnuOverrides = latestGNUPackages {
+          inherit coreutils cpio tar guile;
+        };
       };
   }
