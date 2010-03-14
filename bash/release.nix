@@ -82,7 +82,7 @@ let
         buildPhase = "make -C doc html pdf";
         doCheck = false;
         installPhase =
-          '' make -C doc install_everything
+          '' make -C doc install
              cp -v doc/bashref.{pdf,html} "$out/share/doc/bash"
 
              ensureDir "$out/nix-support"
