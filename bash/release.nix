@@ -76,7 +76,8 @@ let
         name = "bash-manual";
         src = tarball;
         buildInputs = (buildInputsFrom pkgs)
-          ++ [ pkgs.texinfo pkgs.texLive pkgs.perl ];
+          ++ [ pkgs.texinfo pkgs.texLive pkgs.perl
+               pkgs.groff pkgs.ghostscript ];
 
         buildPhase = "make -C doc html pdf";
         doCheck = false;
