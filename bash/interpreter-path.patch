@@ -1,0 +1,15 @@
+Remove absolute path to Perl.  The technique is borrowed from Gnulib.
+
+diff --git a/support/texi2html b/support/texi2html
+index 13b5588..6735a10 100755
+--- a/support/texi2html
++++ b/support/texi2html
+@@ -1,4 +1,7 @@
+-#! /usr/bin/perl
++eval '(exit $?0)' && eval 'exec perl -wS "$0" ${1+"$@"}'
++  & eval 'exec perl -wS "$0" $argv:q'
++    if 0;
++
+ 'di ';
+ 'ig 00 ';
+ #+##############################################################################

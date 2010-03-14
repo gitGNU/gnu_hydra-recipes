@@ -16,6 +16,8 @@ let
 	name = "bash-tarball";
 	src = bashSrc;
 
+        patches = [ ./interpreter-path.patch ];
+
         # The generated files are checked in.
         autoconfPhase = "true";
 
@@ -74,7 +76,7 @@ let
         name = "bash-manual";
         src = tarball;
         buildInputs = (buildInputsFrom pkgs)
-          ++ [ pkgs.texinfo pkgs.texLive ];
+          ++ [ pkgs.texinfo pkgs.texLive pkgs.perl ];
 
         buildPhase = "make -C doc html pdf";
         doCheck = false;
