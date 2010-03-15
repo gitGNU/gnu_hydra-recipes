@@ -16,6 +16,15 @@ let
        configureScript="../$sourceRoot/configure"
     '';
 
+  # Return the right configure flags for `pkgs'.
+  configureFlagsFor = pkgs:
+    [ "--with-headers=${pkgs.linuxHeaders}/include" ]
+
+    # Workaround for this bug:
+    #   http://sourceware.org/bugzilla/show_bug.cgi?id=411
+    ++ pkgs.stdenv.lib.optional
+         (pkgs.stdenv.system == "i686-linux") "CPPFLAGS=-U__i686";
+
   jobs = rec {
 
     tarball =
@@ -73,7 +82,7 @@ let
         pkgs.releaseTools.nixBuild {
           name = "glibc";
           src = tarball;
-          configureFlags = "--with-headers=${pkgs.linuxHeaders}/include";
+          configureFlags = configureFlagsFor pkgs;
           buildInputs = buildInputsFrom pkgs;
           inherit preConfigure;
         };
@@ -87,7 +96,7 @@ let
         releaseTools.coverageAnalysis {
           name = "glibc-coverage";
           src = tarball;
-          configureFlags = "--with-headers=${pkgs.linuxHeaders}/include";
+          configureFlags = configureFlagsFor pkgs;
           buildInputs = buildInputsFrom pkgs;
           inherit preConfigure;
         };
