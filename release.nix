@@ -72,7 +72,7 @@ let
     , nixos ? { outPath = ../nixos; rev = 0; }
 
       /* Source tarballs of the latest GNU packages.  */
-    , coreutils, cpio, tar, guile }:
+    , coreutils, cpio, tar, guile, inetutils }:
 
     let
       version = "0.0-pre${toString nixos.rev}";
@@ -83,7 +83,7 @@ let
           gnu = true;
           system.nixosVersion = version;
           nixpkgs.config.packageOverrides = latestGNUPackages {
-            inherit coreutils cpio tar guile;
+            inherit coreutils cpio tar guile inetutils;
           };
           installer.basePackages = gnuSystemPackages pkgs;
 
@@ -128,13 +128,13 @@ in
 
     tests =
       { system, nixos
-      , coreutils, cpio, tar, guile }:
+      , coreutils, cpio, tar, guile, inetutils }:
 
       import ./tests {
         inherit nixpkgs nixos system;
         services = "${nixos}/services";
         gnuOverrides = latestGNUPackages {
-          inherit coreutils cpio tar guile;
+          inherit coreutils cpio tar guile inetutils;
         };
       };
   }
