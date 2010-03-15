@@ -31,7 +31,9 @@ let
                  "rpcgen-path.patch"           # submit upstream?
                  "stack-protector-link.patch"  # submit upstream?
                ])
-          ++ [ ./ignore-git-diff.patch ];      # allow for "make dist"
+          ++ [ ./ignore-git-diff.patch
+               ./add-local-changes-to-tarball.patch
+             ];
 
 
         # The repository contains Autoconf-generated files & co.
