@@ -36,6 +36,7 @@ let
 
         # The repository contains Autoconf-generated files & co.
         autoconfPhase = "true";
+        bootstrapBuildInputs = [];
 
         # Remove absolute paths from `configure' & co.; build out-of-tree.
         preConfigure =
