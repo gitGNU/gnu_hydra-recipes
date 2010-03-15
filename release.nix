@@ -29,6 +29,7 @@ let
          cpio = override "cpio" origPkgs.cpio cpio;
          gnutar = override "tar" origPkgs.gnutar tar;
          guile_1_9 = override "guile" origPkgs.guile_1_9 guile;
+         inetutils = override "inetutils" origPkgs.inetutils inetutils;
        };
 
   # List of base packages for the ISO.
