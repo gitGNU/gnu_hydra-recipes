@@ -40,15 +40,13 @@ let
         # Remove absolute paths from `configure' & co.; build out-of-tree.
         preConfigure =
           ''
-             export PWD_P=$(type -tP pwd)
+             set -x
              for i in configure io/ftwtest-sh; do
-                 sed -i "$i" -e "s^/bin/pwd^$PWD_P^g"
+                 sed -i "$i" -e "s^/bin/pwd^pwd^g"
              done
 
              ${preConfigure}
           '';
-
-        postConfigure = "set -x"; # XXX
 
         buildInputs = (buildInputsFrom pkgs) ++ [ pkgs.git pkgs.xz ];
 
