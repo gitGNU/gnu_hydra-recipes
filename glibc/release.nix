@@ -72,7 +72,7 @@ let
         pkgs.releaseTools.nixBuild {
           name = "glibc";
           src = tarball;
-          configureFlags = "--with-headers=${pkgs.kernelHeaders}/include";
+          configureFlags = "--with-headers=${pkgs.linuxHeaders}/include";
           buildInputs = buildInputsFrom pkgs;
           inherit preConfigure;
         };
@@ -86,7 +86,7 @@ let
         releaseTools.coverageAnalysis {
           name = "glibc-coverage";
           src = tarball;
-          configureFlags = "--with-headers=${pkgs.kernelHeaders}/include";
+          configureFlags = "--with-headers=${pkgs.linuxHeaders}/include";
           buildInputs = buildInputsFrom pkgs;
           inherit preConfigure;
         };
