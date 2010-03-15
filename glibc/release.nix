@@ -7,13 +7,17 @@ let
 
   buildInputsFrom = pkgs: with pkgs; [ gettext texinfo ];
 
-  # Build out-of-tree.
+  # Build out-of-tree; don't produce self rpaths.
   preConfigure =
     ''
        mkdir ../build
        cd ../build
 
        configureScript="../$sourceRoot/configure"
+
+       # Glibc cannot have itself in its RPATH.
+       # See http://sourceware.org/ml/binutils/2009-03/msg00066.html .
+       export NIX_NO_SELF_RPATH=1
     '';
 
   # Return the right configure flags for `pkgs'.
