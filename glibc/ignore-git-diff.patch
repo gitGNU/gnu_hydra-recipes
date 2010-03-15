@@ -1,0 +1,17 @@
+This trick allows "make dist" to work even in the presence of uncommitted
+changes.
+
+diff --git a/Makefile b/Makefile
+index 61cfa43..4afee9f 100644
+--- a/Makefile
++++ b/Makefile
+@@ -358,8 +358,7 @@ dist-prepare: $(files-for-dist)
+ 	conf=`find sysdeps $(addsuffix /sysdeps,$(sysdeps-add-ons)) \
+ 		   -name configure`; \
+ 	$(MAKE) $$conf && \
+-	git diff --stat HEAD -- $^ $$conf \
+-	| $(AWK) '{ print; rc=1 } END { exit rc }'
++	git diff --stat HEAD -- $^ $$conf
+ 
+ %.tar: FORCE
+ 	git archive --prefix=$*/ $* > $@.new
