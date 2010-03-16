@@ -9,7 +9,7 @@ with import "${nixos}/lib/testing.nix" { inherit nixpkgs services system; };
 with import "${nixos}/lib/build-vms.nix" { inherit nixpkgs services system; };
 
 let
-  call = f: f { inherit nixpkgs system; pkgs = gnuOverrides pkgs; };
+  call = f: f { inherit nixpkgs system pkgs gnuOverrides; };
 
   apply = testFun: complete (call testFun);
 
