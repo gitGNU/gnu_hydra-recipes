@@ -3,6 +3,37 @@
 let
   pkgs = import nixpkgs {};
 
+  meta = {
+    homepage = http://www.gnu.org/software/libunistring/;
+
+    description = "GNU Libunistring, a Unicode string library";
+
+    longDescription = ''
+      This library provides functions for manipulating Unicode strings
+      and for manipulating C strings according to the Unicode
+      standard.
+
+      GNU libunistring is for you if your application involves
+      non-trivial text processing, such as upper/lower case
+      conversions, line breaking, operations on words, or more
+      advanced analysis of text.  Text provided by the user can, in
+      general, contain characters of all kinds of scripts.  The text
+      processing functions provided by this library handle all scripts
+      and all languages.
+
+      libunistring is for you if your application already uses the ISO
+      C / POSIX <ctype.h>, <wctype.h> functions and the text it
+      operates on is provided by the user and can be in any language.
+
+      libunistring is also for you if your application uses Unicode
+      strings as internal in-memory representation.
+    '';
+
+    license = "LGPLv3+";
+
+    maintainers = [ pkgs.stdenv.lib.maintainers.ludo ];
+  };
+
   inherit (pkgs) releaseTools;
 
   jobs = rec {
@@ -35,6 +66,8 @@ let
           autoconf automake111x libtool texinfo git
           wget perl gperf
 	];
+
+        inherit meta;
       };
 
     build =
@@ -52,6 +85,7 @@ let
             stdenv.lib.optional (stdenv.isDarwin
                                  || stdenv.system == "i686-cygwin")
               libiconv;
+          inherit meta;
         };
 
     coverage =
@@ -62,6 +96,7 @@ let
         name = "libunistring-coverage";
         src = tarball;
         buildInputs = [];
+        inherit meta;
       };
 
     manual =
@@ -81,6 +116,7 @@ let
              echo "doc manual $out/share/doc/libunistring libunistring_toc.html" >> "$out/nix-support/hydra-build-products"
              echo "doc-pdf manual $out/share/doc/libunistring/libunistring.pdf" >> "$out/nix-support/hydra-build-products"
           '';
+        inherit meta;
       };
 
     debian50_i386 = makeDeb_i686 (diskImages: diskImages.debian50i386);

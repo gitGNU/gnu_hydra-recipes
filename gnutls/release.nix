@@ -22,7 +22,7 @@ let
     license = "LGPLv2.1+";
 
     # Where notification emails go.
-    maintainers = [ "gnutls-commit@gnu.org" ];
+    maintainers = [ "gnutls-commit@gnu.org" "ludo@gnu.org" ];
   };
 
   pkgs = import nixpkgs {};

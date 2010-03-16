@@ -1,6 +1,25 @@
 { nixpkgs ? ../../nixpkgs }:
 
 let
+  meta = {
+    homepage = http://www.gnu.org/software/libc/;
+    description = "The GNU C Library";
+
+    longDescription =
+      '' Any Unix-like operating system needs a C library: the library which
+         defines the "system calls" and other basic facilities such as
+         open, malloc, printf, exit...
+
+         The GNU C library is used as the C library in the GNU system and
+         most systems with the Linux kernel.
+      '';
+
+    license = "LGPLv2+";
+
+    # Those who will receive email notifications.
+    maintainers = [ "ludo@gnu.org" ];
+  };
+
   pkgs = import nixpkgs {};
 
   inherit (pkgs) releaseTools;
@@ -74,6 +93,8 @@ let
              ensureDir "$out/tarballs"
              mv -v glibc-*.tar.{bz2,gz,xz} "$out/tarballs"
           '';
+
+        inherit meta;
       };
 
     build =
@@ -88,7 +109,7 @@ let
           src = tarball;
           configureFlags = configureFlagsFor pkgs;
           buildInputs = buildInputsFrom pkgs;
-          inherit preConfigure;
+          inherit preConfigure meta;
         };
 
     coverage =
@@ -102,7 +123,7 @@ let
           src = tarball;
           configureFlags = configureFlagsFor pkgs;
           buildInputs = buildInputsFrom pkgs;
-          inherit preConfigure;
+          inherit preConfigure meta;
         };
 
   };

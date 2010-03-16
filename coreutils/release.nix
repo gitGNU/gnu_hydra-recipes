@@ -17,6 +17,7 @@ let
     maintainers =
       [ "Jim Meyering <jim@meyering.net>"
         "Pádraig Brady <P@draigBrady.com>"
+        "Ludovic Courtès <ludo@gnu.org>"
       ];
   };
 
