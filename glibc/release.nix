@@ -37,6 +37,7 @@ let
        # Glibc cannot have itself in its RPATH.
        # See http://sourceware.org/ml/binutils/2009-03/msg00066.html .
        export NIX_NO_SELF_RPATH=1
+       export NIX_DONT_SET_RPATH=1
     '';
 
   # Return the right configure flags for `pkgs'.
