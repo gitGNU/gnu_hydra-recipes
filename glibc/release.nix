@@ -42,12 +42,7 @@ let
 
   # Return the right configure flags for `pkgs'.
   configureFlagsFor = pkgs:
-    [ "--with-headers=${pkgs.linuxHeaders}/include" ]
-
-    # Workaround for this bug:
-    #   http://sourceware.org/bugzilla/show_bug.cgi?id=411
-    ++ pkgs.stdenv.lib.optional
-         (pkgs.stdenv.system == "i686-linux") "CFLAGS='-O2 -U__i686'";
+    [ "--with-headers=${pkgs.linuxHeaders}/include" ];
 
   jobs = rec {
 
@@ -109,6 +104,13 @@ let
           name = "glibc";
           src = tarball;
           configureFlags = configureFlagsFor pkgs;
+
+          # Workaround for this bug:
+          #   http://sourceware.org/bugzilla/show_bug.cgi?id=411
+          makeFlags =
+            pkgs.stdenv.lib.optional (pkgs.stdenv.system == "i686-linux")
+                                     "CFLAGS+=-U__i686";
+
           buildInputs = buildInputsFrom pkgs;
           inherit preConfigure meta;
         };
