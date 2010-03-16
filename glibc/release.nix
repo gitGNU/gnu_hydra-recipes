@@ -46,7 +46,7 @@ let
     # Workaround for this bug:
     #   http://sourceware.org/bugzilla/show_bug.cgi?id=411
     ++ pkgs.stdenv.lib.optional
-         (pkgs.stdenv.system == "i686-linux") "CPPFLAGS=-U__i686";
+         (pkgs.stdenv.system == "i686-linux") "CFLAGS=-U__i686";
 
   jobs = rec {
 
