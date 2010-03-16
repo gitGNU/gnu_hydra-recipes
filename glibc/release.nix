@@ -115,20 +115,6 @@ let
           inherit preConfigure meta;
         };
 
-    coverage =
-      { tarball ? jobs.tarball {}
-      }:
-
-      let pkgs = import nixpkgs { system = "x86_64-linux"; };
-      in
-        releaseTools.coverageAnalysis {
-          name = "glibc-coverage";
-          src = tarball;
-          configureFlags = configureFlagsFor pkgs;
-          buildInputs = buildInputsFrom pkgs;
-          inherit preConfigure meta;
-        };
-
   };
 
 in jobs
