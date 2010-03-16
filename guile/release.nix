@@ -61,15 +61,10 @@ let
                          + "', derivation `" + name + "'")
                         attrName)
 
-        ({ tarball ? jobs.tarball {}
-         , system ? "x86_64-linux"
-         }:
+        ({ tarball ? jobs.tarball {} }:
 
          # Build the exotic configurations only on GNU/Linux.
-         let pkgs =
-               (if configureFlags == []
-                then import nixpkgs { inherit system; }
-                else import nixpkgs { system = "x86_64-linux"; });
+         let pkgs = import nixpkgs { system = "x86_64-linux"; };
          in
            with pkgs;
            releaseTools.nixBuild {
@@ -80,10 +75,9 @@ let
              buildInputs = buildInputsFrom pkgs;
            });
 
-  /* The configuration space under test.  */
+  /* The exotic configurations under test.  */
   configurationSpace =
-    [ [] # the default build, no `configure' arguments
-      [ "--without-threads" ]
+    [ [ "--without-threads" ]
       [ "--disable-deprecated" "--disable-discouraged" ]
       [ "--disable-networking" ]
       [ "--enable-guile-debug" ]
@@ -184,6 +178,23 @@ let
           '';
         inherit meta;
       };
+
+    # The default build, executed on all platforms.
+    build =
+      { tarball ? jobs.tarball {}
+      , system ? "x86_64-linux"
+      }:
+
+      let pkgs = import nixpkgs { inherit system; };
+      in
+        with pkgs;
+        releaseTools.nixBuild {
+          name = "guile";
+          src = tarball;
+          configureFlags = defaultConfigureFlags pkgs;
+          buildInputs = buildInputsFrom pkgs;
+          inherit meta;
+        };
   }
 
   //
