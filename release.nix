@@ -130,11 +130,14 @@ in
       { system, nixos
       , coreutils, cpio, tar, guile, inetutils }:
 
-      import ./tests {
-        inherit nixpkgs nixos system;
-        services = "${nixos}/services";
-        gnuOverrides = latestGNUPackages {
-          inherit coreutils cpio tar guile inetutils;
-        };
+      let testsuite = import ./tests {
+            inherit nixpkgs nixos system;
+            services = "${nixos}/services";
+            gnuOverrides = latestGNUPackages {
+              inherit coreutils cpio tar guile inetutils;
+            };
+          };
+      in {
+        version = testsuite.version.test;
       };
   }
