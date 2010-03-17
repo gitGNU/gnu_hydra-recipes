@@ -18,10 +18,10 @@ let
         src = diffutils;
 
         autoconfPhase = ''
-          cp -Rv ${gnulib}/* gnulib/
-          chmod -R 755 gnulib
+          cp -Rv ${gnulib} ../
+          chmod -R 755 ../gnulib
 
-          ./bootstrap --gnulib-srcdir=./gnulib --skip-po --copy
+          ./bootstrap --gnulib-srcdir=../gnulib --skip-po --copy
         '';
 
         buildInputs = [
@@ -49,6 +49,16 @@ let
         name = "diffutils" ;
         src = tarball;
         buildInputs = buildInputsFrom pkgs;
+      };
+
+    coverage =
+      with pkgs;
+
+      releaseTools.coverageAnalysis {
+        name = "diffutils-coverage";
+        src = tarball;
+        buildInputs = buildInputsFrom pkgs;
+        schedulingPriority = 50;
       };
 
   };
