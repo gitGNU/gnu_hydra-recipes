@@ -8,8 +8,8 @@ let
 
   jobs = rec {
 
-    tarball =
-      pkgs.releaseTools.makeSourceTarball {
+    tarball = with pkgs;
+      releaseTools.makeSourceTarball {
 	name = "cppi-tarball";
 	src = cppi;
 
