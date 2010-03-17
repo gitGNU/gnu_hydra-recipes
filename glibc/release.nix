@@ -118,9 +118,12 @@ let
 
           # Workaround for this bug:
           #   http://sourceware.org/bugzilla/show_bug.cgi?id=411
-          makeFlags =
-            pkgs.stdenv.lib.optional (pkgs.stdenv.system == "i686-linux")
-                                     "CFLAGS+=-U__i686";
+          # Note: Setting $CPPFLAGS or $CFLAGS doesn't work.  The former is
+          # ignored, while the latter disables optimizations, thereby
+          # breaking the build.
+          NIX_CFLAGS_COMPILE =
+            pkgs.stdenv.lib.optionalString (stdenv.system == "i686-linux")
+                                           "-U__i686";
 
           buildInputs = buildInputsFrom pkgs;
 
