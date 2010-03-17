@@ -8,7 +8,7 @@ let
   jobs = rec {
 
     tarball =
-      { diffutilsSrc ? {outPath = ../../diffutils;}
+      { diffutils ? {outPath = ../../diffutils;}
       , gnulib ? {outPath = ../../gnulib;}
       }:
 
@@ -16,7 +16,7 @@ let
 
       pkgs.releaseTools.makeSourceTarball {
         name = "diffutils-tarball";
-        src = diffutilsSrc;
+        src = diffutils;
 
         autoconfPhase = ''
           cp -Rv ${gnulib}/* gnulib/
@@ -41,8 +41,7 @@ let
       };
 
     build =
-      { tarball ? jobs.tarball {}
-      , system ? "x86_64-linux"
+      { system ? "x86_64-linux"
       }:
 
       let pkgs = import nixpkgs {inherit system;};
