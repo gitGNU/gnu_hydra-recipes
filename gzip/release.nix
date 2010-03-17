@@ -17,7 +17,6 @@ let
           mkdir -p ../gnulib
           cp -Rv ${gnulib}/* ../gnulib
           chmod -R 755 ../gnulib
-#          export ACLOCAL_PATH=$ACLOCAL_PATH:../gnulib/m4
 
           ./bootstrap --gnulib-srcdir=../gnulib --skip-po --copy
         '';
@@ -45,9 +44,6 @@ let
       };
 
     coverage =
-      { tarball ? jobs.tarball {}
-      }:
-
       with pkgs;
 
       releaseTools.coverageAnalysis {
