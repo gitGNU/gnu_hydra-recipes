@@ -6,7 +6,7 @@
 let
   pkgs = import nixpkgs {};
 
-  jobs = with pkgs; rec {
+  jobs = rec {
 
     tarball =
       pkgs.releaseTools.makeSourceTarball {
@@ -21,12 +21,11 @@ let
           ./bootstrap --gnulib-srcdir=../gnulib --skip-po --copy
         '';
 
-	buildInputs = [
+	buildInputs = with pkgs; [
           automake111x
           texinfo
           gettext
           git 
-          wget
           perl
           rsync
           xz
