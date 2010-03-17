@@ -3,6 +3,30 @@
 let
   pkgs = import nixpkgs {};
 
+  meta = {
+    homepage = http://www.gnu.org/software/libidn/;
+    description = "GNU Libidn library for internationalized domain names";
+
+    longDescription = ''
+      GNU Libidn is a fully documented implementation of the
+      Stringprep, Punycode and IDNA specifications.  Libidn's purpose
+      is to encode and decode internationalized domain names.  The
+      native C, C\# and Java libraries are available under the GNU
+      Lesser General Public License version 2.1 or later.
+
+      The library contains a generic Stringprep implementation.
+      Profiles for Nameprep, iSCSI, SASL, XMPP and Kerberos V5 are
+      included.  Punycode and ASCII Compatible Encoding (ACE) via IDNA
+      are supported.  A mechanism to define Top-Level Domain (TLD)
+      specific validation tables, and to compare strings against those
+      tables, is included.  Default tables for some TLDs are also
+      included.
+    '';
+
+    license = "LGPLv2+";
+    maintainers = [ pkgs.stdenv.lib.maintainers.ludo ];
+  };
+
   inherit (pkgs) releaseTools;
 
   buildInputsFrom = pkgs: with pkgs;
@@ -73,6 +97,8 @@ let
                  ghostscript # for `fig2dev'
                  cvs # for `autopoint'
 	       ]);
+
+        inherit meta;
       };
 
     build =
@@ -90,6 +116,7 @@ let
           preConfigure = "export JAR=gjar MONO_SHARED_DIR=$TMPDIR";
           configureFlags = stdenv.lib.optional stdenv.isLinux "--enable-java";
           buildInputs = buildInputsFrom pkgs;
+          inherit meta;
         };
 
     coverage =
@@ -104,6 +131,7 @@ let
         preConfigure = "export JAR=gjar MONO_SHARED_DIR=$TMPDIR";
         configureFlags = "--enable-java";
 	buildInputs = buildInputsFrom (import nixpkgs {});
+        inherit meta;
       };
 
   };
