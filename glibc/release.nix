@@ -126,7 +126,7 @@ let
 
           # Some tests are failing, but we don't want that to prevent "make
           # install".
-          checkPhase = "make check || true";
+          checkPhase = "make -k check || true";
 
           inherit preConfigure meta;
         };
