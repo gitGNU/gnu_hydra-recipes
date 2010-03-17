@@ -35,7 +35,8 @@ let
     build =
       { system ? "x86_64-linux"
       }:
-
+      let pkgs = import nixpkgs {inherit system;};
+      in with pkgs;
       releaseTools.nixBuild {
 	name = "gzip" ;
 	src = tarball;
