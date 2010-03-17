@@ -17,7 +17,6 @@ let
           mkdir -p ../gnulib
           cp -Rv ${gnulib}/* ../gnulib
           chmod -R 755 ../gnulib
-
           ./bootstrap --gnulib-srcdir=../gnulib --skip-po --copy
         '';
 
