@@ -29,6 +29,7 @@ let
           perl
           rsync
           xz
+          cvs
 	];
       };
 
