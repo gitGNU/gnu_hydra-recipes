@@ -1,4 +1,7 @@
-{nixpkgs ? ../../nixpkgs}:
+{ nixpkgs ? ../../nixpkgs
+, diffutils ? {outPath = ../../diffutils;}
+, gnulib ? {outPath = ../../gnulib;}
+}:
 let
   pkgs = import nixpkgs {};
 
@@ -8,10 +11,6 @@ let
   jobs = rec {
 
     tarball =
-      { diffutils ? {outPath = ../../diffutils;}
-      , gnulib ? {outPath = ../../gnulib;}
-      }:
-
       with pkgs;
 
       pkgs.releaseTools.makeSourceTarball {
