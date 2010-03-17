@@ -1,5 +1,5 @@
 { nixpkgs ? ../../nixpkgs 
-, grep ? { outPath = ../../gzip; }
+, grep ? { outPath = ../../grep; }
 , gnulib ? {outPath = ../../gnulib;}
 }:
 
@@ -23,6 +23,7 @@ let
 
 	buildInputs = with pkgs; [
           automake111x
+          pkgconfig
           texinfo
           gettext
           git 
