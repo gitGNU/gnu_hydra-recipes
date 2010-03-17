@@ -1,12 +1,18 @@
 /* Builds of variants of the GNU System using the latest GNU packages
    straight from their repository.  */
 
-{ nixpkgs ? ../nixpkgs }:
+{ nixpkgs ? ../nixpkgs
+
+  /* Source tree of NixOS.  */
+, nixos ? { outPath = ../nixos; rev = 0; }
+
+  /* Source tarballs of the latest GNU packages.  */
+, coreutils, cpio, guile, grep, inetutils, tar }:
 
 let
   # Override GNU packages in `origPkgs' so that they use bleeding-edge
-  # tarballs from `gnuPackages'.
-  latestGNUPackages = gnuPackages: origPkgs:
+  # tarballs.
+  latestGNUPackages = origPkgs:
     let
       override = pkgName: origPkg: latestPkg:
         origPkgs.lib.overrideDerivation origPkg (origAttrs: {
@@ -23,11 +29,11 @@ let
             '';
         });
      in
-       with gnuPackages;
        {
          coreutils = override "coreutils" origPkgs.coreutils coreutils;
          cpio = override "cpio" origPkgs.cpio cpio;
          gnutar = override "tar" origPkgs.gnutar tar;
+         gnugrep = override "grep" origPkgs.gnugrep grep;
          guile_1_9 = override "guile" origPkgs.guile_1_9 guile;
          inetutils = override "inetutils" origPkgs.inetutils inetutils;
        };
@@ -66,13 +72,7 @@ let
 
   makeIso =
     { module, description, maintainers ? [ "ludo" ]}:
-    { system ? "i686-linux"
-
-      /* Source tree of NixOS.  */
-    , nixos ? { outPath = ../nixos; rev = 0; }
-
-      /* Source tarballs of the latest GNU packages.  */
-    , coreutils, cpio, tar, guile, inetutils }:
+    { system ? "i686-linux" }:
 
     let
       version = "0.0-pre${toString nixos.rev}";
@@ -82,9 +82,7 @@ let
         {
           gnu = true;
           system.nixosVersion = version;
-          nixpkgs.config.packageOverrides = latestGNUPackages {
-            inherit coreutils cpio tar guile inetutils;
-          };
+          nixpkgs.config.packageOverrides = latestGNUPackages;
           installer.basePackages = gnuSystemPackages pkgs;
 
           # Don't build the GRUB menu builder script, since we don't need it
@@ -127,15 +125,12 @@ in
     };
 
     tests =
-      { system, nixos
-      , coreutils, cpio, tar, guile, inetutils }:
+      { system }:
 
       let testsuite = import ./tests {
             inherit nixpkgs nixos system;
             services = "${nixos}/services";
-            gnuOverrides = latestGNUPackages {
-              inherit coreutils cpio tar guile inetutils;
-            };
+            gnuOverrides = latestGNUPackages;
           };
       in {
         version = testsuite.version.test;
