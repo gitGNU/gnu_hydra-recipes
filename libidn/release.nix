@@ -56,9 +56,15 @@ let
                    sed -i "$i" -e's/javac/gcj -C/g'
                fi
              done
+
+             echo "GCJ version:"
+             gcj --version
+             echo "Mono version:"
+             mcs --version
           '';
 
-        configureFlags = [ "--enable-gtk-doc" "--enable-java" ];
+        configureFlags =
+          [ "--enable-gtk-doc" "--enable-java" "--enable-csharp=mono" ];
 
 	buildInputs = (buildInputsFrom pkgs)
           ++ (with pkgs;
