@@ -1,6 +1,4 @@
 { nixpkgs ? ../../nixpkgs 
-, cppi ? { outPath = ../../cppi; }
-, gnulib ? {outPath = ../../gnulib;}
 }:
 
 let
@@ -30,7 +28,11 @@ let
 
   jobs = rec {
 
-    tarball = with pkgs;
+    tarball = 
+      { cppi ? { outPath = ../../cppi; }
+      , gnulib ? {outPath = ../../gnulib;}
+      }: 
+      with pkgs;
       releaseTools.makeSourceTarball {
 	name = "cppi-tarball";
 	src = cppi;
@@ -61,6 +63,7 @@ let
 
     build =
       { system ? "x86_64-linux"
+      , tarball ? jobs.tarball {}
       }:
       let pkgs = import nixpkgs { inherit system;} ;
       in with pkgs;
@@ -72,6 +75,7 @@ let
       };
 
     coverage =
+      { tarball ? jobs.tarball {} }:
       with pkgs;
 
       releaseTools.coverageAnalysis {

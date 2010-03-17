@@ -1,6 +1,4 @@
 { nixpkgs ? ../../nixpkgs
-, diffutils ? {outPath = ../../diffutils;}
-, gnulib ? {outPath = ../../gnulib;}
 }:
 let
   pkgs = import nixpkgs {};
@@ -19,7 +17,10 @@ let
 
   jobs = rec {
 
-    tarball =
+    tarball = 
+      { diffutils ? {outPath = ../../diffutils;}
+      , gnulib ? {outPath = ../../gnulib;}
+      }:
       with pkgs;
 
       pkgs.releaseTools.makeSourceTarball {
@@ -52,6 +53,7 @@ let
 
     build =
       { system ? "x86_64-linux"
+      , tarball ? jobs.tarball {}
       }:
 
       let pkgs = import nixpkgs {inherit system;};
@@ -64,6 +66,8 @@ let
       };
 
     coverage =
+      { tarball ? jobs.tarball {}
+      }:
       with pkgs;
 
       releaseTools.coverageAnalysis {
