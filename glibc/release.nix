@@ -122,7 +122,7 @@ let
           # ignored, while the latter disables optimizations, thereby
           # breaking the build.
           NIX_CFLAGS_COMPILE =
-            pkgs.stdenv.lib.optionalString (stdenv.system == "i686-linux")
+            pkgs.stdenv.lib.optionalString (pkgs.stdenv.system == "i686-linux")
                                            "-U__i686";
 
           buildInputs = buildInputsFrom pkgs;
