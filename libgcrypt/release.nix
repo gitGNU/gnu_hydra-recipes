@@ -29,7 +29,7 @@ let
   jobs = rec {
 
     tarball =
-      { libgcryptSrc ? { outPath = /data/src/libgcrypt; }
+      { libgcryptSrc ? { outPath = ../../libgcrypt; }
       , libgpgerror ? pkgs.libgpgerror
       }:
 

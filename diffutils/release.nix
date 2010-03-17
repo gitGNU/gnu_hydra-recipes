@@ -1,7 +1,6 @@
 {nixpkgs ? ../../nixpkgs}:
 let
   pkgs = import nixpkgs {};
-  gnulib = (import ../gnulib.nix) pkgs;
 
   buildInputsFrom = pkgs: with pkgs; [
   ];
@@ -10,6 +9,7 @@ let
 
     tarball =
       { diffutilsSrc ? {outPath = ../../diffutils;}
+      , gnulib ? {outPath = ../../gnulib;}
       }:
 
       with pkgs;
@@ -19,10 +19,10 @@ let
         src = diffutilsSrc;
 
         autoconfPhase = ''
-          cp -Rv ${gnulib} ../gnulib
-          chmod -R 755 ../gnulib
+          cp -Rv ${gnulib}/* gnulib/
+          chmod -R 755 gnulib
 
-          ./bootstrap --gnulib-srcdir=../gnulib --skip-po
+          ./bootstrap --gnulib-srcdir=./gnulib --skip-po --copy
         '';
 
         buildInputs = [
