@@ -5,8 +5,17 @@
 let
   pkgs = import nixpkgs {};
 
-  buildInputsFrom = pkgs: with pkgs; [
-  ];
+  meta = {
+    homepage = http://www.gnu.org/software/diffutils/diffutils.html;
+    description = "Commands for showing the differences between files (diff, cmp, etc.)";
+
+    # Those who will receive email notifications.
+    maintainers = [
+      "Jim Meyering <jim@meyering.net>"
+      "Rob Vermaas <rob.vermaas@gmail.com>"
+    ];
+
+  };
 
   jobs = rec {
 
@@ -16,6 +25,7 @@ let
       pkgs.releaseTools.makeSourceTarball {
         name = "diffutils-tarball";
         src = diffutils;
+        inherit meta;
 
         autoconfPhase = ''
           mkdir -p ../gnulib
@@ -37,7 +47,7 @@ let
           gperf
           help2man
           xz
-        ] ++ buildInputsFrom pkgs;
+        ] ;
       };
 
     build =
@@ -49,7 +59,8 @@ let
       releaseTools.nixBuild {
         name = "diffutils" ;
         src = tarball;
-        buildInputs = buildInputsFrom pkgs;
+        inherit meta;
+        buildInputs = [];
       };
 
     coverage =
@@ -58,7 +69,8 @@ let
       releaseTools.coverageAnalysis {
         name = "diffutils-coverage";
         src = tarball;
-        buildInputs = buildInputsFrom pkgs;
+        inherit meta;
+        buildInputs = [];
         schedulingPriority = 50;
       };
 

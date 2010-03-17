@@ -4,6 +4,28 @@
 }:
 
 let
+  meta = {
+    homepage = http://savannah.gnu.org/projects/cppi/;
+
+    description = "GNU cppi, a cpp directive indenter";
+
+    longDescription =
+      '' GNU cppi indents C preprocessor directives to reflect their nesting
+         and ensure that there is exactly one space character between each #if,
+         #elif, #define directive and the following token.  The number of
+         spaces between the `#' and the following directive must correspond
+         to the level of nesting of that directive.
+      '';
+
+    license = "GPLv3+";
+
+    # Those who will receive email notifications.
+    maintainers = [ 
+      "Jim Meyering <jim@meyering.net>"
+      "Rob Vermaas <rob.vermaas@gmail.com>"
+    ];
+  };
+
   pkgs = import nixpkgs {};
 
   jobs = rec {
@@ -12,6 +34,7 @@ let
       releaseTools.makeSourceTarball {
 	name = "cppi-tarball";
 	src = cppi;
+        inherit meta;
 
         autoconfPhase = ''
           mkdir -p ../gnulib
@@ -44,6 +67,7 @@ let
       releaseTools.nixBuild {
 	name = "cppi" ;
 	src = tarball;
+        inherit meta;
 	buildInputs = [];
       };
 
@@ -53,6 +77,7 @@ let
       releaseTools.coverageAnalysis {
         name = "cppi-coverage";
         src = tarball;
+        inherit meta;
         buildInputs = [];
       };
 

@@ -6,12 +6,32 @@
 let
   pkgs = import nixpkgs {};
 
+  meta = {
+    homepage = http://www.gnu.org/software/grep/;
+    description = "GNU implementation of the Unix grep command";
+
+    longDescription = ''
+      The grep command searches one or more input files for lines
+      containing a match to a specified pattern.  By default, grep
+      prints the matching lines.
+    '';
+
+    license = "GPLv3+";
+
+    # Those who will receive email notifications.
+    maintainers = [
+      "Jim Meyering <jim@meyering.net>"
+      "Rob Vermaas <rob.vermaas@gmail.com>"
+    ];
+  };
+
   jobs = rec {
 
     tarball =
       pkgs.releaseTools.makeSourceTarball {
 	name = "grep-tarball";
 	src = grep;
+        inherit meta;
 
         autoconfPhase = ''
           mkdir -p ../gnulib
@@ -42,6 +62,7 @@ let
       releaseTools.nixBuild {
 	name = "grep" ;
 	src = tarball;
+        inherit meta;
 	buildInputs = [];
       };
 
@@ -51,6 +72,7 @@ let
       releaseTools.coverageAnalysis {
         name = "grep-coverage";
         src = tarball;
+        inherit meta;
         buildInputs = [];
       };
 
