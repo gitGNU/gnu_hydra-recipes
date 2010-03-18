@@ -7,7 +7,13 @@
 , nixos ? { outPath = ../nixos; rev = 0; }
 
   /* Source tarballs of the latest GNU packages.  */
-, coreutils, cpio, guile, grep, inetutils, tar }:
+, coreutils ? (import coreutils/release.nix {}).tarball {}
+, cpio      ? (import cpio/release.nix {}).tarball {}
+, guile     ? (import guile/release.nix {}).tarball {}
+, grep      ? (import grep/release.nix {}).tarball {}
+, inetutils ? (import inetutils/release.nix {}).tarball {}
+, tar       ? (import tar/release.nix {}).tarball {}
+}:
 
 let
   # Override GNU packages in `origPkgs' so that they use bleeding-edge
