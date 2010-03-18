@@ -75,6 +75,7 @@ let
 	name = "zile" ;
 	src = tarball;
         inherit meta;
+        TERM="xterm";
 	buildInputs = [ncurses];
       };
 
@@ -86,6 +87,7 @@ let
         name = "zile-coverage";
         src = tarball;
         inherit meta;
+        TERM="xterm";
         buildInputs = [ncurses];
       };
 
