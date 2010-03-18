@@ -84,6 +84,18 @@ let
       [ "CPPFLAGS=-DSCM_DEBUG=1" ]
     ];
 
+  failureHook =
+    '' echo "build failed, dumping log file..."
+       if [ -f check-guile.log ]
+       then
+           cat check-guile.log
+       elif [ -f config.log ]
+           cat config.log
+       else
+           echo "no log file found"
+       fi
+    '';
+
   jobs = rec {
 
     tarball =
@@ -137,7 +149,7 @@ let
                  -e's/"<stdout>"/"c-tokenize.c"/g'
           '';
 
-        inherit meta;
+        inherit meta failureHook;
       };
 
     coverage =
@@ -153,7 +165,7 @@ let
         patches = [
           "${nixpkgs}/pkgs/development/interpreters/guile/disable-gc-sensitive-tests.patch" 
         ];
-        inherit meta;
+        inherit meta failureHook;
       };
 
     manual =
@@ -176,7 +188,7 @@ let
              echo "doc manual $out/share/doc/guile/guile.html index.html" >> "$out/nix-support/hydra-build-products"
              echo "doc-pdf manual $out/share/doc/guile/guile.pdf" >> "$out/nix-support/hydra-build-products"
           '';
-        inherit meta;
+        inherit meta failureHook;
       };
 
     # The default build, executed on all platforms.
@@ -193,7 +205,7 @@ let
           src = tarball;
           configureFlags = defaultConfigureFlags pkgs;
           buildInputs = buildInputsFrom pkgs;
-          inherit meta;
+          inherit meta failureHook;
         };
   }
 
