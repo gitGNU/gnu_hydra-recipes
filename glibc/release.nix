@@ -127,6 +127,10 @@ let
 
           buildInputs = buildInputsFrom pkgs;
 
+          # FIXME: The `tst-cancelx7' and `tst-cancel7' leave zombies behind
+          # them, which prevents the build from completing.
+          doCheck = false;
+
           # Some tests are failing, but we don't want that to prevent "make
           # install".
           checkPhase = "make -k check || true";
