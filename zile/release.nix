@@ -27,6 +27,11 @@ let
     homepage = http://www.gnu.org/software/zile/;
 
     license = "GPLv3+";
+
+    maintainers = [
+      "Reuben Thomas <rrt@sc3d.org>"
+      "Rob Vermaas <rob.vermaas@gmail.com>"
+    ];
   };
 
   pkgs = import nixpkgs {};
