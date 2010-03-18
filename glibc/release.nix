@@ -121,9 +121,9 @@ let
           # Note: Setting $CPPFLAGS or $CFLAGS doesn't work.  The former is
           # ignored, while the latter disables optimizations, thereby
           # breaking the build.
-          NIX_CFLAGS_COMPILE =
+          postConfigure =
             pkgs.stdenv.lib.optionalString (pkgs.stdenv.system == "i686-linux")
-                                           "-U__i686";
+                                           "export NIX_CFLAGS_COMPILE=-U__i686";
 
           buildInputs = buildInputsFrom pkgs;
 
