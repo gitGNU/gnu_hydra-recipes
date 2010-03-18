@@ -63,7 +63,9 @@ let
           name = "binutils-gold";
           src = tarball;
           configureFlags = "--enable-gold";
-          buildInputs = [ pkgs.dejagnu pkgs.zlib ];
+          buildInputs = with pkgs;
+            [ dejagnu zlib flex2535 bison ];
+
           inherit checkPhase failureHook;
         };
   };
