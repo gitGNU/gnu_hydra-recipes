@@ -85,15 +85,11 @@ let
     ];
 
   failureHook =
-    '' echo "build failed, dumping log file..."
-       if [ -f check-guile.log ]
+    '' if [ -f check-guile.log ]
        then
+           echo
+           echo "build failed, dumping test log..."
            cat check-guile.log
-       elif [ -f config.log ]
-       then
-           cat config.log
-       else
-           echo "no log file found"
        fi
     '';
 
