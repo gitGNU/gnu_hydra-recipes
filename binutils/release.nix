@@ -49,6 +49,13 @@ let
 
           # FIXME: Looks like some GNU ld tests want libdwarf.
           buildInputs = [ pkgs.dejagnu pkgs.zlib ];
+
+          # When running the test suite, Nixpkgs' ld wrapper isn't used, so
+          # the just-built ld needs to be told about library paths.  The
+          # `--with-lib-path' option is recognized by `ld/configure' and
+          # passsed as LIB_PATH to the DejaGNU machinery.
+          configureFlags = "--with-lib-path=${pkgs.zlib}/lib";
+
           inherit checkPhase failureHook;
         };
 
@@ -62,7 +69,7 @@ let
         pkgs.releaseTools.nixBuild {
           name = "binutils-gold";
           src = tarball;
-          configureFlags = "--enable-gold";
+          configureFlags = "--with-lib-path=${pkgs.zlib}/lib --enable-gold";
           buildInputs = with pkgs;
             [ dejagnu zlib flex2535 bison ];
 
