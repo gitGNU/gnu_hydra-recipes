@@ -1,15 +1,10 @@
-{ pkgs, gnuOverrides, ... }:
+{ pkgs, ... }:
 
 {
   machine = { config, pkgs, ... }: {
-    gnu = true;
-
     # Extra packages wanted in the global environment.
     environment.systemPackages =
       [ pkgs.cpio pkgs.guile_1_9 pkgs.inetutils ];
-
-    # Use the latest packages.
-    nixpkgs.config.packageOverrides = gnuOverrides;
   };
 
   testScript =
