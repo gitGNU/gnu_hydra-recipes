@@ -90,6 +90,7 @@ let
        then
            cat check-guile.log
        elif [ -f config.log ]
+       then
            cat config.log
        else
            echo "no log file found"
