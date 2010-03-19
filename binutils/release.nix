@@ -73,6 +73,17 @@ let
           # passsed as LIB_PATH to the DejaGNU machinery.
           configureFlags = "--with-lib-path=${pkgs.zlib}/lib";
 
+          /* FIXME: The ld test suite currently fails because it wrongly
+             determines /lib64/ld-linux-x86_64.so as the dynamic linker
+             path.  It's `ld/configure.host' that does the job.  The problem
+             stems from our GCC (mis)configuration:
+
+             $ gcc --help --verbose 2>&1 | egrep 'ld.*\.so'
+             /nix/store/shh00siazqrksamqqn2rm4yyjl4jlxnx-gcc-4.4.3/libexec/gcc/x86_64-unknown-linux-gnu/4.4.3/collect2
+             --eh-frame-hdr -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 ...
+
+             The fix should probably be in the GCC Nix expression.  */
+
           inherit meta checkPhase failureHook;
         };
 
