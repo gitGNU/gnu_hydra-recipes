@@ -5,6 +5,23 @@
 let
   pkgs = import nixpkgs {};
 
+  meta = {
+    description = "GNU Binutils, tools for manipulating binaries (linker, assembler, etc.)";
+
+    longDescription = ''
+      The GNU Binutils are a collection of binary tools.  The main
+      ones are `ld' (the GNU linker) and `as' (the GNU assembler).
+      They also include the BFD (Binary File Descriptor) library,
+      `gprof', `nm', `strip', etc.
+    '';
+
+    homepage = http://www.gnu.org/software/binutils/;
+
+    license = "GPLv3+";
+
+    maintainers = [ pkgs.stdenv.lib.maintainers.ludo ];
+  };
+
   inherit (pkgs) releaseTools;
 
   checkPhase = "make -k check";
@@ -56,7 +73,7 @@ let
           # passsed as LIB_PATH to the DejaGNU machinery.
           configureFlags = "--with-lib-path=${pkgs.zlib}/lib";
 
-          inherit checkPhase failureHook;
+          inherit meta checkPhase failureHook;
         };
 
     buildGold =
@@ -73,7 +90,7 @@ let
           buildInputs = with pkgs;
             [ dejagnu zlib flex2535 bison ];
 
-          inherit checkPhase failureHook;
+          inherit meta checkPhase failureHook;
         };
   };
 
