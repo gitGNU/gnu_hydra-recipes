@@ -38,7 +38,7 @@ let
     # The following packages aren't available on non-GNU platforms.
     ++ stdenv.lib.optionals stdenv.isLinux [ gcj mono gnome.gtkdoc ];
 
-  jobs = rec {
+  jobs = {
 
     tarball =
       { libidnSrc }:
