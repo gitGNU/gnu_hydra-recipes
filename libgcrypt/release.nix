@@ -24,7 +24,9 @@ let
 
   inherit (pkgs) releaseTools;
 
-  buildInputsFrom = pkgs: with pkgs; [];
+  buildInputsFrom = pkgs: with pkgs;
+    # On Darwin libintl is needed.
+    stdenv.lib.optional stdenv.isDarwin gettext;
 
   jobs = rec {
 
