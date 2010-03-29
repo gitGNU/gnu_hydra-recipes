@@ -20,7 +20,6 @@ let
   };
 
   pkgs = import nixpkgs {};
-  gnulibSrc = (import ../gnulib.nix) pkgs;
 
   inherit (pkgs) releaseTools;
 
@@ -30,7 +29,8 @@ let
   jobs = rec {
 
     tarball =
-      { myserverSrc ? { outPath = /data/src/myserver; }
+      { myserverSrc ? { outPath = /data/src/myserver; },
+        gnulibSrc ? ((import ../gnulib.nix) pkgs)
       }:
 
       releaseTools.sourceTarball {
