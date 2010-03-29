@@ -58,10 +58,6 @@ let
           ./autogen.sh
         '';
 
-        preBuild = '' 
-          make -C src tbl_funcs.h
-        '';
-
         HELP2MAN = "${help2man}/bin/help2man";
 	buildInputs = [
           ncurses
