@@ -21,12 +21,12 @@ let
 	name = "libtasn1-tarball";
 	src = libtasn1Src;
 
+        patches = [ ./interpreter-path.patch ];
         preConfigurePhases = "preAutoconfPhase autoconfPhase";
 
 	preAutoconfPhase =
 	  ''sed -i "configure.ac" \
 		-e "s/^AC_INIT(\([^,]\+\), \[\([^,]\+\)\]/AC_INIT(\1, [\2-$(git describe || echo git)]/g"
-            sed -i "doc/gdoc" -e"s|/usr/bin/perl|${pkgs.perl}/bin/perl|g"
 	  '';
 
 	autoconfPhase = "autoreconf -vfi";
