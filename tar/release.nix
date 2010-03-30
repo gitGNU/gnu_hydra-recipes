@@ -46,6 +46,14 @@ let
         name = "tar" ;
         src = tarball;
         buildInputs = buildInputsFrom pkgs;
+        failureHook =
+          '' if [ -f tests/testsuite.log ]
+             then
+                 echo
+                 echo "build failed, dumping test log..."
+                 cat tests/testsuite.log
+             fi
+          '';
       };
 
     coverage =
