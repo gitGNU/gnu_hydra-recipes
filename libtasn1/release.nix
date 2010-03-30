@@ -3,6 +3,21 @@
 let
   pkgs = import nixpkgs {};
 
+  meta = {
+    homepage = http://www.gnu.org/software/libtasn1/;
+    description = "GNU Libtasn1, an ASN.1 library";
+
+    longDescription =
+      '' Libtasn1 is the ASN.1 library used by GnuTLS, GNU Shishi and some
+         other packages.  The goal of this implementation is to be highly
+         portable, and only require an ANSI C89 platform.
+      '';
+
+    license = "LGPLv2+";
+
+    maintainers = [ pkgs.stdenv.lib.maintainers.ludo ];
+  };
+
   inherit (pkgs) releaseTools;
 
   jobs = {
@@ -34,6 +49,8 @@ let
           gnome.gtkdoc pkgconfig perl texLive docbook_xsl
           libxml2 /* for the setup hook */
 	];
+
+        inherit meta;
       };
 
     build =
@@ -46,6 +63,7 @@ let
         pkgs.releaseTools.nixBuild {
           name = "libtasn1" ;
           src = tarball;
+          inherit meta;
         };
 
     coverage =
@@ -55,6 +73,7 @@ let
       releaseTools.coverageAnalysis {
 	name = "libtasn1-coverage";
 	src = tarball;
+        inherit meta;
       };
 
   };
