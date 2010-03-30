@@ -47,9 +47,6 @@ let
         pkgs.releaseTools.nixBuild {
           name = "libtasn1" ;
           src = tarball;
-          patchPhase =
-            '' sed -i "doc/gdoc" -e"s|#!.*/bin/perl|${pkgs.perl}/bin/perl|g"
-            '';
         };
 
     coverage =
