@@ -16,9 +16,8 @@ let
 	src = libtasn1Src;
 
         patches = [ ./interpreter-path.patch ];
-        preConfigurePhases = "preAutoconfPhase autoconfPhase";
 
-	preAutoconfPhase =
+	preAutoconf =
 	  ''sed -i "configure.ac" \
 		-e "s/^AC_INIT(\([^,]\+\), \[\([^,]\+\)\]/AC_INIT(\1, [\2-$(git describe || echo git)]/g"
 	  '';
