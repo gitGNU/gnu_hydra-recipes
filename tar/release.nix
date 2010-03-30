@@ -4,7 +4,7 @@ let
 
   buildInputsFrom = pkgs: [ pkgs.gettext ];
 
-  jobs = rec {
+  jobs = {
 
     tarball =
       { tarSrc ? {outPath = ../../tar;}
@@ -12,15 +12,13 @@ let
       , gnulib ? {outPath = ../../gnulib;}
       }:
 
-      with pkgs;
-
-      pkgs.releaseTools.makeSourceTarball {
+      pkgs.releaseTools.sourceTarball {
         name = "tar-tarball";
         src = tarSrc;
 
         autoconfPhase = ''
           # Disable Automake's `check-news' so that "make dist" always works.
-          sed -i "configure.ac" -es/check-news//g
+          sed -i "configure.ac" -es/gnits/gnu/g
 
           cp -Rv ${gnulib} ../gnulib
           chmod -R 755 ../gnulib
@@ -30,7 +28,7 @@ let
           ./bootstrap --gnulib-srcdir=../gnulib --paxutils-srcdir=../paxutils --skip-po --copy
         '';
 
-        buildInputs =
+        buildInputs = with pkgs;
          [ git texinfo bison
            cvs # for `autopoint'
            man rsync perl cpio automake111x
