@@ -5,19 +5,13 @@ let
 
   inherit (pkgs) releaseTools;
 
-  deps = pkgs: with pkgs;
-    [ gnome.gtkdoc pkgconfig perl texLive
-      help2man docbook_xsl
-      libxml2 /* for the setup hook */
-    ];
-
-  jobs = rec {
+  jobs = {
 
     tarball =
       { libtasn1Src ? { outPath = ../../libtasn1; }
       }:
 
-      releaseTools.makeSourceTarball {
+      releaseTools.sourceTarball {
 	name = "libtasn1-tarball";
 	src = libtasn1Src;
 
@@ -35,10 +29,12 @@ let
         dontBuild = false;
         configureFlags = [ "--enable-gtk-doc" ];
 
-	buildInputs = (deps pkgs) ++ (with pkgs; [
-	  autoconf automake111x libtool
+	buildInputs = with pkgs; [
+	  autoconf automake111x libtool help2man
 	  git texinfo
-	]);
+          gnome.gtkdoc pkgconfig perl texLive docbook_xsl
+          libxml2 /* for the setup hook */
+	];
       };
 
     build =
@@ -54,8 +50,6 @@ let
           patchPhase =
             '' sed -i "doc/gdoc" -e"s|#!.*/bin/perl|${pkgs.perl}/bin/perl|g"
             '';
-
-          buildInputs = deps pkgs;
         };
 
     coverage =
@@ -65,7 +59,6 @@ let
       releaseTools.coverageAnalysis {
 	name = "libtasn1-coverage";
 	src = tarball;
-	buildInputs = deps (import nixpkgs {});
       };
 
   };
