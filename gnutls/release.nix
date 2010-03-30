@@ -29,8 +29,9 @@ let
 
   inherit (pkgs) releaseTools;
 
-  buildInputsFrom = pkgs:
-    with pkgs; [ zlib lzo guile gettext pkgconfig perl ];
+  buildInputsFrom = pkgs: with pkgs;
+    [ zlib lzo guile gettext pkgconfig perl ]
+    ++ stdenv.lib.optional stdenv.isLinux valgrind;
 
   jobs = rec {
 
