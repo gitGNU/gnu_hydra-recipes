@@ -123,7 +123,7 @@ let
         configureFlags =
           "--with-lzo --with-libtasn1-prefix=${libtasn1} --enable-guile";
         buildInputs = (buildInputsFrom pkgs) ++ [ libtasn1 libgcrypt ];
-        inherit meta;
+        # No `meta' so that mail notifications are not sent.
       };
 
     manual =
