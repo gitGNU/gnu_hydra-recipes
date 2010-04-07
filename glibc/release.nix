@@ -188,6 +188,16 @@ let
        gcc.cpu = "ultrasparc";
      };
 
+     xbuild_arm = makeCrossBuild {
+       config = "armv5tel-unknown-linux-gnueabi";
+       bigEndian = false;
+       arch = "arm";
+       float = "soft";
+       withTLS = true;
+       platform = pkgs.platforms.sheevaplug;
+       libc = "glibc";
+     };
+
   };
 
 in jobs
