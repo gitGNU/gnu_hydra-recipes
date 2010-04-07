@@ -55,6 +55,7 @@ let
   configureFlagsFor = pkgs:
     [ "--with-headers=${pkgs.linuxHeaders}/include" ];
 
+  # Cross-compilation jobs.
   makeCrossBuild = crossSystem:
     { tarball ? jobs.tarball {} }:
 
@@ -62,16 +63,25 @@ let
       system = "x86_64-linux";
       pkgs = import nixpkgs { inherit system crossSystem; };
     in
-      pkgs.releaseTools.nixBuild {
+      (pkgs.releaseTools.nixBuild {
         name = "glibc-${crossSystem.config}";
         src = tarball;
         configureFlags = configureFlagsFor pkgs
-          ++ [ "--target=${crossSystem.config}" ];
+          ++ [ "--host=${crossSystem.config}"
+               "--enable-kernel=2.6.0"
+               "--with-__thread"
+               (if crossSystem.withTLS
+                then "--with-tls"
+                else "--without-tls")
+               (if crossSystem.float == "soft"
+                then "--without-fp"
+                else "--with-fp")
+             ];
 
-        nativeBuildInputs = buildInputsFrom pkgs;
+        buildNativeInputs = buildInputsFrom pkgs;
         doCheck = false;
         inherit preConfigure meta;
-      };
+      }).hostDrv;
 
   jobs = rec {
 
@@ -123,6 +133,7 @@ let
       };
 
     build =
+      # Native builds.
       { tarball ? jobs.tarball {}
       , system ? "x86_64-linux"
       }:
@@ -162,15 +173,17 @@ let
        bigEndian = true;
        arch = "sparc64";
        float = "hard";
+       withTLS = true;
+       libc = "glibc";
        platform = {
-           name = "ultrasparc";
-           kernelMajor = "2.6";
-           kernelHeadersBaseConfig = "sparc64_defconfig";
-           kernelBaseConfig = "sparc64_defconfig";
-           kernelArch = "sparc";
-           kernelAutoModules = false;
-           kernelTarget = "zImage";
-           uboot = null;
+         name = "ultrasparc";
+         kernelMajor = "2.6";
+         kernelHeadersBaseConfig = "sparc64_defconfig";
+         kernelBaseConfig = "sparc64_defconfig";
+         kernelArch = "sparc";
+         kernelAutoModules = false;
+         kernelTarget = "zImage";
+         uboot = null;
        };
        gcc.cpu = "ultrasparc";
      };
