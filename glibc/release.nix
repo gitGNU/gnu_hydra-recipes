@@ -66,17 +66,18 @@ let
       (pkgs.releaseTools.nixBuild {
         name = "glibc-${crossSystem.config}";
         src = tarball;
-        configureFlags = configureFlagsFor pkgs
-          ++ [ "--host=${crossSystem.config}"
-               "--enable-kernel=2.6.0"
-               "--with-__thread"
-               (if crossSystem.withTLS
-                then "--with-tls"
-                else "--without-tls")
-               (if crossSystem.float == "soft"
-                then "--without-fp"
-                else "--with-fp")
-             ];
+        configureFlags =
+          [ "--host=${crossSystem.config}"
+            "--with-headers=${pkgs.linuxHeadersCross}/include"
+            "--enable-kernel=2.6.0"
+            "--with-__thread"
+            (if crossSystem.withTLS
+             then "--with-tls"
+             else "--without-tls")
+            (if crossSystem.float == "soft"
+             then "--without-fp"
+             else "--with-fp")
+          ];
 
         buildNativeInputs = buildInputsFrom pkgs;
         doCheck = false;
