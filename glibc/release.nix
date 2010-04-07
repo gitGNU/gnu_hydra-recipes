@@ -56,7 +56,7 @@ let
     [ "--with-headers=${pkgs.linuxHeaders}/include" ];
 
   # Cross-compilation jobs.
-  makeCrossBuild = crossSystem:
+  makeCrossBuild = glibcPorts: crossSystem:
     { tarball ? jobs.tarball {} }:
 
     let
@@ -66,10 +66,17 @@ let
       (pkgs.releaseTools.nixBuild {
         name = "glibc-${crossSystem.config}";
         src = tarball;
+
+        postUnpack =
+          pkgs.stdenv.lib.optionalString (glibcPorts != null)
+            '' cp -rv "${glibcPorts}" glibc-ports
+            '';
+
         configureFlags =
           [ "--host=${crossSystem.config}"
             "--with-headers=${pkgs.linuxHeadersCross}/include"
             "--enable-kernel=2.6.0"
+            "--enable-add-ons"
             "--with-__thread"
             (if crossSystem.withTLS
              then "--with-tls"
@@ -168,36 +175,43 @@ let
           inherit preConfigure meta;
         };
 
-     xbuild_sparc64 = makeCrossBuild {
-       # Stolen from $nixpkgs/pkgs/top-level/release-cross.nix.
-       config = "sparc64-unknown-linux";
-       bigEndian = true;
-       arch = "sparc64";
-       float = "hard";
-       withTLS = true;
-       libc = "glibc";
-       platform = {
-         name = "ultrasparc";
-         kernelMajor = "2.6";
-         kernelHeadersBaseConfig = "sparc64_defconfig";
-         kernelBaseConfig = "sparc64_defconfig";
-         kernelArch = "sparc";
-         kernelAutoModules = false;
-         kernelTarget = "zImage";
-         uboot = null;
+     xbuild_sparc64 =
+       makeCrossBuild null {
+         # Stolen from $nixpkgs/pkgs/top-level/release-cross.nix.
+         config = "sparc64-unknown-linux";
+         bigEndian = true;
+         arch = "sparc64";
+         float = "hard";
+         withTLS = true;
+         libc = "glibc";
+         platform = {
+           name = "ultrasparc";
+           kernelMajor = "2.6";
+           kernelHeadersBaseConfig = "sparc64_defconfig";
+           kernelBaseConfig = "sparc64_defconfig";
+           kernelArch = "sparc";
+           kernelAutoModules = false;
+           kernelTarget = "zImage";
+           uboot = null;
+         };
+         gcc.cpu = "ultrasparc";
        };
-       gcc.cpu = "ultrasparc";
-     };
 
-     xbuild_arm = makeCrossBuild {
-       config = "armv5tel-unknown-linux-gnueabi";
-       bigEndian = false;
-       arch = "arm";
-       float = "soft";
-       withTLS = true;
-       platform = pkgs.platforms.sheevaplug;
-       libc = "glibc";
-     };
+     xbuild_arm =
+       { glibcPorts ? null }:
+
+       # ARM support is in glibc-ports.
+       assert glibcPorts != null;
+
+       makeCrossBuild glibcPorts {
+         config = "armv5tel-unknown-linux-gnueabi";
+         bigEndian = false;
+         arch = "arm";
+         float = "soft";
+         withTLS = true;
+         platform = pkgs.platforms.sheevaplug;
+         libc = "glibc";
+       };
 
   };
 
