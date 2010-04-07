@@ -197,6 +197,9 @@ let
          gcc.cpu = "ultrasparc";
        };
 
+     /* FIXME: ARM cross-build disabled for now as `readelf' would enter an
+        endless loop: "readelf: Error: Unable to seek to 0x5161cc33100016d".
+
      xbuild_arm =
        { glibcPorts ? null }:
 
@@ -212,6 +215,8 @@ let
          platform = pkgs.platforms.sheevaplug;
          libc = "glibc";
        };
+
+      */
 
   };
 
