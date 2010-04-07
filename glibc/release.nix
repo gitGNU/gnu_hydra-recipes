@@ -69,7 +69,7 @@ let
 
         postUnpack =
           pkgs.stdenv.lib.optionalString (glibcPorts != null)
-            '' cp -rv "${glibcPorts}" glibc-ports
+            '' cp -rv "${glibcPorts}/sysdeps/${crossSystem.arch}" glibc-port
             '';
 
         configureFlags =
