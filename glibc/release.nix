@@ -55,6 +55,24 @@ let
   configureFlagsFor = pkgs:
     [ "--with-headers=${pkgs.linuxHeaders}/include" ];
 
+  makeCrossBuild = crossSystem:
+    { tarball ? jobs.tarball {} }:
+
+    let
+      system = "x86_64-linux";
+      pkgs = import nixpkgs { inherit system crossSystem; };
+    in
+      pkgs.releaseTools.nixBuild {
+        name = "glibc-${crossSystem.config}";
+        src = tarball;
+        configureFlags = configureFlagsFor pkgs
+          ++ [ "--target=${crossSystem.config}" ];
+
+        nativeBuildInputs = buildInputsFrom pkgs;
+        doCheck = false;
+        inherit preConfigure meta;
+      };
+
   jobs = rec {
 
     tarball =
@@ -137,6 +155,25 @@ let
 
           inherit preConfigure meta;
         };
+
+     xbuild_sparc64 = makeCrossBuild {
+       # Stolen from $nixpkgs/pkgs/top-level/release-cross.nix.
+       config = "sparc64-unknown-linux";
+       bigEndian = true;
+       arch = "sparc64";
+       float = "hard";
+       platform = {
+           name = "ultrasparc";
+           kernelMajor = "2.6";
+           kernelHeadersBaseConfig = "sparc64_defconfig";
+           kernelBaseConfig = "sparc64_defconfig";
+           kernelArch = "sparc";
+           kernelAutoModules = false;
+           kernelTarget = "zImage";
+           uboot = null;
+       };
+       gcc.cpu = "ultrasparc";
+     };
 
   };
 
