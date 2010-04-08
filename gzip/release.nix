@@ -7,9 +7,12 @@ let
   pkgs = import nixpkgs {};
 
   buildInputsFrom = pkgs: with pkgs;
-    [ utillinuxngCurses # more(1), for zmore's unit tests
-      less              # less(1), for zless's unit tests
-    ];
+    # less(1), for zless's unit tests
+    [ less ] ++
+
+    # more(1), for zmore's unit tests.  Assume it's available on non-Linux
+    # platforms.
+    (stdenv.lib.optional stdenv.isLinux utillinuxngCurses);
 
   jobs = rec {
 
