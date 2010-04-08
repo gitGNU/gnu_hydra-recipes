@@ -48,6 +48,12 @@ let
        unset NIX_LDFLAGS
        unset NIX_LDFLAGS_AFTER
 
+       unset NIX_CROSS_CFLAGS_COMPILE
+       unset NIX_CROSS_CFLAGS_LINK
+       unset NIX_CROSS_LDFLAGS_BEFORE
+       unset NIX_CROSS_LDFLAGS
+       unset NIX_CROSS_LDFLAGS_AFTER
+
        env | grep NIX
     '';
 
@@ -197,9 +203,6 @@ let
          gcc.cpu = "ultrasparc";
        };
 
-     /* FIXME: ARM cross-build disabled for now as `readelf' would enter an
-        endless loop: "readelf: Error: Unable to seek to 0x5161cc33100016d".
-
      xbuild_arm =
        { glibcPorts ? null }:
 
@@ -215,8 +218,6 @@ let
          platform = pkgs.platforms.sheevaplug;
          libc = "glibc";
        };
-
-      */
 
   };
 
