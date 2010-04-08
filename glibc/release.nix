@@ -64,7 +64,7 @@ let
       pkgs = import nixpkgs { inherit system crossSystem; };
     in
       (pkgs.releaseTools.nixBuild {
-        name = "glibc-${crossSystem.config}";
+        name = "glibc";
         src = tarball;
 
         postUnpack =
