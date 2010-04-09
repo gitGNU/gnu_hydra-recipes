@@ -90,6 +90,11 @@ let
            echo
            echo "build failed, dumping test log..."
            cat check-guile.log
+       elif [ -f config.log -a ! -f Makefile ]
+       then
+           echo
+           echo "configuration failed, dumping config.log..."
+           cat config.log
        fi
     '';
 
