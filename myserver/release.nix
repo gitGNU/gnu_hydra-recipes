@@ -24,7 +24,9 @@ let
   inherit (pkgs) releaseTools;
 
   buildInputsFrom = pkgs: with pkgs;
-    [ libgcrypt libevent libidn gnutls libxml2 zlib texinfo cppunit ];
+    [ libgcrypt libevent libidn gnutls libxml2 zlib texinfo cppunit
+      libtasn1  # somehow libbase64 wants libtasn1
+    ];
 
   jobs = rec {
 
