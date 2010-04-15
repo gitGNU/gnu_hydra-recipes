@@ -34,7 +34,7 @@ let
     coverage =
       { tarball ? jobs.tarball }:
 
-      let pkgs = import nixpkgs { inherit system; };
+      let pkgs = import nixpkgs {};
       in
         pkgs.releaseTools.coverageAnalysis {
           name = "patch-coverage";
