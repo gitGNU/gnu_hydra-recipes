@@ -5,6 +5,25 @@
 let
   pkgs = import nixpkgs {};
 
+  meta = {
+    description = "GNU Patch, a program to apply differences to files";
+
+    longDescription =
+      '' GNU Patch takes a patch file containing a difference listing
+         produced by the diff program and applies those differences to one or
+         more original files, producing patched versions.
+      '';
+
+    homepage = http://savannah.gnu.org/projects/patch;
+
+    license = "GPLv3+";
+
+    maintainers =
+     [ "Andreas Gruenbacher <agruen@gnu.org>"
+       pkgs.stdenv.lib.maintainers.ludo
+     ];
+  };
+
   jobs = {
     tarball =
       with pkgs;
@@ -18,6 +37,7 @@ let
 
              ./bootstrap --gnulib-srcdir=gnulib --skip-po --copy
           '';
+        inherit meta;
       };
 
     build =
@@ -37,6 +57,7 @@ let
                    cat tests/test-suite.log
                fi
             '';
+          inherit meta;
         };
 
     coverage =
