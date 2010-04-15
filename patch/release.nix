@@ -29,6 +29,14 @@ let
         pkgs.releaseTools.nixBuild {
           name = "patch";
           src = tarball;
+          failureHook =
+            '' if [ -f tests/test-suite.log ]
+               then
+                   echo
+                   echo "build failed, dumping test log..."
+                   cat tests/test-suite.log
+               fi
+            '';
         };
 
     coverage =
