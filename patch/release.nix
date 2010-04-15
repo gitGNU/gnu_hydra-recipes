@@ -32,13 +32,12 @@ let
         };
 
     coverage =
-      { system ? builtins.currentSystem
-      , tarball ? jobs.tarball }:
+      { tarball ? jobs.tarball }:
 
       let pkgs = import nixpkgs { inherit system; };
       in
         pkgs.releaseTools.coverageAnalysis {
-          name = "patch";
+          name = "patch-coverage";
           src = tarball;
         };
   };
