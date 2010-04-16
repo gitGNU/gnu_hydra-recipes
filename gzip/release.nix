@@ -14,6 +14,31 @@ let
     # platforms.
     (stdenv.lib.optional stdenv.isLinux utillinuxngCurses);
 
+  meta = {
+   homepage = http://www.gnu.org/software/gzip/;
+    description = "Gzip, the GNU zip compression program";
+
+    longDescription =
+      ''gzip (GNU zip) is a popular data compression program written by
+        Jean-loup Gailly for the GNU project.  Mark Adler wrote the
+        decompression part.
+
+        We developed this program as a replacement for compress because of
+        the Unisys and IBM patents covering the LZW algorithm used by
+        compress.  These patents made it impossible for us to use compress,
+        and we needed a replacement.  The superior compression ratio of gzip
+        is just a bonus.
+      '';
+
+    license = "GPLv3+";
+
+    # Those who will receive email notifications.
+    maintainers = [
+      "Jim Meyering <jim@meyering.net>"
+      "Rob Vermaas <rob.vermaas@gmail.com>"
+    ];
+  };
+
   jobs = rec {
 
     tarball =
@@ -38,6 +63,8 @@ let
           rsync
           xz
 	];
+
+        inherit meta;
       };
 
     build =
@@ -49,6 +76,7 @@ let
 	name = "gzip" ;
 	src = tarball;
 	buildInputs = buildInputsFrom pkgs;
+        inherit meta;
       };
 
     coverage =
@@ -58,6 +86,7 @@ let
         name = "gzip-coverage";
         src = tarball;
         buildInputs = buildInputsFrom pkgs;
+        inherit meta;
       };
 
   };
