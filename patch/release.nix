@@ -30,7 +30,7 @@ let
       releaseTools.sourceTarball {
         name = "patch";
         src = patchSrc;
-        buildInputs = [ xz gettext texinfo automake111x ];
+        buildInputs = [ git xz gettext texinfo automake111x ];
         autoconfPhase =
           '' cp -Rv "${gnulib}/"* gnulib/
              chmod -R 755 gnulib
