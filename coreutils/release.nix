@@ -43,7 +43,7 @@ let
 	  automake111x
 	  bison
 	  gettext
-	  git
+	  git man
 	  gperf
 	  texinfo
 	  rsync
@@ -54,16 +54,15 @@ let
 	dontBuild = false;
 
         autoconfPhase = ''
-          cp -Rv "${gnulibSrc}" ../gnulib
-          chmod -R 755 ../gnulib
-
 	  sed 's|/usr/bin/perl|${perl}/bin/perl|' -i src/wheel-gen.pl
+
+          git config submodule.gnulib.url "${gnulib}"
 
           # By default `bootstrap' tries to download `.po' files from the
           # net, which doesn't work in chroots.  Skip that for now and
           # provide an empty `LINGUAS' file.
           touch po/LINGUAS
-          ./bootstrap --gnulib-srcdir=../gnulib --copy --skip-po
+          ./bootstrap --gnulib-srcdir="${gnulib}" --skip-po
         '';
 
         inherit meta;
