@@ -30,12 +30,14 @@ let
       releaseTools.sourceTarball {
         name = "patch";
         src = patchSrc;
-        buildInputs = [ git xz gettext texinfo automake111x ];
-        autoconfPhase =
-          '' cp -Rv "${gnulib}/"* gnulib/
-             chmod -R 755 gnulib
 
-             ./bootstrap --gnulib-srcdir=gnulib --skip-po --copy
+        # Note: `./bootstrap' uses "git submodule --help" to determine the
+        # version of Git is being used, which in turn wants `man'.
+        buildInputs = [ git man xz gettext texinfo automake111x ];
+
+        autoconfPhase =
+          '' git config submodule.gnulib.url "${gnulib}"
+             ./bootstrap --gnulib-srcdir="${gnulib}" --skip-po
           '';
         inherit meta;
       };
