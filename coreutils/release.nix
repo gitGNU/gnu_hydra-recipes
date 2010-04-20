@@ -43,7 +43,7 @@ let
 	  automake111x
 	  bison
 	  gettext
-	  git man
+	  git
 	  gperf
 	  texinfo
 	  rsync

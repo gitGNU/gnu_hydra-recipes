@@ -30,11 +30,7 @@ let
       releaseTools.sourceTarball {
         name = "patch";
         src = patchSrc;
-
-        # Note: `./bootstrap' uses "git submodule --help" to determine the
-        # version of Git is being used, which in turn wants `man'.
-        buildInputs = [ git man xz gettext texinfo automake111x ];
-
+        buildInputs = [ git xz gettext texinfo automake111x ];
         autoconfPhase =
           '' git config submodule.gnulib.url "${gnulib}"
              ./bootstrap --gnulib-srcdir="${gnulib}" --skip-po
