@@ -30,7 +30,10 @@ let
       releaseTools.sourceTarball {
         name = "patch";
         src = patchSrc;
-        buildInputs = [ git xz gettext texinfo automake111x ];
+        buildInputs =
+          [ git xz gettext texinfo automake111x
+            bison # the `testing' branch needs it
+          ];
         autoconfPhase =
           '' git config submodule.gnulib.url "${gnulib}"
              ./bootstrap --gnulib-srcdir="${gnulib}" --skip-po
