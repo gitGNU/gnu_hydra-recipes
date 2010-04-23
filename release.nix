@@ -13,6 +13,7 @@
 , grep      ? (import grep/release.nix {}).tarball {}
 , inetutils ? (import inetutils/release.nix {}).tarball {}
 , tar       ? (import tar/release.nix {}).tarball {}
+, patch     ? (import patch/release.nix {}).tarball {}
 }:
 
 let
@@ -42,6 +43,7 @@ let
          gnugrep = override "grep" origPkgs.gnugrep grep;
          guile_1_9 = override "guile" origPkgs.guile_1_9 guile;
          inetutils = override "inetutils" origPkgs.inetutils inetutils;
+         gnupatch = override "patch" origPkgs.gnupatch patch;
        };
 
   # List of base packages for the ISO.

@@ -14,6 +14,7 @@
       $machine->mustSucceed("tar --version >&2");
       $machine->mustSucceed("cpio --version >&2");
       $machine->mustSucceed("grep --version >&2");
+      $machine->mustSucceed("patch --version >&2");
       $machine->mustSucceed("ifconfig --version >&2");
       $machine->mustSucceed("guile --version >&2");
       $machine->mustSucceed("guile -c '(format #t \"hello, world!~%\")' >&2");
