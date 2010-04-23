@@ -38,7 +38,12 @@ let
         });
      in
        {
-         glibc = override "glibc" origPkgs.glibc glibc;
+         # Override `glibc211', not `glibc', because glibc fails to compile
+         # with bootstrapTools on x86_64; bootstrapTools appeat to contain an
+         # old version of GNU as, which doesn't support
+         # `gnu_indirect_function', leading to a build failure.
+         glibc211 = override "glibc" origPkgs.glibc211 glibc;
+
          coreutils = override "coreutils" origPkgs.coreutils coreutils;
          cpio = override "cpio" origPkgs.cpio cpio;
          gnutar = override "tar" origPkgs.gnutar tar;
