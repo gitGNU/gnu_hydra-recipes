@@ -1,5 +1,11 @@
 { pkgs, ... }:
 
+let
+  commands =
+    [ "ldd" "touch" "tar" "cpio" "grep" "patch"
+      "ifconfig" "guile"
+    ];
+in
 {
   machine = { config, pkgs, ... }: {
     # Extra packages wanted in the global environment.
@@ -9,14 +15,10 @@
 
   testScript =
     ''
-      $machine->mustSucceed("ldd --version >&2");
-      $machine->mustSucceed("touch --version >&2");
-      $machine->mustSucceed("tar --version >&2");
-      $machine->mustSucceed("cpio --version >&2");
-      $machine->mustSucceed("grep --version >&2");
-      $machine->mustSucceed("patch --version >&2");
-      $machine->mustSucceed("ifconfig --version >&2");
-      $machine->mustSucceed("guile --version >&2");
-      $machine->mustSucceed("guile -c '(format #t \"hello, world!~%\")' >&2");
+       ${pkgs.lib.concatMapStrings
+           (cmd: "$machine->mustSucceed(\"${cmd} --version >&2\");")
+           commands}
+
+       $machine->mustSucceed("guile -c '(format #t \"hello, world!~%\")' >&2");
     '';
 }
