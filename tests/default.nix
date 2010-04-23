@@ -35,4 +35,8 @@ let
 in
   {
     version = apply (import ./version.nix);
+
+    # Selected NixOS tests.
+    login = apply (import "${nixos}/tests/login.nix");
+    portmap = apply (import "${nixos}/tests/portmap.nix");
   }
