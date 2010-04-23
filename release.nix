@@ -36,13 +36,21 @@ let
               fi
             '';
         });
+
+       glibcNew = glibc;
      in
        {
-         # Override `glibc211', not `glibc', because glibc fails to compile
-         # with bootstrapTools on x86_64; bootstrapTools appeat to contain an
-         # old version of GNU as, which doesn't support
-         # `gnu_indirect_function', leading to a build failure.
-         glibc211 = override "glibc" origPkgs.glibc211 glibc;
+         # The bootstrap tools on x86_64 contain an old version of GNU as,
+         # which doesn't support `gnu_indirect_function', leading to a build
+         # failure when multi-arch support is enabled.  Thus, build with
+         # `--disable-multi-arch'.
+         glibc = origPkgs.lib.overrideDerivation origPkgs.glibc (origAttrs: {
+           name = "glibc-${glibcNew.version}";
+           src = glibcNew;
+           # Keep `patches' from Nixpkgs.
+           configureFlags = origPkgs.glibc.configureFlags ++ [ "--disable-multi-arch" ];
+           preUnpack = '' src="$(echo $src/tarballs/*.bz2)" '';
+         });
 
          coreutils = override "coreutils" origPkgs.coreutils coreutils;
          cpio = override "cpio" origPkgs.cpio cpio;
