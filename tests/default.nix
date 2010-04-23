@@ -2,7 +2,7 @@
 , nixos ? ../../nixos
 , services ? ../../services
 , system ? builtins.currentSystem
-, gnuModule
+, gnuConfigOptions
 }:
 
 with import "${nixos}/lib/testing.nix" { inherit nixpkgs services system; };
@@ -19,17 +19,12 @@ let
       if t ? machine then { machine = t.machine; }
       else { };
     vms = buildVirtualNetwork {
-      # Build a network of nodes that using `gnuModule', i.e., using the
+      # Build a network of nodes that use `gnuConfigOptions', i.e., the
       # latest GNU packages and a GNU configuration.
       nodes =
         let gnuify = name: configFunction:
               builtins.trace "node `${name}'"
-              (args:
-                let
-                  c = (configFunction args);
-                  r = if c ? require then c.require else [];
-                in
-                  c // { require = r ++ [ gnuModule ]; });
+              (args: (configFunction args) // gnuConfigOptions);
         in
           pkgs.lib.mapAttrs gnuify nodes;
     };

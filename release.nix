@@ -134,16 +134,14 @@ in
       { system ? "x86_64-linux" }:
 
       let
-        gnuModule =
+        gnuConfigOptions =
           {
-            # FIXME: Setting `gnu' yields "value is a boolean while an
-            # attribute set was expected".
             gnu = true;
             nixpkgs.config.packageOverrides = latestGNUPackages;
           };
 
         testsuite = import ./tests {
-             inherit nixpkgs nixos system gnuModule;
+             inherit nixpkgs nixos system gnuConfigOptions;
              services = "${nixos}/services";
            };
       in {
