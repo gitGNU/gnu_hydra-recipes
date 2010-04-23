@@ -7,6 +7,7 @@
 , nixos ? { outPath = ../nixos; rev = 0; }
 
   /* Source tarballs of the latest GNU packages.  */
+, glibc     ? (import glibc/release.nix {}).tarball {}
 , coreutils ? (import coreutils/release.nix {}).tarball {}
 , cpio      ? (import cpio/release.nix {}).tarball {}
 , guile     ? (import guile/release.nix {}).tarball {}
@@ -37,6 +38,7 @@ let
         });
      in
        {
+         glibc = override "glibc" origPkgs.glibc glibc;
          coreutils = override "coreutils" origPkgs.coreutils coreutils;
          cpio = override "cpio" origPkgs.cpio cpio;
          gnutar = override "tar" origPkgs.gnutar tar;
