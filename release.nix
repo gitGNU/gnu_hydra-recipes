@@ -47,7 +47,9 @@ let
          glibc = origPkgs.lib.overrideDerivation origPkgs.glibc (origAttrs: {
            name = "glibc-${glibcNew.version}";
            src = glibcNew;
-           # Keep `patches' from Nixpkgs.
+           # XXX: Could be useful to keep some of the Nixpkgs patches but
+           # some of them no longer apply.
+           patches = [];
            configureFlags = origPkgs.glibc.configureFlags ++ [ "--disable-multi-arch" ];
            preUnpack = '' src="$(echo $src/tarballs/*.bz2)" '';
          });
