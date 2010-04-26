@@ -73,6 +73,9 @@ mapTestOn {
   #glibc29 = linux;
   #glibcLocales = linux;
   global = linux;
+  glpk = all;
+  gsasl = all;
+  gss = all;
   gnash = linux;
   gnat = linux;
   gnuchess = linux;
@@ -123,6 +126,7 @@ mapTestOn {
   mailutils = linux;
   mcron = linux;
   miscfiles = linux;
+  mitscheme = linux;
   mkisofs = linux;
   mpfr = linux;
   myserver = linux;
