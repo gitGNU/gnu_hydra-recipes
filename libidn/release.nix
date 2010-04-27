@@ -50,7 +50,7 @@ let
         # `help2man' wants to run the programs.
         dontBuild = false;
 
-        patches = [ ./mono-without-binfmt_misc.patch ];
+        patches = [ ./interpreter-path.patch ./mono-without-binfmt_misc.patch ];
 
 	autoconfPhase =
 	  '' # If `git describe' doesn't work, keep the default version
@@ -62,8 +62,6 @@ let
                  sed -i "configure.ac" \
                      -e "s/^AC_INIT(\([^,]\+\), \[\([^,]\+\)\]/AC_INIT(\1, [$version_string]/g"
              fi
-
-             sed -i "doc/gdoc" -e"s|/usr/bin/perl|${pkgs.perl}/bin/perl|g"
 
              # Setting this variable allows Mono to run in a chroot without
              # /tmp (otherwise it just abort()s).
@@ -110,9 +108,6 @@ let
         releaseTools.nixBuild {
           name = "libidn" ;
           src = tarball;
-          patchPhase =
-            '' sed -i "doc/gdoc" -e"s|#!.*/bin/perl|${perl}/bin/perl|g"
-            '';
           preConfigure = "export JAR=gjar MONO_SHARED_DIR=$TMPDIR";
           configureFlags = stdenv.lib.optional stdenv.isLinux "--enable-java";
           buildInputs = buildInputsFrom pkgs;
@@ -125,9 +120,6 @@ let
       releaseTools.coverageAnalysis {
 	name = "libidn-coverage";
 	src = tarball;
-        patchPhase =
-          '' sed -i "doc/gdoc" -e"s|#!.*/bin/perl|${pkgs.perl}/bin/perl|g"
-          '';
         preConfigure = "export JAR=gjar MONO_SHARED_DIR=$TMPDIR";
         configureFlags = "--enable-java";
 	buildInputs = buildInputsFrom (import nixpkgs {});
