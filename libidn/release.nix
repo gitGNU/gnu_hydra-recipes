@@ -27,8 +27,6 @@ let
     maintainers = [ "libidn-commit@gnu.org" pkgs.stdenv.lib.maintainers.ludo ];
   };
 
-  inherit (pkgs) releaseTools;
-
   buildInputsFrom = pkgs: with pkgs;
     [ pkgconfig perl texLive
       help2man docbook_xsl docbook_xml_dtd_412
@@ -43,7 +41,7 @@ let
     tarball =
       { libidnSrc }:
 
-      releaseTools.sourceTarball {
+      pkgs.releaseTools.sourceTarball {
 	name = "libidn-tarball";
 	src = libidnSrc;
 
@@ -117,12 +115,12 @@ let
     coverage =
       { tarball }:
 
-      releaseTools.coverageAnalysis {
+      pkgs.releaseTools.coverageAnalysis {
 	name = "libidn-coverage";
 	src = tarball;
         preConfigure = "export JAR=gjar MONO_SHARED_DIR=$TMPDIR";
         configureFlags = "--enable-java";
-	buildInputs = buildInputsFrom (import nixpkgs {});
+	buildInputs = buildInputsFrom pkgs;
         inherit meta;
       };
 
