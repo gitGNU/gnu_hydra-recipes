@@ -136,6 +136,7 @@ mapTestOn {
   plotutils = linux;
   pth = linux;
   readline = linux;
+  rush = all;
   sharutils = linux;
   texinfo = linux;
   texmacs = linux;
