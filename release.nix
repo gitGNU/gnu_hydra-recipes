@@ -132,6 +132,7 @@ let
 	{ meta = {
 	    description = "NixOS GNU/Linux installation CD (${description}) - ISO image for ${system}-gnu";
 	    maintainers = map (x: lib.getAttr x lib.maintainers) maintainers;
+            schedulingPriority = "10";
 	  };
 	  inherit iso;
 	  passthru = { inherit config; };
