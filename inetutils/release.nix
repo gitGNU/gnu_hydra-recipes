@@ -24,7 +24,7 @@ let
 
   inherit (pkgs) releaseTools;
 
-  buildInputsFrom = pkgs: with pkgs; [ ncurses ];
+  buildInputsFrom = pkgs: with pkgs; [ ncurses shishi ];
 
   jobs = rec {
 
@@ -43,7 +43,10 @@ let
 
         doCheck = false;
 
-        configureFlags = "--with-ncurses-include-dir=${pkgs.ncurses}/include";
+        configureFlags =
+          [ "--with-ncurses-include-dir=${pkgs.ncurses}/include"
+            "--with-shishi=${pkgs.shishi}"
+          ];
 
         autoconfPhase = ''
           cp -Rv "${gnulibSrc}" ../gnulib
@@ -61,7 +64,6 @@ let
         inherit preBuild meta;
       };
 
-    # XXX: Compile `--with-shishi'.
     build =
       { tarball ? jobs.tarball {}
       , system ? "x86_64-linux"
@@ -72,8 +74,27 @@ let
         pkgs.releaseTools.nixBuild {
           name = "inetutils";
           src = tarball;
+          buildInputs = [ pkgs.ncurses ];
+          configureFlags =
+            [ "--with-ncurses-include-dir=${pkgs.ncurses}/include" ];
+          inherit preBuild meta;
+        };
+
+    build_shishi =
+      { tarball ? jobs.tarball {}
+      , system ? "x86_64-linux"
+      }:
+
+      let pkgs = import nixpkgs { inherit system; };
+      in
+        pkgs.releaseTools.nixBuild {
+          name = "inetutils";
+          src = tarball;
           buildInputs = buildInputsFrom pkgs;
-          configureFlags = "--with-ncurses-include-dir=${pkgs.ncurses}/include";
+          configureFlags =
+            [ "--with-ncurses-include-dir=${pkgs.ncurses}/include"
+              "--with-shishi=${pkgs.shishi}"
+            ];
           inherit preBuild meta;
         };
 
@@ -85,7 +106,10 @@ let
 	name = "inetutils-coverage";
 	src = tarball;
 	buildInputs = buildInputsFrom pkgs;
-        configureFlags = "--with-ncurses-include-dir=${pkgs.ncurses}/include";
+        configureFlags =
+          [ "--with-ncurses-include-dir=${pkgs.ncurses}/include"
+            "--with-shishi=${pkgs.shishi}"
+          ];
         inherit preBuild meta;
       };
 
