@@ -56,6 +56,7 @@ let
 	pkgs.releaseTools.nixBuild {
 	  name = "findutils";
 	  src = tarball;
+          buildInputs = [ pkgs.dejagnu ];
 	  inherit meta;
 	};
 
@@ -67,6 +68,7 @@ let
 	pkgs.releaseTools.coverageAnalysis {
 	  name = "findutils-coverage";
 	  src = tarball;
+          buildInputs = [ pkgs.dejagnu ];
 	};
   };
 in
