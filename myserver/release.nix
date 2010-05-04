@@ -54,7 +54,7 @@ let
 
 	buildInputs = (buildInputsFrom pkgs)
           ++ (with pkgs;
-              [ autoconf automake111x perl git
+              [ autoconf automake111x perl git rsync
                 gettext cvs  # cvs is used by `autopoint'
               ]);
 
