@@ -166,5 +166,9 @@ in
            };
       in {
         version = testsuite.version.test;
+
+        # Selected NixOS tests.
+        login = testsuite.login.test;
+        portmap = testsuite.portmap.test;
       };
   }
