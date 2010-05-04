@@ -49,12 +49,12 @@ let
           cp -Rv "${gnulibSrc}" ../gnulib
           chmod -R 755 ../gnulib
 
-          ./bootstrap --gnulib-srcdir=../gnulib --copy
+          ./bootstrap --gnulib-srcdir=../gnulib --copy --skip-po
         '';
 
 	buildInputs = (buildInputsFrom pkgs)
           ++ (with pkgs;
-              [ autoconf automake111x perl git rsync
+              [ autoconf automake111x perl git
                 gettext cvs  # cvs is used by `autopoint'
               ]);
 
