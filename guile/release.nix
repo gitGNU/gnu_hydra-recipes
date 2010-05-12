@@ -167,7 +167,17 @@ let
         patches = [
           "${nixpkgs}/pkgs/development/interpreters/guile/disable-gc-sensitive-tests.patch" 
         ];
-        inherit meta failureHook;
+
+        postCheck =
+          '' echo "Running Scheme code coverage analysis, be patient..."
+             rm -v "test-suite/tests/poe.test"  # for bug #29616
+             ./check-guile --coverage
+          '';
+        lcovExtraTraceFiles = [ "guile.info" ];
+
+        inherit failureHook;
+
+        meta = meta // { schedulingPriority = "20"; };
       };
 
     manual =
