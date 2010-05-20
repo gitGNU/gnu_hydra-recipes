@@ -68,6 +68,23 @@ let
     let
       system = "x86_64-linux";
       pkgs = import nixpkgs { inherit system crossSystem; };
+      crossGNU = (crossSystem.config == "i586-pc-gnu");
+      kernelHeaders =
+        if crossGNU
+        then pkgs.hurdHeaders
+        else pkgs.linuxHeadersCross;
+      CPATH =
+        if crossGNU
+        then "${pkgs.hurdHeaders}/include:${pkgs.machHeaders}/include"
+        else null;
+      extraBuildInputs =
+        if crossGNU
+        then [ pkgs.mig ]
+        else [];
+      propagatedBuildNativeInputs =
+        if crossGNU
+        then [ pkgs.hurdHeaders pkgs.machHeaders ] # XXX: Not really native
+        else [];
     in
       (pkgs.releaseTools.nixBuild {
         name = "glibc";
@@ -80,7 +97,7 @@ let
 
         configureFlags =
           [ "--host=${crossSystem.config}"
-            "--with-headers=${pkgs.linuxHeadersCross}/include"
+            "--with-headers=${kernelHeaders}/include"
             "--enable-kernel=2.6.0"
             "--enable-add-ons"
             "--with-__thread"
@@ -92,9 +109,9 @@ let
              else "--with-fp")
           ];
 
-        buildNativeInputs = buildInputsFrom pkgs;
+        buildNativeInputs = (buildInputsFrom pkgs) ++ extraBuildInputs;
         doCheck = false;
-        inherit preConfigure meta;
+        inherit propagatedBuildNativeInputs CPATH preConfigure meta;
       }).hostDrv;
 
   jobs = rec {
@@ -219,6 +236,17 @@ let
          libc = "glibc";
        };
 
+     xbuild_gnu =
+       # Cross-build for GNU (aka. GNU/Hurd.)
+       makeCrossBuild null {
+        config = "i586-pc-gnu";
+        bigEndian = false;
+        arch = "i586";
+        float = "hard";
+        withTLS = true;
+        platform = pkgs.platforms.pc;
+        libc = "glibc";
+      };
   };
 
 in jobs
