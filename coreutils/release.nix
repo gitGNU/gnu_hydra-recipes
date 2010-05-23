@@ -22,6 +22,7 @@ let
   };
 
   pkgs = import nixpkgs {};
+  crossSystems = (import ../cross-systems.nix) { inherit pkgs; };
 
   buildInputsFrom = pkgs:
     with pkgs; [ perl gmp ] ++ (stdenv.lib.optional stdenv.isLinux acl);
@@ -81,6 +82,24 @@ let
 	buildInputs = buildInputsFrom pkgs ++ [ pkgs.texinfo pkgs.texLive ];
         inherit meta;
       };
+
+    xbuild_gnu =
+      # Cross build to GNU.
+      { tarball ? jobs.tarball {}
+      }:
+
+      let pkgs = import nixpkgs {
+            crossSystem = crossSystems.i586_pc_gnu;
+          };
+      in
+      (pkgs.releaseTools.nixBuild {
+	name = "coreutils" ;
+	src = tarball;
+        buildInputs = [ pkgs.gmp ];
+	buildNativeInputs = [ pkgs.perl ];
+        doCheck = false;
+        inherit meta;
+      }).hostDrv;
 
     coverage =
       { tarball ? jobs.tarball {}
