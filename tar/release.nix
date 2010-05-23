@@ -1,6 +1,7 @@
 {nixpkgs ? ../../nixpkgs}:
 let
   pkgs = import nixpkgs { system = "i686-linux"; };
+  crossSystems = (import ../cross-systems.nix) { inherit pkgs; };
 
   buildInputsFrom = pkgs: [ pkgs.gettext ];
 
@@ -55,6 +56,21 @@ let
              fi
           '';
       };
+
+    xbuild_gnu =
+      # Cross build to GNU.
+      { tarball ? jobs.tarball {}
+      }:
+
+      let pkgs = import nixpkgs {
+            crossSystem = crossSystems.i586_pc_gnu;
+          };
+      in
+      (pkgs.releaseTools.nixBuild {
+        name = "tar" ;
+        src = tarball;
+        doCheck = false;
+      }).hostDrv;
 
     coverage =
       { tarball ? jobs.tarball {}
