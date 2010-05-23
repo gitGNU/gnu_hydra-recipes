@@ -96,7 +96,7 @@ let
 
     # Complete cross bootstrap of GNU from GNU/Linux.
     xbootstrap =
-      { tarball ? jobs.tarball {} }:
+      { tarball ? jobs.tarball }:
 
       let
         pkgs = import nixpkgs {
@@ -110,9 +110,9 @@ let
             name = "${pkgName}-${latestPkg.version}";
             src = latestPkg;
             patches = [];
-            preAutoconf = ":";
+            preConfigure = ":";
 
-            # `makeSourceTarball' puts tarballs in $out/tarballs, so look there.
+            # `sourceTarball' puts tarballs in $out/tarballs, so look there.
             preUnpack =
               ''
                 if test -d "$src/tarballs"; then
@@ -121,12 +121,12 @@ let
               '';
           });
 
-        pkgsOverridden =
+        hurdCrossOverridden =
           # Override the `src' attribute of the Hurd packages.
           # TODO: Handle `hurdLibpthreadCross', `machHeaders', etc. similarly.
           override "hurd" pkgs.hurdCross tarball;
       in
-        pkgsOverridden.hurdCross;
+        hurdCrossOverridden;
    };
 in
   jobs
