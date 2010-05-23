@@ -1,0 +1,15 @@
+Fix "make dist" in `daemons'.
+
+diff --git a/daemons/Makefile b/daemons/Makefile
+index f5e31bc..97f6577 100644
+--- a/daemons/Makefile
++++ b/daemons/Makefile
+@@ -22,7 +22,7 @@ makemode := utilities
+ 
+ targets = rc getty mail.local console-run runttys runsystem
+ special-targets = rc runsystem
+-SRCS = rc.sh getty.c lmail.c console-run.c runttys.c
++SRCS = rc.sh runsystem.sh getty.c lmail.c console-run.c runttys.c
+ installationdir = $(libexecdir)
+ 
+ HURDLIBS = fshelp ports shouldbeinlibc

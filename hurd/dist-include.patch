@@ -1,0 +1,13 @@
+Fix "make dist" in `include'.
+
+diff --git a/include/Makefile b/include/Makefile
+index b923a1a..fda9e89 100644
+--- a/include/Makefile
++++ b/include/Makefile
+@@ -32,3 +32,6 @@ install-headers install: $(installhdrs:%=$(includedir)/%)
+ $(includedir)/%: $(srcdir)/%
+ 	@$(MKINSTALLDIRS) $(@D)
+ 	$(INSTALL_DATA) $< $@
++
++lndist: $(top_srcdir)/hurd-snap/$(dir)
++	cp -r --parent Makefile $(installhdrs) $<

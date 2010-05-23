@@ -1,0 +1,38 @@
+Fix "make dist" in `mach-defpager'.  Assumes that the required source files
+have been copied here from ../serverboot.
+
+diff --git a/mach-defpager/Makefile b/mach-defpager/Makefile
+index 5ed8f11..b95584b 100644
+--- a/mach-defpager/Makefile
++++ b/mach-defpager/Makefile
+@@ -27,15 +27,13 @@ OBJS 	:= $(SRCS:.c=.o) \
+ 	   $(addsuffix Server.o,\
+ 		       memory_object default_pager memory_object_default exc) \
+ 	   default_pager_replyUser.o
++LCLHDRS := file_io.h queue.h wiring.h
+ 
+ HURDLIBS:= threads
+ LDFLAGS += -static
+ 
+ include ../Makeconf
+ 
+-vpath %.c $(srcdir)/../serverboot
+-CPPFLAGS += -I$(srcdir)/../serverboot
+-
+ MIGSFLAGS = -DSEQNOS
+ 
+ # Don't even bother.
+
+diff --git a/mach-defpager/setup.c b/mach-defpager/setup.c
+index aea4310..5ee2873 100644
+--- a/mach-defpager/setup.c
++++ b/mach-defpager/setup.c
+@@ -27,7 +27,7 @@
+ #include "default_pager_S.h"
+ 
+ /* This should be in some system header...  XXX  */
+-static inline int page_aligned (vm_offset_t num)
++int page_aligned (vm_offset_t num)
+ {
+   return trunc_page (num) == num;
+ }

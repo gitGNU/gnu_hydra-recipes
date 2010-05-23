@@ -1,0 +1,15 @@
+Fix "make dist" in `sutils'.
+
+diff --git a/sutils/Makefile b/sutils/Makefile
+index be2da53..229d77b 100644
+--- a/sutils/Makefile
++++ b/sutils/Makefile
+@@ -25,7 +25,7 @@ scripts = e2os MAKEDEV losetup
+ targets = $(special-targets) $(progs)
+ special-targets = $(scripts)
+ installationdir = $(sbindir)
+-SRCS = $(progs:=.c) $(scripts:=.sh)
++SRCS = $(progs:=.c) clookup.c fstab.c update.c $(scripts:=.sh)
+ LCLHDRS = fstab.h
+ 
+ OBJS = $(progs:=.c)

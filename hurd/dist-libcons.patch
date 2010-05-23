@@ -1,0 +1,15 @@
+Fix "make dist" in `libcons'.
+
+diff --git a/libcons/Makefile b/libcons/Makefile
+index f3bab3f..53b32ee 100644
+--- a/libcons/Makefile
++++ b/libcons/Makefile
+@@ -24,7 +24,7 @@ SRCS= demuxer.c init-init.c init-loop.c opts-version.c extra-version.c \
+       cons-switch.c vcons-remove.c vcons-add.c vcons-open.c \
+       vcons-close.c vcons-destroy.c vcons-refresh.c vcons-scrollback.c \
+       vcons-input.c vcons-move-mouse.c vcons-event.c
+-LCLHDRS = priv.h mutations.h
++LCLHDRS = priv.h mutations.h $(installhdrs)
+ installhdrs = cons.h
+ 
+ fs_notify-MIGSFLAGS = -imacros $(srcdir)/mutations.h
