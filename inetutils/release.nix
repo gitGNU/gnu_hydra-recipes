@@ -21,6 +21,7 @@ let
   preBuild = "export V=99";
 
   pkgs = import nixpkgs {};
+  crossSystems = (import ../cross-systems.nix) { inherit pkgs; };
 
   inherit (pkgs) releaseTools;
 
@@ -97,6 +98,24 @@ let
             ];
           inherit preBuild meta;
         };
+
+    xbuild_gnu =
+      # Cross build to GNU.
+      { tarball ? jobs.tarball {}
+      }:
+
+      let pkgs = import nixpkgs {
+            crossSystem = crossSystems.i586_pc_gnu;
+          };
+      in
+        (pkgs.releaseTools.nixBuild {
+          name = "inetutils" ;
+          src = tarball;
+          buildInputs = [ pkgs.ncurses ];
+          configureFlags =
+            [ "--with-ncurses-include-dir=${pkgs.ncurses}/include" ];
+          doCheck = false;
+        }).hostDrv;
 
     coverage =
       { tarball ? jobs.tarball {}
