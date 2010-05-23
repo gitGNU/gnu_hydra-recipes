@@ -4,6 +4,7 @@
 
 let
   pkgs = import nixpkgs {};
+  crossSystems = (import ../cross-systems.nix) { inherit pkgs; };
 
   meta = {
     description = "GNU Patch, a program to apply differences to files";
@@ -60,6 +61,21 @@ let
             '';
           inherit meta;
         };
+
+    xbuild_gnu =
+      # Cross build to GNU.
+      { tarball ? jobs.tarball }:
+
+      let pkgs = import nixpkgs {
+            crossSystem = crossSystems.i586_pc_gnu;
+          };
+      in
+      (pkgs.releaseTools.nixBuild {
+	name = "patch" ;
+	src = tarball;
+        doCheck = false;
+        inherit meta;
+      }).hostDrv;
 
     coverage =
       { tarball ? jobs.tarball }:
