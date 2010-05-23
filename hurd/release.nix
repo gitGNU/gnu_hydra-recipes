@@ -99,34 +99,48 @@ let
       { tarball ? jobs.tarball }:
 
       let
+        overrideHurdPackages = pkgs:
+
+          # Override the `src' attribute of the Hurd packages.
+          # TODO: Handle `hurdLibpthreadCross', `machHeaders', etc. similarly.
+          let
+            override = pkgName: origPkg: latestPkg:
+              builtins.trace "overridding `${pkgName}'..."
+              (pkgs.lib.overrideDerivation origPkg (origAttrs: {
+                name = "${pkgName}-${latestPkg.version}";
+                src = latestPkg;
+                patches = [];
+                preConfigure = ":";
+
+                # `sourceTarball' puts tarballs in $out/tarballs, so look there.
+                preUnpack =
+                  ''
+                    if test -d "$src/tarballs"; then
+                        src=$(ls -1 "$src/tarballs/"*.tar.bz2 "$src/tarballs/"*.tar.gz | sort | head -1)
+                    fi
+                  '';
+              }));
+          in
+            {
+              hurdCross = override "hurd" pkgs.hurdCross tarball;
+              hurdHeaders = override "hurd-headers" pkgs.hurdHeaders tarball;
+              hurdCrossIntermediate =
+                 override "hurd-minimal" pkgs.hurdCrossIntermediate tarball;
+            };
+
         pkgs = import nixpkgs {
           system = "x86_64-linux";               # build platform
           crossSystem = crossSystems.i586_pc_gnu; # host platform
+          config = { packageOverrides = overrideHurdPackages; };
         };
-
-        override = pkgName: origPkg: latestPkg:
-          # Override the `src' attribute of `origPkg' with `latestPkg'.
-          pkgs.lib.overrideDerivation origPkg (origAttrs: {
-            name = "${pkgName}-${latestPkg.version}";
-            src = latestPkg;
-            patches = [];
-            preConfigure = ":";
-
-            # `sourceTarball' puts tarballs in $out/tarballs, so look there.
-            preUnpack =
-              ''
-                if test -d "$src/tarballs"; then
-                    src=$(ls -1 "$src/tarballs/"*.tar.bz2 "$src/tarballs/"*.tar.gz | sort | head -1)
-                fi
-              '';
-          });
-
-        hurdCrossOverridden =
-          # Override the `src' attribute of the Hurd packages.
-          # TODO: Handle `hurdLibpthreadCross', `machHeaders', etc. similarly.
-          override "hurd" pkgs.hurdCross tarball;
       in
-        hurdCrossOverridden;
+        (pkgs.releaseTools.nixBuild {
+          name = "hurd";
+          src = tarball;
+          propagatedBuildNativeInputs = [ pkgs.machHeaders ];
+          buildNativeInputs = [ pkgs.mig ];
+          inherit meta;
+        }).hostDrv;
    };
 in
   jobs
