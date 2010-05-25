@@ -28,10 +28,9 @@ let
         name = "libredwg";
         src = libredwgSrc;
         buildInputs =
-          [ gettext texinfo
+          [ gettext texinfo automake111x
           ];
         inherit meta;
-        automake = pkgs.automake111x;
       };
 
     build =

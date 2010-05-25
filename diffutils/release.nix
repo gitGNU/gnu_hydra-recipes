@@ -42,14 +42,13 @@ let
           cvs
           texinfo
           perl
+          automake111x
           autoconf
           rsync
           gperf
           help2man
           xz
         ] ;
-
-        automake = pkgs.automake111x;
       };
 
     build =

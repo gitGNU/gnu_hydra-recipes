@@ -55,6 +55,7 @@ let
         '';
 
 	buildInputs = with pkgs; [
+          automake111x
           texinfo
           gettext
           git 
@@ -62,7 +63,7 @@ let
           rsync
           xz
 	];
-        automake = pkgs.automake111x;
+
         inherit meta;
       };
 

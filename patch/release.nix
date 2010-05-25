@@ -32,15 +32,13 @@ let
         name = "patch";
         src = patchSrc;
         buildInputs =
-          [ git xz gettext texinfo
+          [ git xz gettext texinfo automake111x
             bison # the `testing' branch needs it
           ];
         autoconfPhase =
           '' git config submodule.gnulib.url "${gnulib}"
              ./bootstrap --gnulib-srcdir="${gnulib}" --skip-po
           '';
-
-        automake = pkgs.automake111x;
         inherit meta;
       };
 

@@ -47,6 +47,7 @@ let
         '';
 
 	buildInputs = [
+          automake111x
           texinfo
           gettext
           git 
@@ -58,8 +59,6 @@ let
           gperf
           cvs
 	];
-
-        automake = pkgs.automake111x;
       };
 
     build =

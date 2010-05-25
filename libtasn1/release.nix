@@ -44,13 +44,11 @@ let
         configureFlags = [ "--enable-gtk-doc" ];
 
 	buildInputs = with pkgs; [
-	  autoconf libtool help2man
+	  autoconf automake111x libtool help2man
 	  git texinfo
           gnome.gtkdoc pkgconfig perl texLive docbook_xsl
           libxml2 /* for the setup hook */
 	];
-
-        automake = pkgs.automake111x;
 
         inherit meta;
       };

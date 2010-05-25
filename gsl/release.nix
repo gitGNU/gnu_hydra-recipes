@@ -43,9 +43,7 @@ let
           '';
 	buildInputs =
           with pkgs;
-            [ autoconf git texinfo];
-
-        automake = pkgs.automake111x;
+            [ autoconf automake111x git texinfo];
 
         inherit meta;
       };

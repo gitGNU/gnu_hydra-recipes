@@ -41,6 +41,7 @@ let
 	src = coreutilsSrc;
 
 	buildInputs = [
+	  automake111x
 	  bison
 	  gettext_0_18
 	  git
@@ -50,8 +51,6 @@ let
 	  cvs
 	  xz
 	] ++ buildInputsFrom pkgs;
-
-        automake = pkgs.automake111x;
 
 	dontBuild = false;
 
