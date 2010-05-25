@@ -188,8 +188,7 @@ let
         postCheck =
           '' echo "Running Scheme code coverage analysis, be patient..."
              rm -v "test-suite/tests/poe.test"  # for bug #29616
-             rm -v "test-suite/tests/socket.test"  # takes 3600+ seconds (?!)
-             ./check-guile --coverage
+             stdbuf -o 0 -e 0 ./check-guile --coverage
           '';
         lcovExtraTraceFiles = [ "guile.info" ];
 
