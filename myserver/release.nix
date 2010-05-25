@@ -54,9 +54,11 @@ let
 
 	buildInputs = (buildInputsFrom pkgs)
           ++ (with pkgs;
-              [ autoconf automake111x perl git
+              [ autoconf perl git
                 gettext cvs  # cvs is used by `autopoint'
               ]);
+
+        automake = pkgs.automake111x;
 
         inherit meta;
       };

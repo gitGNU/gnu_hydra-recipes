@@ -18,7 +18,7 @@ let
 	src = libgpgerrorSrc;
 
 	buildInputs = (buildInputsFrom pkgs) ++ (with pkgs; [
-	  autoconf automake111x libtool
+	  autoconf libtool
 	  subversion texinfo
 	]);
 
@@ -28,6 +28,7 @@ let
              rm -fv m4/libtool* m4/lt* libtool build-aux/lt*
              libtoolize --install --force
           '';
+        automake = pkgs.automake111x;
       };
 
     build =

@@ -58,9 +58,11 @@ let
 
 	buildInputs = (buildInputsFrom pkgs)
           ++ (with pkgs;
-              [ autoconf automake111x bison perl git
+              [ autoconf bison perl git
                 texinfo help2man
               ]);
+
+        automake = pkgs.automake111x;
 
         inherit preBuild meta;
       };

@@ -43,7 +43,6 @@ let
         '';
 
 	buildInputs = with pkgs; [
-          automake111x
           pkgconfig
           texinfo
           gettext
@@ -53,6 +52,8 @@ let
           xz
           cvs
 	];
+   
+        automake = pkgs.automake111x;
       };
 
     build =

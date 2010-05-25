@@ -42,11 +42,11 @@ let
 	buildInputs = (buildInputsFrom pkgs)
           ++ [ libgpgerror ]
           ++ (with pkgs; [
-	       autoconf automake111x
+	       autoconf
                libtool_1_5 # the repo contains Libtool 1.5's `ltmain.sh', etc.
 	       subversion texinfo transfig ghostscript
 	      ]);
-
+        automake = pkgs.automake111x;
         inherit meta;
       };
 

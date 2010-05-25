@@ -35,13 +35,14 @@ let
         name = "parted";
         src = partedSrc;
         buildInputs =
-          [ git xz gettext texinfo automake111x perl rsync gperf man cvs
+          [ git xz gettext texinfo perl rsync gperf man cvs
             devicemapper libuuid gettext readline pkgconfig # utillinuxng
           ];
         autoconfPhase =
           '' git config submodule.gnulib.url "${gnulib}"
              ./bootstrap --gnulib-srcdir="${gnulib}" --skip-po
           '';
+        automake = automake111x;
         inherit meta;
       };
 

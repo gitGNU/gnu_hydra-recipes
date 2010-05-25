@@ -63,9 +63,11 @@ let
 	'';
 
 	buildInputs = with pkgs; [
-          autoconf automake111x libtool texinfo git
+          autoconf libtool texinfo git
           wget perl gperf
 	];
+        
+        automake = pkgs.automake111x;
 
         inherit meta;
       };

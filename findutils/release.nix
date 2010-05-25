@@ -32,7 +32,7 @@ let
 	name = "findutils-tarball";
 	src = findutilsSrc;
 	buildInputs =
-          [ automake111x gettext gperf bison groff git
+          [ gettext gperf bison groff git
             texinfo xz
             cvs # for `autopoint'
           ];
@@ -44,6 +44,7 @@ let
              chmod -R u+w ../gnulib
              sh ./import-gnulib.sh -d ../gnulib
 	  '';
+        automake = pkgs.automake111x;
 	inherit meta;
       };
 

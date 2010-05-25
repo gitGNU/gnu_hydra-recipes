@@ -37,8 +37,9 @@ let
           rsync
           gnum4
           bison
-          automake111x
         ] ++ buildInputsFrom pkgs;
+
+        automake = pkgs.automake111x;
       };
 
     build =
