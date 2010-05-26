@@ -20,7 +20,7 @@ let
   pkgs = import nixpkgs { system = "i686-linux"; };
   crossSystems = (import ../cross-systems.nix) { inherit pkgs; };
 
-  buildInputsFrom = pkgs: [ pkgs.gettext ];
+  buildInputsFrom = pkgs: [ pkgs.gettext_0_18 ];
 
   jobs = {
 
