@@ -63,7 +63,7 @@ let
           automake111x
           pkgconfig
           texinfo
-          gettext
+          gettext_0_18
           git 
           perl
           rsync
