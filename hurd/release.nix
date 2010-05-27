@@ -120,13 +120,12 @@ let
 
           # Override the `src' attribute of the Hurd packages.
           let
-            override = pkgName: origPkg: latestPkg:
+            override = pkgName: origPkg: latestPkg: clearPreConfigure:
               builtins.trace "overridding `${pkgName}'..."
               (pkgs.lib.overrideDerivation origPkg (origAttrs: {
                 name = "${pkgName}-${latestPkg.version}";
                 src = latestPkg;
                 patches = [];
-                preConfigure = ":";
 
                 # `sourceTarball' puts tarballs in $out/tarballs, so look there.
                 preUnpack =
@@ -135,15 +134,19 @@ let
                         src=$(ls -1 "$src/tarballs/"*.tar.bz2 "$src/tarballs/"*.tar.gz | sort | head -1)
                     fi
                   '';
-              }));
+              }
+              //
+              (if clearPreConfigure
+               then { preConfigure = ":"; }
+               else {})));
           in
             {
               # TODO: Handle `hurdLibpthreadCross', `machHeaders', etc. similarly.
-              glibcCross = override "glibc" pkgs.glibcCross glibcTarball;
-              hurdCross = override "hurd" pkgs.hurdCross tarball;
-              hurdHeaders = override "hurd-headers" pkgs.hurdHeaders tarball;
+              glibcCross = override "glibc" pkgs.glibcCross glibcTarball false;
+              hurdCross = override "hurd" pkgs.hurdCross tarball true;
+              hurdHeaders = override "hurd-headers" pkgs.hurdHeaders tarball true;
               hurdCrossIntermediate =
-                 override "hurd-minimal" pkgs.hurdCrossIntermediate tarball;
+                 override "hurd-minimal" pkgs.hurdCrossIntermediate tarball true;
             };
 
         pkgs = import nixpkgs {
