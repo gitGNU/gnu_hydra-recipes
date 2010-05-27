@@ -112,13 +112,13 @@ let
 
     # Complete cross bootstrap of GNU from GNU/Linux.
     xbootstrap =
-      { tarball ? jobs.tarball }:
+      { tarball ? jobs.tarball
+      , glibcTarball }:
 
       let
         overrideHurdPackages = pkgs:
 
           # Override the `src' attribute of the Hurd packages.
-          # TODO: Handle `hurdLibpthreadCross', `machHeaders', etc. similarly.
           let
             override = pkgName: origPkg: latestPkg:
               builtins.trace "overridding `${pkgName}'..."
@@ -138,6 +138,8 @@ let
               }));
           in
             {
+              # TODO: Handle `hurdLibpthreadCross', `machHeaders', etc. similarly.
+              glibcCross = override "glibc" pkgs.glibcCross glibcTarball;
               hurdCross = override "hurd" pkgs.hurdCross tarball;
               hurdHeaders = override "hurd-headers" pkgs.hurdHeaders tarball;
               hurdCrossIntermediate =
