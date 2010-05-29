@@ -144,18 +144,18 @@ let
           # to check whether `NEWS' is up to date wrt. the version number.
           # The assumption is that `nix-prefetch-git' left the `.git'
           # directory in there.
-          '' version_string="$((git describe || echo git) | sed -es/release_//g | tr - .)"
-             sed -i "GUILE-VERSION" \
-                 -es"/^\(GUILE_VERSION=\).*$/\1$version_string/g"
+          '' if [ ! -f build-aux/git-version-gen ]
+             then
+                 version_string="$((git describe || echo git) | sed -es/release_//g | tr - .)"
+                 sed -i "GUILE-VERSION" \
+                     -es"/^\(GUILE_VERSION=\).*$/\1$version_string/g"
+             fi
 
              # In `branch_release-1-8' we still use the old name.
-             if test -f "configure.ac"
+             if test -f "configure.in"
              then
-                 configure_ac="configure.ac"
-             else
-                 configure_ac="configure.in"
+                 sed -i "configure.in" -es"/check-news//g"
              fi
-             sed -i "$configure_ac" -es"/check-news//g"
           '';
         patches = [ ./disable-version-test.patch ];
 
