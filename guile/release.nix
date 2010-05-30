@@ -47,7 +47,10 @@ let
   defaultConfigureFlags = pkgs:
      with pkgs;
 
-     ((stdenv.lib.optional stdenv.isLinux "--enable-error-on-warning")
+     # FIXME: Temporarily commented out because of libunistring issues.
+     # http://lists.gnu.org/archive/html/bug-gnulib/2010-05/msg00226.html
+     (#(stdenv.lib.optional stdenv.isLinux "--enable-error-on-warning")
+      []
 
      # The `--with' flags below aren't strictly needed, except on Cygwin
      # where the added `-L' linker flags help Libtool find the dlls, which in
