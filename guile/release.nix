@@ -149,18 +149,15 @@ let
           # directory in there.
           '' if [ ! -f build-aux/git-version-gen ]
              then
+                 # Do it the old way for 1.8.
                  version_string="$((git describe || echo git) | sed -es/release_//g | tr - .)"
                  sed -i "GUILE-VERSION" \
                      -es"/^\(GUILE_VERSION=\).*$/\1$version_string/g"
-             fi
 
-             # In `branch_release-1-8' we still use the old name.
-             if test -f "configure.in"
-             then
                  sed -i "configure.in" -es"/check-news//g"
+                 patch -p1 --batch < ${./disable-version-test.patch}
              fi
           '';
-        patches = [ ./disable-version-test.patch ];
 
         buildPhase =
           '' make
