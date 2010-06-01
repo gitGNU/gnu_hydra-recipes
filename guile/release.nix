@@ -186,9 +186,13 @@ let
         ];
 
         postCheck =
-          '' echo "Running Scheme code coverage analysis, be patient..."
+          '' echo "running Scheme code coverage analysis, be patient..."
              rm -v "test-suite/tests/poe.test"  # for bug #29616
              stdbuf -o 0 -e 0 ./check-guile --coverage
+
+             echo "checking the contents of \`guile.info':"
+             cat guile.info | grep 'vlist\.scm'
+             echo "(done)"
           '';
         lcovExtraTraceFiles = [ "guile.info" ];
 
