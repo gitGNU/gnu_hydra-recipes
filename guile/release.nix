@@ -139,7 +139,8 @@ let
           texinfo
         ] ++ buildInputsFrom pkgs;
 
-        # make dist fails without this, so for now do make, make dist..
+        # "make dist" needs to generate Texinfo files in `doc/ref' using the
+        # just-built guile.
         dontBuild = false;
 
         preAutoconf =
@@ -157,6 +158,8 @@ let
                  sed -i "configure.in" -es"/check-news//g"
                  patch -p1 --batch < ${./disable-version-test.patch}
              fi
+
+             ulimit -c unlimited
           '';
 
         buildPhase =
