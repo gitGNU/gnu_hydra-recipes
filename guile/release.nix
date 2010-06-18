@@ -193,9 +193,9 @@ let
              rm -v "test-suite/tests/poe.test"  # for bug #29616
              stdbuf -o 0 -e 0 ./check-guile --coverage
 
-             echo "checking the contents of \`guile.info':"
-             cat guile.info | grep 'vlist\.scm'
-             echo "(done)"
+             # Publish the raw LCOV info file.
+             cp -v guile.info "$out/"
+             echo "report lcov-scheme $out/guile.info" >> $out/nix-support/hydra-build-products
           '';
         lcovExtraTraceFiles = [ "guile.info" ];
 
