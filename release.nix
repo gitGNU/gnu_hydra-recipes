@@ -109,6 +109,9 @@ let
       pkgs.emacs
       pkgs.zile
 
+      # Debugging tools
+      pkgs.gdb
+
       # Last but not least...
       pkgs.guile_1_9
     ];
