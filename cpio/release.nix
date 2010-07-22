@@ -19,8 +19,17 @@
 let
   pkgs = import nixpkgs {};
 
-  buildInputsFrom = pkgs: with pkgs; [
-  ];
+  buildInputsFrom = pkgs: [];
+
+  failureHook =
+    '' if [ -f tests/testsuite.log ]
+       then
+           echo
+           echo "Test suite failed, dumping \`testsuite.log'."
+           echo
+           cat tests/testsuite.log
+       fi
+    '';
 
   jobs = rec {
 
@@ -69,6 +78,7 @@ let
         name = "cpio" ;
         src = tarball;
         buildInputs = buildInputsFrom pkgs;
+        inherit failureHook;
       };
 
   };
