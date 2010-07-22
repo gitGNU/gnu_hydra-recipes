@@ -18,6 +18,7 @@
 {nixpkgs ? ../../nixpkgs}:
 let
   pkgs = import nixpkgs {};
+  crossSystems = (import ../cross-systems.nix) { inherit pkgs; };
 
   buildInputsFrom = pkgs: [];
 
@@ -80,6 +81,22 @@ let
         buildInputs = buildInputsFrom pkgs;
         inherit failureHook;
       };
+
+    xbuild_gnu =
+      # Cross build to GNU.
+      { tarball ? jobs.tarball {}
+      }:
+
+      let pkgs = import nixpkgs {
+            crossSystem = crossSystems.i586_pc_gnu;
+          };
+      in
+      (pkgs.releaseTools.nixBuild {
+	name = "cpio" ;
+	src = tarball;
+        buildInputs = buildInputsFrom pkgs;
+        doCheck = false;
+      }).hostDrv;
 
   };
 
