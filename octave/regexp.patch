@@ -1,0 +1,22 @@
+diff -rc octave2/doc/interpreter/mk_doc_cache.m octave3/doc/interpreter/mk_doc_cache.m
+*** octave2/doc/interpreter/mk_doc_cache.m	2010-07-27 17:59:58.000000000 +0200
+--- octave3/doc/interpreter/mk_doc_cache.m	2010-07-27 20:00:32.000000000 +0200
+***************
+*** 45,52 ****
+  text = [text{:}, doc_delim];
+  
+  ## Modify Octave-specific macros before passing to makeinfo
+! text = regexprep (text, "@seealso *{([^}]*)}", "See also: $1.");
+! text = regexprep (text, "@nospell *{([^}]*)}", "$1");
+  text = regexprep (text, "-\\*- texinfo -\\*-[ \t]*[\r\n]*", "");
+  text = regexprep (text, "@", "@@");
+  
+--- 45,52 ----
+  text = [text{:}, doc_delim];
+  
+  ## Modify Octave-specific macros before passing to makeinfo
+! text = regexprep (text, "@seealso *\{([^}]*)\}", "See also: $1.");
+! text = regexprep (text, "@nospell *\{([^}]*)\}", "$1");
+  text = regexprep (text, "-\\*- texinfo -\\*-[ \t]*[\r\n]*", "");
+  text = regexprep (text, "@", "@@");
+  

@@ -45,6 +45,8 @@ let
           ./autogen.sh --gnulib-srcdir=../gnulib --skip-po --copy
         '';
 
+        patches = [./regexp.patch];
+
 	buildInputs = [
           flex2535 git gperf texinfo bison texLive automake111x gfortran readline ncurses perl qhull blas liblapack
 	];
