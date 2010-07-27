@@ -19,7 +19,7 @@
 let
   pkgs = import nixpkgs {};
 
-  buildInputsFrom = pkgs: with pkgs; [ perl m4 ];
+  buildInputsFrom = pkgs: with pkgs; [ xz perl m4 ];
 
   jobs = rec {
 
