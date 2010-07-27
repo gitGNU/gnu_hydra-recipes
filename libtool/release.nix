@@ -18,6 +18,35 @@
 
 let
   pkgs = import nixpkgs {};
+  crossSystems = (import ../cross-systems.nix) { inherit pkgs; };
+
+  preCheck =
+    # Avoid interference from the ld wrapper.
+    '' export NIX_DONT_SET_RPATH=1
+       unset NIX_LD_WRAPPER_EXEC_HOOK
+
+       unset NIX_CFLAGS_COMPILE
+       unset NIX_CFLAGS_LINK
+       unset NIX_LDFLAGS_BEFORE
+       unset NIX_LDFLAGS
+       unset NIX_LDFLAGS_AFTER
+       unset NIX_GCC_WRAPPER_FLAGS_SET
+
+       unset NIX_CROSS_CFLAGS_COMPILE
+       unset NIX_CROSS_CFLAGS_LINK
+       unset NIX_CROSS_LDFLAGS_BEFORE
+       unset NIX_CROSS_LDFLAGS
+       unset NIX_CROSS_LDFLAGS_AFTER
+    '';
+
+  failureHook =
+    '' if [ -f tests/testsuite.log ]
+       then
+           echo
+           echo "build failed, dumping test log..."
+           cat tests/testsuite.log
+       fi
+    '';
 
   inherit (pkgs) releaseTools;
 
@@ -67,25 +96,30 @@ let
           name = "libtool";
           src = tarball;
           buildInputs = [ autoconf automake ];
-
-          preCheck =
-            # Avoid interference from the ld wrapper.
-            '' export NIX_DONT_SET_RPATH=1
-               unset NIX_LD_WRAPPER_EXEC_HOOK
-               unset NIX_LDFLAGS
-               unset NIX_LDFLAGS_BEFORE
-               unset NIX_GCC_WRAPPER_FLAGS_SET
-            '';
-
-          failureHook =
-            '' if [ -f tests/testsuite.log ]
-               then
-                   echo
-                   echo "build failed, dumping test log..."
-                   cat tests/testsuite.log
-               fi
-            '';
+          inherit preCheck failureHook;
         };
+
+    xbuild_gnu =
+      # Cross build to GNU.
+      { tarball ? jobs.tarball {}
+      , autoconf ? pkgs.autoconf
+      , automake ? pkgs.automake
+      }:
+
+      let pkgs = import nixpkgs {
+            crossSystem = crossSystems.i586_pc_gnu;
+          };
+      in
+      (pkgs.releaseTools.nixBuild {
+	name = "libtool" ;
+	src = tarball;
+        buildNativeInputs = [ autoconf automake ];
+
+        # The test suite can run in cross-compilation mode.
+        doCheck = true;
+
+        inherit preCheck failureHook;
+      }).hostDrv;
 
     manual =
       { tarball ? jobs.tarball {}
