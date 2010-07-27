@@ -67,7 +67,9 @@ let
       pkgs.releaseTools.nixBuild {
         name = "autoconf-manual";
         src = tarball;
-        buildInputs = [ pkgs.texinfo pkgs.texLive ] ++ (buildInputsFrom pkgs);
+        buildInputs =
+          [ pkgs.texinfo pkgs.texLive pkgs.texLiveCMSuper ]
+          ++ (buildInputsFrom pkgs);
 
         buildPhase = "make html pdf";
         doCheck = false;
