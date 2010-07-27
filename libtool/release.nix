@@ -76,6 +76,15 @@ let
                unset NIX_LDFLAGS_BEFORE
                unset NIX_GCC_WRAPPER_FLAGS_SET
             '';
+
+          failureHook =
+            '' if [ -f tests/testsuite.log ]
+               then
+                   echo
+                   echo "build failed, dumping test log..."
+                   cat tests/testsuite.log
+               fi
+            '';
         };
 
     manual =
