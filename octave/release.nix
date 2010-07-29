@@ -45,6 +45,7 @@ let
           ./autogen.sh --gnulib-srcdir=../gnulib --skip-po --copy
         '';
 
+        configureFlags = "--disable-doc";
 	buildInputs = [
           flex2535 git gperf texinfo bison texLive automake111x gfortran readline ncurses perl qhull blas liblapack
 	];
