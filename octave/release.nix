@@ -23,6 +23,8 @@ let
 
   pkgs = import nixpkgs {};
   
+  buildInputsFrom = pkgs: with pkgs; [gfortran readline ncurses perl qhull blas liblapack pcre imagemagick gnuplot] ;
+  
   jobs = rec {
 
     tarball = 
@@ -31,10 +33,11 @@ let
       }: 
       with pkgs;
       releaseTools.makeSourceTarball {
-	name = "octave-tarball";
-	src = octave;
+        name = "octave-tarball";
+        src = octave;
         inherit meta;
         dontBuild = false;
+        
         autoconfPhase = ''
           # Disable Automake's `check-news' so that "make dist" always works.
           sed -i "configure.ac" -es/gnits/gnu/g
@@ -45,10 +48,8 @@ let
           ./autogen.sh --gnulib-srcdir=../gnulib --skip-po --copy
         '';
 
-        configureFlags = "--disable-doc";
-	buildInputs = [
-          flex2535 git gperf texinfo bison texLive automake111x gfortran readline ncurses perl qhull blas liblapack pcre
-	];
+        buildInputs = [
+          flex2535 git gperf texinfo bison texLive automake111x ] ++ buildInputsFrom pkgs ;
       };
 
     build =
@@ -58,10 +59,10 @@ let
       let pkgs = import nixpkgs { inherit system;} ;
       in with pkgs;
       releaseTools.nixBuild {
-	name = "octave" ;
-	src = tarball;
+        name = "octave" ;
+        src = tarball;
         inherit meta;
-	buildInputs = [];
+        buildInputs = buildInputsFrom pkgs;
       };
 
     coverage =
@@ -72,7 +73,7 @@ let
         name = "octave-coverage";
         src = tarball;
         inherit meta;
-        buildInputs = [ gfortran readline ncurses perl qhull blas liblapack pcre ];
+        buildInputs = buildInputsFrom pkgs;
       };
 
   };
