@@ -34,7 +34,7 @@ let
 	name = "octave-tarball";
 	src = octave;
         inherit meta;
-        dontBuild = false;
+#        dontBuild = false;
         autoconfPhase = ''
           # Disable Automake's `check-news' so that "make dist" always works.
           sed -i "configure.ac" -es/gnits/gnu/g
@@ -47,7 +47,7 @@ let
 
         configureFlags = "--disable-doc";
 	buildInputs = [
-          flex2535 git gperf texinfo bison texLive automake111x gfortran readline ncurses perl qhull blas liblapack
+          flex2535 git gperf texinfo bison texLive automake111x gfortran readline ncurses perl qhull blas liblapack pcre
 	];
       };
 
