@@ -49,7 +49,7 @@ let
         '';
 
         buildInputs = [
-          flex2535 git gperf texinfo bison texLive automake111x curl fltk20 qrupdate suitesparse ] ++ buildInputsFrom pkgs ;
+          flex2535 git gperf texinfo bison texLive automake111x curl fltk11 qrupdate suitesparse ] ++ buildInputsFrom pkgs ;
       };
 
     build =
