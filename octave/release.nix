@@ -72,7 +72,7 @@ let
         name = "octave-coverage";
         src = tarball;
         inherit meta;
-        buildInputs = [];
+        buildInputs = [ gfortran readline ncurses perl qhull blas liblapack pcre ];
       };
 
   };
