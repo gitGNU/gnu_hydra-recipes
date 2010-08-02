@@ -23,7 +23,7 @@ let
 
   pkgs = import nixpkgs {};
   
-  buildInputsFrom = pkgs: with pkgs; [gfortran readline ncurses perl qhull blas liblapack pcre imagemagick gnuplot] ;
+  buildInputsFrom = pkgs: with pkgs; [gfortran readline ncurses perl qhull blas liblapack pcre imagemagick gnuplot fftw zlib ghostscript xfig pstoedit] ;
   
   jobs = rec {
 
