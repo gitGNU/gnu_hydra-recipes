@@ -23,7 +23,7 @@ let
 
   pkgs = import nixpkgs {};
   
-  buildInputsFrom = pkgs: with pkgs; [gfortran readline ncurses perl qhull blas liblapack pcre imagemagick gnuplot fftw zlib ghostscript transfig xfig pstoedit hdf5 texinfo qrupdate suitesparse curl fltk11] ;
+  buildInputsFrom = pkgs: with pkgs; [gfortran readline ncurses perl qhull blas liblapack pcre imagemagick gnuplot fftw zlib ghostscript transfig xfig pstoedit hdf5 texinfo qrupdate suitesparse curl fltk11 texLive] ;
   
   jobs = rec {
 
@@ -49,7 +49,7 @@ let
         '';
 
         buildInputs = [
-          flex2535 git gperf bison texLive automake111x] ++ buildInputsFrom pkgs ;
+          flex2535 git gperf bison automake111x] ++ buildInputsFrom pkgs ;
       };
 
     build =
