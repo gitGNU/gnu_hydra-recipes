@@ -52,14 +52,6 @@ let
         patches =
           [ ./dist-pfinet.patch
             ./dist-mach-defpager.patch
-            ./dist-console-client.patch
-            ./dist-libthreads.patch
-            ./dist-exec.patch
-            ./dist-libcons.patch
-            ./dist-serverboot.patch
-            ./dist-daemons.patch
-            ./dist-sutils.patch
-            ./dist-include.patch
           ];
         postPatch =
           '' # `mach-defpager' depends on code from `serverboot', but the
