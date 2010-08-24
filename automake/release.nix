@@ -1,5 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
-   Copyright (C) 2009  Ludovic Courtès <ludo@gnu.org>
+   Copyright (C) 2009, 2010  Ludovic Courtès <ludo@gnu.org>
    Copyright (C) 2009  Rob Vermaas <rob.vermaas@gmail.com>
 
    This program is free software: you can redistribute it and/or modify
@@ -34,6 +34,8 @@ let
         name = "automake-tarball";
         src = automakeSrc;
         dontBuild = false;
+
+        patches = [ ./fix-timestamp-issues.tmp.patch ];
 
         /* XXX: Automake says "version is incorrect" if you try to check its
            version number as is done below.  That's unfortunate.
