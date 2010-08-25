@@ -83,9 +83,12 @@ let
                    stopNest
                fi
             '';
-          buildInputs = [devicemapper libuuid gettext_0_18 readline]; 
+          buildInputs = [ devicemapper libuuid gettext_0_18 readline ];
 
-          configureFlags = "--with-readline";
+          preCheck =
+            # Some tests assume `mkswap' is in $PATH.
+            '' export PATH="${utillinuxng}/sbin:$PATH"
+            '';
 
           inherit meta;
         };
