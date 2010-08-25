@@ -52,8 +52,8 @@ let
         name = "parted";
         src = partedSrc;
         buildInputs =
-          [ git xz gettext texinfo automake111x perl rsync gperf man cvs
-            devicemapper libuuid gettext readline pkgconfig # utillinuxng
+          [ git xz gettext_0_18 texinfo automake111x perl rsync gperf man cvs
+            devicemapper libuuid readline pkgconfig # utillinuxng
           ];
         autoconfPhase =
           '' git config submodule.gnulib.url "${gnulib}"
@@ -82,7 +82,7 @@ let
                    stopNest
                fi
             '';
-          buildInputs = [devicemapper libuuid gettext readline]; 
+          buildInputs = [devicemapper libuuid gettext_0_18 readline]; 
 
           configureFlags = "--with-readline";
 
