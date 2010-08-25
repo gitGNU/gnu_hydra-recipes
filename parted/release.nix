@@ -21,6 +21,7 @@
 
 let
   pkgs = import nixpkgs {};
+  crossSystems = (import ../cross-systems.nix) { inherit pkgs; };
 
   meta = {
     description = "GNU Parted, a tool to create, destroy, resize, check, and copy partitions";
@@ -88,6 +89,28 @@ let
 
           inherit meta;
         };
+
+    xbuild_gnu =
+      # Cross build to GNU.
+      { tarball ? jobs.tarball }:
+
+      let pkgs = import nixpkgs {
+            crossSystem = crossSystems.i586_pc_gnu;
+          };
+      in
+        with pkgs;
+        (pkgs.releaseTools.nixBuild {
+          name = "parted" ;
+          src = tarball;
+          doCheck = false;
+          buildInputs = [ readline libuuid hurdCross ];
+          buildNativeInputs = [ gettext_0_18 ];
+          configureFlags =
+            [ "--disable-device-mapper"
+              "--enable-static" # The Hurd wants libparted.a
+            ];
+          inherit meta;
+        }).hostDrv;
 
     coverage =
       { tarball ? jobs.tarball }:
