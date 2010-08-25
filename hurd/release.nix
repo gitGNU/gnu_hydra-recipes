@@ -16,6 +16,7 @@
 
 { nixpkgs ? ../../nixpkgs
 , hurdSrc ? { outPath = /data/src/hurd/hurd; }
+, parted ? (import ../parted/release.nix {}).xbuild_gnu {}
 }:
 
 let
@@ -81,12 +82,14 @@ let
              : > "fatfs/EXTENSIONS"
           '';
         buildNativeInputs = [ pkgs.machHeaders pkgs.mig pkgs.texinfo ];
+        buildInputs = [ pkgs.parted /* not the cross-GNU one */ pkgs.libuuid ];
         inherit meta;
       };
 
     # Cross build from GNU/Linux.
     xbuild =
-      { tarball ? jobs.tarball }:
+      { tarball ? jobs.tarball
+      }:
 
       let
         pkgs = import nixpkgs {
@@ -99,6 +102,7 @@ let
           src = tarball;
           propagatedBuildNativeInputs = [ pkgs.machHeaders ];
           buildNativeInputs = [ pkgs.mig ];
+          buildInputs = [ parted pkgs.libuuid ];
           inherit meta;
         }).hostDrv;
 
