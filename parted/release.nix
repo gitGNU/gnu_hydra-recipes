@@ -46,6 +46,9 @@ let
     platforms = pkgs.stdenv.lib.platforms.linux;
   };
 
+  buildInputsFrom = pkgs: with pkgs;
+    [ devicemapper libuuid gettext_0_18 readline ];
+
   jobs = {
     tarball =
       with pkgs;
@@ -53,9 +56,9 @@ let
         name = "parted";
         src = partedSrc;
         buildInputs =
-          [ git xz gettext_0_18 texinfo automake111x perl rsync gperf man cvs
-            devicemapper libuuid readline pkgconfig # utillinuxng
-          ];
+          [ git xz texinfo automake111x perl rsync gperf man cvs pkgconfig ]
+          ++
+          (buildInputsFrom pkgs);
         autoconfPhase =
           '' git config submodule.gnulib.url "${gnulib}"
              ./bootstrap --gnulib-srcdir="${gnulib}" --skip-po
@@ -69,7 +72,6 @@ let
 
       let pkgs = import nixpkgs { inherit system; };
       in
-        with pkgs;
         pkgs.releaseTools.nixBuild {
           name = "parted";
           src = tarball;
@@ -83,11 +85,11 @@ let
                    stopNest
                fi
             '';
-          buildInputs = [ devicemapper libuuid gettext_0_18 readline ];
+          buildInputs = buildInputsFrom pkgs;
 
           preCheck =
             # Some tests assume `mkswap' is in $PATH.
-            '' export PATH="${utillinuxng}/sbin:$PATH"
+            '' export PATH="${pkgs.utillinuxng}/sbin:$PATH"
             '';
 
           inherit meta;
@@ -123,6 +125,12 @@ let
         pkgs.releaseTools.coverageAnalysis {
           name = "parted-coverage";
           src = tarball;
+          buildInputs = buildInputsFrom pkgs;
+          preCheck =
+            # Some tests assume `mkswap' is in $PATH.
+            '' export PATH="${pkgs.utillinuxng}/sbin:$PATH"
+            '';
+          inherit meta;
         };
   };
 in
