@@ -69,6 +69,7 @@ let
           rsync
           xz
           cvs
+          gperf
 	];
       };
 
