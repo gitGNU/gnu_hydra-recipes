@@ -79,12 +79,12 @@ let
       }:
       let pkgs = import nixpkgs {inherit system;};
       in with pkgs;
-      releaseTools.nixBuild {
-	name = "grep" ;
-	src = tarball;
+      releaseTools.nixBuild ({
+        name = "grep" ;
+        src = tarball;
         inherit meta;
-	buildInputs = [] ++ lib.optional pkgs.stdenv.isDarwin libiconv;
-      };
+        buildInputs = [pcre] ++ lib.optional stdenv.isDarwin libiconv;
+      } // lib.optionalAttrs stdenv.isDarwin { NIX_LDFLAGS="-L${libiconv}/lib -liconv"; } );
 
     coverage =
       { tarball ? jobs.tarball {}
