@@ -47,7 +47,8 @@ let
 
   buildInputsFrom = pkgs: with pkgs;
     [ zlib lzo guile gettext pkgconfig perl nettle]
-    ++ stdenv.lib.optional stdenv.isLinux valgrind;
+    ++ stdenv.lib.optional stdenv.isLinux valgrind
+    ++ stdenv.lib.optional stdenv.isDarwin libiconv;
 
   jobs = rec {
 
