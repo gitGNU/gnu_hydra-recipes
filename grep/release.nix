@@ -83,7 +83,7 @@ let
 	name = "grep" ;
 	src = tarball;
         inherit meta;
-	buildInputs = [];
+	buildInputs = [] ++ lib.optional pkgs.stdenv.isDarwin libiconv;
       };
 
     coverage =
