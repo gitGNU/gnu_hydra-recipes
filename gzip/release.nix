@@ -92,7 +92,7 @@ let
       releaseTools.nixBuild {
 	name = "gzip" ;
 	src = tarball;
-	buildInputs = buildInputsFrom pkgs;
+	buildInputs = buildInputsFrom pkgs ++ lib.optional (system == "i686-cygwin") [pkgs.ncurses]; 
         inherit meta;
       };
 
