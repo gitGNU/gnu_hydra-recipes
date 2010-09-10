@@ -45,13 +45,7 @@ let
 
   # Build out-of-tree; don't produce self rpaths.
   preConfigure =
-    ''
-       set -x
-
-       mkdir ../build
-       cd ../build
-
-       configureScript="../$sourceRoot/configure"
+    '' set -x
 
        # Glibc cannot have itself in its RPATH.
        # See http://sourceware.org/ml/binutils/2009-03/msg00066.html .
@@ -127,6 +121,7 @@ let
           ];
 
         buildNativeInputs = (buildInputsFrom pkgs) ++ extraBuildInputs;
+        buildOutOfSourceTree = true;
         doCheck = false;
         inherit propagatedBuildNativeInputs CPATH preConfigure meta;
       }).hostDrv;
@@ -155,7 +150,7 @@ let
         autoconfPhase = "true";
         bootstrapBuildInputs = [];
 
-        # Remove absolute paths from `configure' & co.; build out-of-tree.
+        # Remove absolute paths from `configure' & co.
         preConfigure =
           ''
              set -x
@@ -177,6 +172,7 @@ let
              mv -v glibc-*.tar.{bz2,gz,xz} "$out/tarballs"
           '';
 
+        buildOutOfSourceTree = true;
         inherit meta;
       };
 
@@ -212,6 +208,7 @@ let
           # install".
           checkPhase = "make -k check || true";
 
+          buildOutOfSourceTree = true;
           inherit preConfigure meta;
         };
 
