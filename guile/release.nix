@@ -93,6 +93,7 @@ let
              configureFlags =
                (defaultConfigureFlags pkgs) ++ configureFlags;
              buildInputs = buildInputsFrom pkgs;
+             buildOutOfSourceTree = true;
            });
 
   /* The exotic configurations under test.  */
@@ -224,6 +225,7 @@ let
              echo "doc manual $out/share/doc/guile/guile.html index.html" >> "$out/nix-support/hydra-build-products"
              echo "doc-pdf manual $out/share/doc/guile/guile.pdf" >> "$out/nix-support/hydra-build-products"
           '';
+        buildOutOfSourceTree = true;
         inherit meta failureHook;
       };
 
@@ -241,6 +243,7 @@ let
           src = tarball;
           configureFlags = defaultConfigureFlags pkgs;
           buildInputs = buildInputsFrom pkgs;
+          buildOutOfSourceTree = true;
           inherit meta failureHook;
         };
   }
