@@ -150,15 +150,17 @@ let
         autoconfPhase = "true";
         bootstrapBuildInputs = [];
 
-        # Remove absolute paths from `configure' & co.
+        # Remove absolute paths from `configure' & co; build out of source
+        # tree.
         preConfigure =
-          ''
-             set -x
+          '' set -x
              for i in configure io/ftwtest-sh; do
                  sed -i "$i" -e "s^/bin/pwd^pwd^g"
              done
 
-             ${preConfigure}
+             mkdir ../build
+             cd ../build
+             configureScript="../$sourceRoot/configure"
           '';
 
         buildInputs = (buildInputsFrom pkgs) ++ [ pkgs.git pkgs.xz ];
@@ -172,7 +174,6 @@ let
              mv -v glibc-*.tar.{bz2,gz,xz} "$out/tarballs"
           '';
 
-        buildOutOfSourceTree = true;
         inherit meta;
       };
 
