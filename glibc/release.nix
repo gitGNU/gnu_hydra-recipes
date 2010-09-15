@@ -45,7 +45,13 @@ let
 
   # Build out-of-tree; don't produce self rpaths.
   preConfigure =
-    '' set -x
+    ''
+       set -x
+
+       mkdir ../build
+       cd ../build
+
+       configureScript="../$sourceRoot/configure"
 
        # Glibc cannot have itself in its RPATH.
        # See http://sourceware.org/ml/binutils/2009-03/msg00066.html .
@@ -121,7 +127,6 @@ let
           ];
 
         buildNativeInputs = (buildInputsFrom pkgs) ++ extraBuildInputs;
-        buildOutOfSourceTree = true;
         doCheck = false;
         inherit propagatedBuildNativeInputs CPATH preConfigure meta;
       }).hostDrv;
@@ -150,17 +155,15 @@ let
         autoconfPhase = "true";
         bootstrapBuildInputs = [];
 
-        # Remove absolute paths from `configure' & co; build out of source
-        # tree.
+        # Remove absolute paths from `configure' & co.; build out-of-tree.
         preConfigure =
-          '' set -x
+          ''
+             set -x
              for i in configure io/ftwtest-sh; do
                  sed -i "$i" -e "s^/bin/pwd^pwd^g"
              done
 
-             mkdir ../build
-             cd ../build
-             configureScript="../$sourceRoot/configure"
+             ${preConfigure}
           '';
 
         buildInputs = (buildInputsFrom pkgs) ++ [ pkgs.git pkgs.xz ];
@@ -209,7 +212,6 @@ let
           # install".
           checkPhase = "make -k check || true";
 
-          buildOutOfSourceTree = true;
           inherit preConfigure meta;
         };
 
