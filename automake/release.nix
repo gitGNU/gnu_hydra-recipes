@@ -35,8 +35,6 @@ let
         src = automakeSrc;
         dontBuild = false;
 
-        patches = [ ./fix-timestamp-issues.tmp.patch ];
-
         /* XXX: Automake says "version is incorrect" if you try to check its
            version number as is done below.  That's unfortunate.
 
