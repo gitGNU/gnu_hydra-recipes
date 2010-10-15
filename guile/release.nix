@@ -266,6 +266,34 @@ let
           preUnpack = "gcc --version";
           inherit meta failureHook;
         };
+
+    # Check what it's like to build with an old compiler.
+    build_tinycc =
+      { tarball ? jobs.tarball {}
+      }:
+
+      let
+        system = "x86_64-linux";
+        pkgs = import nixpkgs { inherit system; };
+      in
+        with pkgs;
+        releaseTools.nixBuild {
+          name = "guile";
+          src = tarball;
+          configureFlags =
+            [ "CC=${tinycc}/bin/tcc" ] ++ (defaultConfigureFlags pkgs) ++
+            [ "--with-libltdl-prefix=${libtool}"
+              "--with-libgmp-prefix=${gmp}"
+              "--with-libunistring-prefix=${libunistring}"
+              "--with-readline-prefix=${readline}"
+              "--disable-rpath"  # tcc doesn't support the `-rpath' option
+            ];
+          makeFlags = [ "V=1" ];
+          buildInputs = buildInputsFrom pkgs;
+          buildOutOfSourceTree = true;
+          patches = [ ./tinycc-isnan.patch ];
+          inherit meta failureHook;
+        };
   }
 
   //
