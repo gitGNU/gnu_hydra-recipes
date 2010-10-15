@@ -246,6 +246,26 @@ let
           buildOutOfSourceTree = true;
           inherit meta failureHook;
         };
+
+    # Check what it's like to build with an old compiler.
+    build_gcc3 =
+      { tarball ? jobs.tarball {}
+      }:
+
+      let
+        system = "x86_64-linux";
+        pkgs = import nixpkgs { inherit system; };
+      in
+        with pkgs;
+        releaseTools.nixBuild {
+          name = "guile";
+          src = tarball;
+          configureFlags = defaultConfigureFlags pkgs;
+          buildInputs = [ pkgs.gcc34 ] ++ (buildInputsFrom pkgs);
+          buildOutOfSourceTree = true;
+          preUnpack = "gcc --version";
+          inherit meta failureHook;
+        };
   }
 
   //
