@@ -45,7 +45,10 @@ let
           pkgs.lib.mapAttrs gnuify nodes;
     };
 
-    test = runTests vms t.testScript;
+    test = (runTests vms t.testScript) // {
+      meta.schedulingPriority = "5";
+    };
+
     report = makeReport test;
   };
 in
