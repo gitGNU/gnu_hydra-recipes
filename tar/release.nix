@@ -26,7 +26,6 @@ let
 
     tarball =
       { tarSrc ? {outPath = ../../tar;}
-      , paxutils ? {outPath = ../../paxutils;}
       , gnulib ? {outPath = ../../gnulib;}
       }:
 
@@ -40,10 +39,8 @@ let
 
           cp -Rv ${gnulib} ../gnulib
           chmod -R 755 ../gnulib
-          cp -Rv ${paxutils} ../paxutils
-          chmod -R 755 ../paxutils
 
-          ./bootstrap --gnulib-srcdir=../gnulib --paxutils-srcdir=../paxutils --skip-po --copy
+          ./bootstrap --gnulib-srcdir=../gnulib --skip-po --copy
         '';
 
         buildInputs = with pkgs;
