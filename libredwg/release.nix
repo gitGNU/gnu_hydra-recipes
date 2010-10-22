@@ -45,7 +45,7 @@ let
         name = "libredwg";
         src = libredwgSrc;
         buildInputs =
-          [ gettext texinfo automake111x
+          [ gettext texinfo automake111x python swig
           ];
         inherit meta;
       };
