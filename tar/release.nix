@@ -27,12 +27,14 @@ let
     tarball =
       { tarSrc ? {outPath = ../../tar;}
       , gnulib ? {outPath = ../../gnulib;}
+      , paxutils ? {outPath = ../../paxutils;}
       }:
 
       pkgs.releaseTools.sourceTarball {
         name = "tar-tarball";
         src = tarSrc;
 
+        PAXUTILS_SRCDIR = paxutils;
         autoconfPhase = ''
           # Disable Automake's `check-news' so that "make dist" always works.
           sed -i "configure.ac" -es/gnits/gnu/g
