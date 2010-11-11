@@ -79,6 +79,7 @@ let
           ncurses
           help2man
           lua5
+          perl
 	];
       };
 
