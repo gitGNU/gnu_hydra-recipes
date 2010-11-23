@@ -43,9 +43,11 @@ let
   inherit (pkgs) releaseTools;
 
   buildInputsFrom = pkgs: with pkgs;
+    [ ncurses shishi ] ++
+
     # Ironically, net-tools is needed to run the tests, which expect
     # `netstat'.
-    [ ncurses shishi nettools ];
+    (lib.optional stdenv.isLinux nettools);
 
   jobs = rec {
 
@@ -95,7 +97,8 @@ let
         pkgs.releaseTools.nixBuild {
           name = "inetutils";
           src = tarball;
-          buildInputs = [ pkgs.ncurses pkgs.nettools ];
+          buildInputs = [ pkgs.ncurses ]
+            ++ (pkgs.lib.optional pkgs.stdenv.isLinux pkgs.nettools);
           configureFlags =
             [ "--with-ncurses-include-dir=${pkgs.ncurses}/include" ];
           inherit preBuild meta;
