@@ -21,6 +21,8 @@ let
 
   buildInputsFrom = pkgs: with pkgs; [ xz perl m4 ];
 
+  texLive = pkgs.texLiveAggregationFun { paths = [ pkgs.texLive pkgs.texLiveCMSuper ]; } ;
+
   jobs = rec {
 
     tarball =
@@ -68,7 +70,7 @@ let
         name = "autoconf-manual";
         src = tarball;
         buildInputs =
-          [ pkgs.texinfo pkgs.texLive pkgs.texLiveCMSuper ]
+          [ pkgs.texinfo texLive ]
           ++ (buildInputsFrom pkgs);
 
         buildPhase = "make html pdf";
