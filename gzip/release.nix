@@ -74,7 +74,7 @@ let
 	buildInputs = with pkgs; [
           automake111x
           texinfo
-          gettext
+          gettext_0_17
           git 
           perl
           rsync

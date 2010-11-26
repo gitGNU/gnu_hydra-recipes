@@ -134,7 +134,7 @@ let
           automake111x
           autoconf
           flex2535
-          gettext
+          gettext_0_17
           git
           gnum4  # this should be a propagated build input of Autotools
           texinfo

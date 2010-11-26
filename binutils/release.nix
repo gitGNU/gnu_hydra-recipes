@@ -59,7 +59,7 @@ let
         src = binutilsSrc;
         autoconfPhase = "true";
         buildInputs = with pkgs;
-          [ texinfo gettext flex2535 bison ];
+          [ texinfo gettext_0_17 flex2535 bison ];
 
         distPhase =
           ''

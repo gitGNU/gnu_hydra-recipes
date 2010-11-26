@@ -41,7 +41,7 @@ let
 
   inherit (pkgs) releaseTools;
 
-  buildInputsFrom = pkgs: with pkgs; [ gettext texinfo perl ];
+  buildInputsFrom = pkgs: with pkgs; [ gettext_0_17 texinfo perl ];
 
   # Build out-of-tree; don't produce self rpaths.
   preConfigure =

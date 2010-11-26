@@ -66,7 +66,7 @@ let
 	buildInputs = [
           automake111x
           texinfo
-          gettext
+          gettext_0_17
           git 
           wget
           perl

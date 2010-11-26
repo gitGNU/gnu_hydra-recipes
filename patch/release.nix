@@ -49,7 +49,7 @@ let
         name = "patch";
         src = patchSrc;
         buildInputs =
-          [ git xz gettext texinfo automake111x
+          [ git xz gettext_0_17 texinfo automake111x
             bison # the `testing' branch needs it
           ];
         autoconfPhase =

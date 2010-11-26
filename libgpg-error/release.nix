@@ -22,7 +22,7 @@ let
 
   inherit (pkgs) releaseTools;
 
-  buildInputsFrom = pkgs: with pkgs; [ gettext ];
+  buildInputsFrom = pkgs: with pkgs; [ gettext_0_17 ];
 
   jobs = rec {
 

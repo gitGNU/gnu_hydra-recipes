@@ -55,7 +55,7 @@ let
 
         buildInputs = [
           git
-          gettext
+          gettext_0_17
           cvs
           texinfo
           perl

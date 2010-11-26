@@ -46,7 +46,7 @@ let
   inherit (pkgs) releaseTools;
 
   buildInputsFrom = pkgs: with pkgs;
-    [ zlib lzo guile gettext pkgconfig perl nettle]
+    [ zlib lzo guile gettext_0_17 pkgconfig perl nettle]
     ++ stdenv.lib.optional stdenv.isLinux valgrind
     ++ stdenv.lib.optional (stdenv.isDarwin || stdenv.isBSD) libiconv;
 

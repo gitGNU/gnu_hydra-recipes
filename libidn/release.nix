@@ -105,7 +105,7 @@ let
 
 	buildInputs = (buildInputsFrom pkgs)
           ++ (with pkgs;
-               [ autoconf automake111x libtool gettext
+               [ autoconf automake111x libtool gettext_0_17
 	         git texinfo gperf gengetopt transfig
                  ghostscript # for `fig2dev'
                  cvs # for `autopoint'

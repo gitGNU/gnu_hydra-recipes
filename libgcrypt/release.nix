@@ -43,7 +43,7 @@ let
 
   buildInputsFrom = pkgs: with pkgs;
     # On Darwin libintl is needed.
-    stdenv.lib.optional stdenv.isDarwin gettext;
+    stdenv.lib.optional stdenv.isDarwin gettext_0_17;
 
   jobs = rec {
 
