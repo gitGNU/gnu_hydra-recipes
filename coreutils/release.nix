@@ -97,6 +97,8 @@ let
 	name = "coreutils" ;
 	src = tarball;
 	buildInputs = buildInputsFrom pkgs ++ [ pkgs.texinfo pkgs.texLive ];
+        configureFlags = let stdenv = pkgs.stdenv; in
+          stdenv.lib.optional stdenv.isLinux [ "--enable-gcc-warnings" ];
         inherit meta;
       };
 
