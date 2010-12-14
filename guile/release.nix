@@ -47,7 +47,9 @@ let
   defaultConfigureFlags = pkgs:
      with pkgs;
 
-     ((stdenv.lib.optional stdenv.isLinux "--enable-error-on-warning")
+     ([ "--disable-silent-rules" ]
+
+     ++ (stdenv.lib.optional stdenv.isLinux "--enable-error-on-warning")
 
      # The `--with' flags below aren't strictly needed, except on Cygwin
      # where the added `-L' linker flags help Libtool find the dlls, which in
