@@ -49,7 +49,9 @@ let
 
      ([ "--disable-silent-rules" ]
 
-     ++ (stdenv.lib.optional stdenv.isLinux "--enable-error-on-warning")
+     # FIXME: Commented because of:
+     # libunistring-0.9.3/include/unistr.h:197:7: error: "CONFIG_UNICODE_SAFETY" is not defined
+     #++ (stdenv.lib.optional stdenv.isLinux "--enable-error-on-warning")
 
      # The `--with' flags below aren't strictly needed, except on Cygwin
      # where the added `-L' linker flags help Libtool find the dlls, which in
