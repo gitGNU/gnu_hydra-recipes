@@ -20,6 +20,8 @@ let
   pkgs = import nixpkgs {};
   crossSystems = (import ../cross-systems.nix) { inherit pkgs; };
 
+  texLive = pkgs.texLiveAggregationFun { paths = [ pkgs.texLive pkgs.texLiveCMSuper ]; } ;
+
   preCheck =
     # Avoid interference from the ld wrapper.
     '' export NIX_DONT_SET_RPATH=1
@@ -131,8 +133,7 @@ let
         name = "libtool-manual";
         src = tarball;
         buildInputs =
-          [ autoconf automake
-            pkgs.texinfo pkgs.texLive
+          [ autoconf automake texLive
           ];
 
         buildPhase = "make html pdf";
