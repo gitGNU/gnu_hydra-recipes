@@ -133,7 +133,7 @@ let
         name = "libtool-manual";
         src = tarball;
         buildInputs =
-          [ autoconf automake texLive
+          [ autoconf automake pkgs.texinfo texLive
           ];
 
         buildPhase = "make html pdf";
