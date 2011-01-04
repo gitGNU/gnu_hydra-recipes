@@ -48,7 +48,7 @@ let
 
     tarball =
       { coreutilsSrc ? {outPath = ../../coreutils;}
-      , gnulibSrc ? (import ../gnulib.nix) pkgs
+      , gnulibSrc ? ../../gnulib
       }:
 
       with pkgs;
@@ -96,7 +96,7 @@ let
       pkgs.releaseTools.nixBuild {
 	name = "coreutils" ;
 	src = tarball;
-	buildInputs = buildInputsFrom pkgs ++ [ pkgs.texinfo pkgs.texLive ];
+	buildInputs = buildInputsFrom pkgs ;
         configureFlags = let stdenv = pkgs.stdenv; in
           stdenv.lib.optional stdenv.isLinux [ "--enable-gcc-warnings" ];
         inherit meta;
