@@ -100,6 +100,8 @@ let
         configureFlags = let stdenv = pkgs.stdenv; in
           stdenv.lib.optional stdenv.isLinux [ "--enable-gcc-warnings" ];
         inherit meta;
+        succeedOnFailure = true;
+        keepBuildDirectory = true;
       };
 
     xbuild_gnu =
