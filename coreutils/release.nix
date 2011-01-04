@@ -60,7 +60,7 @@ let
 	buildInputs = [
 	  automake111x
 	  bison
-	  gettext_0_18
+	  gettext_0_17
 	  git
 	  gperf
 	  texinfo
