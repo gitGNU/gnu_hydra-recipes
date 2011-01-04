@@ -1,5 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
-   Copyright (C) 2010  Ludovic Courtès <ludo@gnu.org>
+   Copyright (C) 2010, 2011  Ludovic Courtès <ludo@gnu.org>
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -41,15 +41,8 @@ let
   inherit (pkgs) releaseTools;
 
   checkPhase = "make -k check";
-  failureHook =
-    '' echo "build failed, dumping log files..."
-       for log in $(find -name \*.log)
-       do
-         echo
-         echo "--- $log"
-         cat "$log"
-       done
-    '';
+  succeedOnFailure = true;
+  keepBuildDirectory = true;
 
   jobs = rec {
 
@@ -100,7 +93,7 @@ let
 
              The fix should probably be in the GCC Nix expression.  */
 
-          inherit meta checkPhase failureHook;
+          inherit meta checkPhase succeedOnFailure keepBuildDirectory;
         };
 
     buildGold =
@@ -117,7 +110,7 @@ let
           buildInputs = with pkgs;
             [ dejagnu zlib flex2535 bison ];
 
-          inherit meta checkPhase failureHook;
+          inherit meta checkPhase succeedOnFailure keepBuildDirectory;
         };
   };
 
