@@ -46,7 +46,7 @@ let
 
   buildInputsFrom = pkgs: with pkgs;
     [ pkgconfig perl 
-      help2man docbook_xsl docbook_xml_dtd_412
+      docbook_xsl docbook_xml_dtd_412
       libxml2 /* for the setup hook */
     ]
 
@@ -106,7 +106,7 @@ let
 	buildInputs = (buildInputsFrom pkgs)
           ++ (with pkgs;
                [ autoconf automake111x libtool gettext_0_17
-	         git texinfo gperf gengetopt transfig texLive
+	         git texinfo gperf gengetopt transfig texLive help2man
                  ghostscript # for `fig2dev'
                  cvs # for `autopoint'
 	       ]);
