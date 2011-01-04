@@ -45,7 +45,7 @@ let
   };
 
   buildInputsFrom = pkgs: with pkgs;
-    [ pkgconfig perl texLive
+    [ pkgconfig perl 
       help2man docbook_xsl docbook_xml_dtd_412
       libxml2 /* for the setup hook */
     ]
@@ -56,7 +56,7 @@ let
   jobs = {
 
     tarball =
-      { libidnSrc }:
+      { libidnSrc ? { outPath = ../../libidn ; rev = 1234; } }:
 
       pkgs.releaseTools.sourceTarball {
 	name = "libidn-tarball";
@@ -106,7 +106,7 @@ let
 	buildInputs = (buildInputsFrom pkgs)
           ++ (with pkgs;
                [ autoconf automake111x libtool gettext_0_17
-	         git texinfo gperf gengetopt transfig
+	         git texinfo gperf gengetopt transfig texLive
                  ghostscript # for `fig2dev'
                  cvs # for `autopoint'
 	       ]);
@@ -115,7 +115,7 @@ let
       };
 
     build =
-      { tarball, system }:
+      { tarball ? jobs.tarball {}, system ? "x86_64-linux"}:
 
       let pkgs = import nixpkgs { inherit system; };
       in
