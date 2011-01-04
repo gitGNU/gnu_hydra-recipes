@@ -72,6 +72,9 @@ let
         src = tarball;
         inherit meta configureFlags;
         buildInputs = with pkgs; [ed];
+
+        succeedOnFailure = true;
+        keepBuildDirectory = true;
       } ;
 
     coverage =
