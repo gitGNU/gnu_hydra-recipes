@@ -1,5 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
-   Copyright (C) 2010  Ludovic Courtès <ludo@gnu.org>
+   Copyright (C) 2010, 2011  Ludovic Courtès <ludo@gnu.org>
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -103,6 +103,27 @@ let
           propagatedBuildNativeInputs = [ pkgs.machHeaders ];
           buildNativeInputs = [ pkgs.mig ];
           buildInputs = [ parted pkgs.libuuid ];
+          inherit meta;
+        }).hostDrv;
+
+    # Same without dependency on Parted.
+    xbuild_without_parted =
+      { tarball ? jobs.tarball
+      }:
+
+      let
+        pkgs = import nixpkgs {
+          system = "x86_64-linux";                # build platform
+          crossSystem = crossSystems.i586_pc_gnu; # host platform
+        };
+      in
+        (pkgs.releaseTools.nixBuild {
+          name = "hurd";
+          src = tarball;
+          propagatedBuildNativeInputs = [ pkgs.machHeaders ];
+          buildNativeInputs = [ pkgs.mig ];
+          buildInputs = [ pkgs.libuuid ];
+          configureFlags = [ "--without-parted" ];
           inherit meta;
         }).hostDrv;
 
