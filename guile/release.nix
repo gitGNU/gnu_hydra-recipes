@@ -1,5 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
-   Copyright (C) 2009, 2010  Ludovic Courtès <ludo@gnu.org>
+   Copyright (C) 2009, 2010, 2011  Ludovic Courtès <ludo@gnu.org>
    Copyright (C) 2009  Rob Vermaas <rob.vermaas@gmail.com>
 
    This program is free software: you can redistribute it and/or modify
@@ -106,19 +106,8 @@ let
       [ "CPPFLAGS=-DSCM_DEBUG=1" ]
     ];
 
-  failureHook =
-    '' if [ -f check-guile.log ]
-       then
-           echo
-           echo "build failed, dumping test log..."
-           cat check-guile.log
-       elif [ -f config.log -a ! -f Makefile ]
-       then
-           echo
-           echo "configuration failed, dumping config.log..."
-           cat config.log
-       fi
-    '';
+  succeedOnFailure = true;
+  keepBuildDirectory = true;
 
   jobs = rec {
 
@@ -173,7 +162,7 @@ let
                  -e's/"<stdout>"/"c-tokenize.c"/g'
           '';
 
-        inherit meta failureHook;
+        inherit meta succeedOnFailure keepBuildDirectory;
       };
 
     coverage =
@@ -201,7 +190,7 @@ let
           '';
         lcovExtraTraceFiles = [ "guile.info" ];
 
-        inherit failureHook;
+        inherit succeedOnFailure keepBuildDirectory;
 
         meta = meta // { schedulingPriority = "20"; };
       };
@@ -227,7 +216,7 @@ let
              echo "doc-pdf manual $out/share/doc/guile/guile.pdf" >> "$out/nix-support/hydra-build-products"
           '';
         buildOutOfSourceTree = true;
-        inherit meta failureHook;
+        inherit meta succeedOnFailure keepBuildDirectory;
       };
 
     # The default build, executed on all platforms.
@@ -245,7 +234,7 @@ let
           configureFlags = defaultConfigureFlags pkgs;
           buildInputs = buildInputsFrom pkgs;
           buildOutOfSourceTree = true;
-          inherit meta failureHook;
+          inherit meta succeedOnFailure keepBuildDirectory;
         };
 
     # Check what it's like to build with an old compiler.
@@ -265,7 +254,7 @@ let
           buildInputs = [ pkgs.gcc34 ] ++ (buildInputsFrom pkgs);
           buildOutOfSourceTree = true;
           preUnpack = "gcc --version";
-          inherit meta failureHook;
+          inherit meta succeedOnFailure keepBuildDirectory;
         };
 
     # Check what it's like to build with an old compiler.
@@ -293,7 +282,7 @@ let
           buildInputs = buildInputsFrom pkgs;
           buildOutOfSourceTree = true;
           patches = [ ./tinycc-isnan.patch ];
-          inherit meta failureHook;
+          inherit meta succeedOnFailure keepBuildDirectory;
         };
   }
 
