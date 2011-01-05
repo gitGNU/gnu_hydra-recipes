@@ -52,8 +52,8 @@ let
   jobs = rec {
 
     tarball =
-      { inetutilsSrc ? { outPath = /data/src/inetutils; }
-      , gnulibSrc ? (import ../gnulib.nix) pkgs
+      { inetutilsSrc ? { outPath = ../../inetutils; }
+      , gnulibSrc ? { outPath = ../../gnulib; }
       }:
 
       releaseTools.sourceTarball {

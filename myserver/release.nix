@@ -48,8 +48,8 @@ let
   jobs = rec {
 
     tarball =
-      { myserverSrc ? { outPath = /data/src/myserver; },
-        gnulibSrc ? ((import ../gnulib.nix) pkgs)
+      { myserverSrc ? { outPath = ../../myserver; },
+        gnulibSrc ? { outPath = ../../gnulib; }
       }:
 
       releaseTools.sourceTarball {
