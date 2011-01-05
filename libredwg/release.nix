@@ -50,6 +50,7 @@ let
         buildInputs =
           [ gettext_0_17 texinfo automake111x python swig
           ];
+        dontBuild = false;
         inherit meta succeedOnFailure keepBuildDirectory;
       };
 
