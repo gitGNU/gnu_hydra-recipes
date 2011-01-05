@@ -53,6 +53,9 @@ let
     # The following packages aren't available on non-GNU platforms.
     ++ stdenv.lib.optionals stdenv.isLinux [ gcj mono gnome.gtkdoc ];
 
+  succeedOnFailure = true;
+  keepBuildDirectory = true;
+
   jobs = {
 
     tarball =
@@ -111,7 +114,8 @@ let
                  cvs # for `autopoint'
 	       ]);
 
-        inherit meta;
+        inherit meta succeedOnFailure keepBuildDirectory;
+
       };
 
     build =
@@ -126,7 +130,7 @@ let
           preConfigure = "export JAR=gjar MONO_SHARED_DIR=$TMPDIR";
           configureFlags = stdenv.lib.optional stdenv.isLinux "--enable-java";
           buildInputs = buildInputsFrom pkgs;
-          inherit meta;
+          inherit meta succeedOnFailure keepBuildDirectory;
         };
 
     coverage =
