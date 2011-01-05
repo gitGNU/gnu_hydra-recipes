@@ -38,6 +38,9 @@ let
      ];
   };
 
+  succeedOnFailure = true;
+  keepBuildDirectory = true;
+
   jobs = {
     tarball =
       with pkgs;
@@ -47,7 +50,7 @@ let
         buildInputs =
           [ gettext_0_17 texinfo automake111x python swig
           ];
-        inherit meta;
+        inherit meta succeedOnFailure keepBuildDirectory;
       };
 
     build =
@@ -59,7 +62,7 @@ let
         pkgs.releaseTools.nixBuild {
           name = "libredwg";
           src = tarball;
-          inherit meta;
+          inherit meta succeedOnFailure keepBuildDirectory;
         };
 
     coverage =
