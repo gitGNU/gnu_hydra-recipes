@@ -32,6 +32,9 @@ let
 
   };
 
+  succeedOnFailure = true;
+  keepBuildDirectory = true;
+
   jobs = rec {
 
     tarball = 
@@ -43,7 +46,7 @@ let
       pkgs.releaseTools.makeSourceTarball {
         name = "diffutils-tarball";
         src = diffutils;
-        inherit meta;
+        inherit meta succeedOnFailure keepBuildDirectory;
 
         autoconfPhase = ''
           mkdir -p ../gnulib
@@ -78,7 +81,7 @@ let
       releaseTools.nixBuild {
         name = "diffutils" ;
         src = tarball;
-        inherit meta;
+        inherit meta succeedOnFailure keepBuildDirectory;
         buildInputs = [];
       };
 

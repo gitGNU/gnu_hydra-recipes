@@ -23,6 +23,9 @@ let
 
   texLive = pkgs.texLiveAggregationFun { paths = [ pkgs.texLive pkgs.texLiveCMSuper ]; } ;
 
+  succeedOnFailure = true;
+  keepBuildDirectory = true;
+
   jobs = rec {
 
     tarball =
@@ -47,6 +50,8 @@ let
           help2man
           git
         ] ++ buildInputsFrom pkgs;
+        
+        inherit succeedOnFailure keepBuildDirectory;
       };
 
     build =
@@ -60,6 +65,7 @@ let
         name = "autoconf" ;
         src = tarball;
         buildInputs = buildInputsFrom pkgs;
+        inherit succeedOnFailure keepBuildDirectory;
       };
 
     manual =

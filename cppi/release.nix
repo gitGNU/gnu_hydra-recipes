@@ -43,6 +43,9 @@ let
 
   pkgs = import nixpkgs {};
 
+  succeedOnFailure = true;
+  keepBuildDirectory = true;
+
   jobs = rec {
 
     tarball = 
@@ -53,7 +56,7 @@ let
       releaseTools.makeSourceTarball {
 	name = "cppi-tarball";
 	src = cppi;
-        inherit meta;
+        inherit meta succeedOnFailure keepBuildDirectory;
 
         autoconfPhase = ''
           mkdir -p ../gnulib
@@ -87,7 +90,7 @@ let
       releaseTools.nixBuild {
 	name = "cppi" ;
 	src = tarball;
-        inherit meta;
+        inherit meta succeedOnFailure keepBuildDirectory;
 	buildInputs = [];
       };
 

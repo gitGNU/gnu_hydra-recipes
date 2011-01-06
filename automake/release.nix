@@ -23,6 +23,9 @@ let
 
   buildInputsFrom = pkgs: with pkgs; [ perl help2man ];
 
+  succeedOnFailure = true;
+  keepBuildDirectory = true;
+
   jobs = rec {
 
     tarball =
@@ -49,6 +52,8 @@ let
         preAutoconfPhase = "autoconf --version";
         bootstrapBuildInputs = [ autoconf ];
         buildInputs = (with pkgs; [ texinfo git ]) ++ (buildInputsFrom pkgs);
+        
+        inherit succeedOnFailure keepBuildDirectory;
       };
 
     build =
@@ -69,6 +74,8 @@ let
           # Disable indented log output from Make, otherwise "make.test" will
           # fail.  Ask for verbose test suite output.
           preCheck = "unset NIX_INDENT_MAKE ; export VERBOSE=yes";
+
+        inherit succeedOnFailure keepBuildDirectory;
         };
   };
 

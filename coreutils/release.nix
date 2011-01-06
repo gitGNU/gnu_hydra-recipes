@@ -44,6 +44,9 @@ let
   buildInputsFrom = pkgs:
     with pkgs; [ perl gmp ] ++ (stdenv.lib.optional stdenv.isLinux acl);
 
+  succeedOnFailure = true;
+  keepBuildDirectory = true;
+
   jobs = rec {
 
     tarball =
@@ -54,25 +57,25 @@ let
       with pkgs;
 
       pkgs.releaseTools.makeSourceTarball {
-	name = "coreutils-tarball";
-	src = coreutilsSrc;
+        name = "coreutils-tarball";
+        src = coreutilsSrc;
 
-	buildInputs = [
-	  automake111x
-	  bison
-	  gettext_0_17
-	  git
-	  gperf
-	  texinfo
-	  rsync
-	  cvs
-	  xz
-	] ++ buildInputsFrom pkgs;
+        buildInputs = [
+          automake111x
+          bison
+          gettext_0_17
+          git
+          gperf
+          texinfo   
+          rsync
+          cvs
+          xz
+        ] ++ buildInputsFrom pkgs;
 
-	dontBuild = false;
+        dontBuild = false;
 
         autoconfPhase = ''
-	  sed 's|/usr/bin/perl|${perl}/bin/perl|' -i src/wheel-gen.pl
+          sed 's|/usr/bin/perl|${perl}/bin/perl|' -i src/wheel-gen.pl
 
           git config submodule.gnulib.url "${gnulibSrc}"
 
@@ -83,7 +86,8 @@ let
           ./bootstrap --gnulib-srcdir="${gnulibSrc}" --skip-po
         '';
 
-        inherit meta;
+        inherit meta succeedOnFailure keepBuildDirectory;
+        
       };
 
     build =
@@ -94,12 +98,12 @@ let
       let pkgs = import nixpkgs {inherit system;};
       in
       pkgs.releaseTools.nixBuild {
-	name = "coreutils" ;
-	src = tarball;
-	buildInputs = buildInputsFrom pkgs ;
+        name = "coreutils" ;
+        src = tarball;
+        buildInputs = buildInputsFrom pkgs ;
         configureFlags = let stdenv = pkgs.stdenv; in
           stdenv.lib.optional stdenv.isLinux [ "--enable-gcc-warnings" ];
-        inherit meta;
+        inherit meta succeedOnFailure keepBuildDirectory;
         succeedOnFailure = true;
         keepBuildDirectory = true;
       };
@@ -114,12 +118,12 @@ let
           };
       in
       (pkgs.releaseTools.nixBuild {
-	name = "coreutils" ;
-	src = tarball;
+        name = "coreutils" ;
+        src = tarball;
         buildInputs = [ pkgs.gmp ];
-	buildNativeInputs = [ pkgs.perl ];
+        buildNativeInputs = [ pkgs.perl ];
         doCheck = false;
-        inherit meta;
+        inherit meta succeedOnFailure keepBuildDirectory;
       }).hostDrv;
 
     coverage =
@@ -129,9 +133,9 @@ let
       with pkgs;
 
       releaseTools.coverageAnalysis {
-	name = "coreutils-coverage";
-	src = tarball;
-	buildInputs = buildInputsFrom pkgs;
+        name = "coreutils-coverage";
+        src = tarball;
+        buildInputs = buildInputsFrom pkgs;
         postCheck =
           # Remove the file that confuses lcov.
           '' rm -fv 'src/<built-in>.'*
@@ -163,6 +167,5 @@ let
         inherit meta;
       };
   };
-
 
 in jobs

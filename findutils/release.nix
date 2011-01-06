@@ -41,6 +41,9 @@ let
        pkgs.stdenv.lib.maintainers.ludo
      ];
   };
+  
+  succeedOnFailure = true;
+  keepBuildDirectory = true;
 
   jobs = {
     tarball =
@@ -61,7 +64,7 @@ let
              chmod -R u+w ../gnulib
              sh ./import-gnulib.sh -d ../gnulib
 	  '';
-	inherit meta;
+        inherit meta succeedOnFailure keepBuildDirectory;
       };
 
     build =
@@ -74,7 +77,7 @@ let
 	  name = "findutils";
 	  src = tarball;
           buildInputs = [ pkgs.dejagnu ];
-	  inherit meta;
+        inherit meta succeedOnFailure keepBuildDirectory;
 	};
 
     coverage =

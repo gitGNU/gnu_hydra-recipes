@@ -45,15 +45,8 @@ let
 
   buildInputsFrom = pkgs: [];
 
-  failureHook =
-    '' if [ -f tests/testsuite.log ]
-       then
-           echo
-           echo "Test suite failed, dumping \`testsuite.log'."
-           echo
-           cat tests/testsuite.log
-       fi
-    '';
+  succeedOnFailure = true;
+  keepBuildDirectory = true;
 
   jobs = rec {
 
@@ -90,7 +83,7 @@ let
           automake111x
         ] ++ buildInputsFrom pkgs;
 
-        inherit meta;
+        inherit meta succeedOnFailure keepBuildDirectory;
       };
 
     build =
@@ -104,7 +97,7 @@ let
         name = "cpio" ;
         src = tarball;
         buildInputs = buildInputsFrom pkgs;
-        inherit failureHook meta;
+        inherit meta succeedOnFailure keepBuildDirectory;
       };
 
     xbuild_gnu =
@@ -121,7 +114,7 @@ let
 	src = tarball;
         buildInputs = buildInputsFrom pkgs;
         doCheck = false;
-        inherit meta;
+        inherit meta succeedOnFailure keepBuildDirectory;
       }).hostDrv;
 
   };

@@ -23,14 +23,17 @@ let
 
   buildInputsFrom = pkgs: with pkgs; [ readline bison ];
 
+  succeedOnFailure = true;
+  keepBuildDirectory = true;
+
   jobs = rec {
 
     tarball =
       { bashSrc }:
 
       releaseTools.sourceTarball {
-	name = "bash-tarball";
-	src = bashSrc;
+        name = "bash-tarball";
+        src = bashSrc;
 
         patches = [ ./interpreter-path.patch ];
 
@@ -58,7 +61,8 @@ let
           '';
 
         doCheck = false;
-	buildInputs = (buildInputsFrom pkgs);
+        buildInputs = (buildInputsFrom pkgs);
+        inherit succeedOnFailure keepBuildDirectory;
       };
 
     build =
@@ -72,6 +76,7 @@ let
           name = "bash";
           src = tarball;
           buildInputs = buildInputsFrom pkgs;
+          inherit succeedOnFailure keepBuildDirectory;
         };
 
     coverage =
@@ -79,9 +84,9 @@ let
       }:
 
       releaseTools.coverageAnalysis {
-	name = "bash-coverage";
-	src = tarball;
-	buildInputs = buildInputsFrom pkgs;
+        name = "bash-coverage";
+        src = tarball;
+        buildInputs = buildInputsFrom pkgs;
       };
 
     manual =
