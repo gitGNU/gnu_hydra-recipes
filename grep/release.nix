@@ -88,8 +88,6 @@ let
         inherit meta succeedOnFailure keepBuildDirectory;
         buildInputs = [pcre] ++ lib.optional stdenv.isDarwin libiconv;
 
-        succeedOnFailure = true;
-        keepBuildDirectory = true;
       } // lib.optionalAttrs stdenv.isDarwin { NIX_LDFLAGS="-L${libiconv}/lib -liconv"; } );
 
     coverage =
