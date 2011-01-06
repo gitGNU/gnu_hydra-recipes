@@ -16,13 +16,9 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 { nixpkgs ? { outPath = ../../nixpkgs; }
-, gnulib ? { outPath = ../../gnulib; }
 , partedSrc ? { outPath = ../../parted; } }:
 
 let
-  pkgs = import nixpkgs {};
-  crossSystems = (import ../cross-systems.nix) { inherit pkgs; };
-
   meta = {
     description = "GNU Parted, a tool to create, destroy, resize, check, and copy partitions";
 
@@ -43,88 +39,49 @@ let
     ];
 
     # GNU Parted requires libuuid, which is part of util-linux-ng.
-    platforms = pkgs.stdenv.lib.platforms.linux;
+    platforms = (import nixpkgs {}).stdenv.lib.platforms.linux;
   };
 
   buildInputsFrom = pkgs: with pkgs;
     [ devicemapper libuuid gettext_0_18 readline ];
 
-  succeedOnFailure = true;
-  keepBuildDirectory = true;
-
-  jobs = {
-    tarball =
-      with pkgs;
-      releaseTools.sourceTarball {
-        name = "parted";
-        src = partedSrc;
-        buildInputs =
-          [ git xz texinfo automake111x perl rsync gperf man cvs pkgconfig ]
-          ++
-          (buildInputsFrom pkgs);
-        autoconfPhase =
-          '' git config submodule.gnulib.url "${gnulib}"
-             ./bootstrap --gnulib-srcdir="${gnulib}" --skip-po
-          '';
-        inherit meta succeedOnFailure keepBuildDirectory;
-      };
-
-    build =
-      { system ? builtins.currentSystem
-      , tarball ? jobs.tarball }:
-
-      let pkgs = import nixpkgs { inherit system; };
-      in
-        pkgs.releaseTools.nixBuild {
-          name = "parted";
-          src = tarball;
-          buildInputs = buildInputsFrom pkgs;
-
-          preCheck =
-            # Some tests assume `mkswap' is in $PATH.
-            '' export PATH="${pkgs.utillinuxng}/sbin:$PATH"
-            '';
-
-          inherit meta succeedOnFailure keepBuildDirectory;
-        };
-
-    xbuild_gnu =
-      # Cross build to GNU.
-      { tarball ? jobs.tarball }:
-
-      let pkgs = import nixpkgs {
-            crossSystem = crossSystems.i586_pc_gnu;
-          };
-      in
-        with pkgs;
-        (pkgs.releaseTools.nixBuild {
-          name = "parted" ;
-          src = tarball;
-          doCheck = false;
-          buildInputs = [ readline libuuid hurdCross ];
-          buildNativeInputs = [ gettext_0_18 ];
-          configureFlags =
-            [ "--disable-device-mapper"
-              "--enable-static" # The Hurd wants libparted.a
-            ];
-          inherit meta;
-        }).hostDrv;
-
-    coverage =
-      { tarball ? jobs.tarball }:
-
-      let pkgs = import nixpkgs {};
-      in
-        pkgs.releaseTools.coverageAnalysis {
-          name = "parted-coverage";
-          src = tarball;
-          buildInputs = buildInputsFrom pkgs;
-          preCheck =
-            # Some tests assume `mkswap' is in $PATH.
-            '' export PATH="${pkgs.utillinuxng}/sbin:$PATH"
-            '';
-          inherit meta;
-        };
-  };
 in
-  jobs
+  import ../gnu-jobs.nix {
+    name = "parted";
+    src  = partedSrc;
+    inherit nixpkgs meta; 
+    enableGnuCrossBuild = true;
+    
+    customEnv = {
+        
+      tarball = pkgs: {
+        buildInputs = with pkgs; [ git xz texinfo automake111x perl rsync gperf man cvs pkgconfig ] ++ buildInputsFrom pkgs;
+      } ;
+      
+      build = pkgs: {
+        buildInputs = buildInputsFrom pkgs;
+        preCheck =
+          # Some tests assume `mkswap' is in $PATH.
+          '' export PATH="${pkgs.utillinuxng}/sbin:$PATH"
+          '';
+      };
+      
+      coverage = pkgs: {
+        buildInputs = buildInputsFrom pkgs;
+        preCheck =
+          # Some tests assume `mkswap' is in $PATH.
+          '' export PATH="${pkgs.utillinuxng}/sbin:$PATH"
+          '';
+      };
+      
+      xbuild_gnu = pkgs: {
+        buildInputs = with pkgs; [ readline libuuid hurdCross ];
+        buildNativeInputs = with pkgs; [ gettext_0_18 ];
+        configureFlags =
+          [ "--disable-device-mapper"
+            "--enable-static" # The Hurd wants libparted.a
+          ];
+      };
+      
+    };   
+  }

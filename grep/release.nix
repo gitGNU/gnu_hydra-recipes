@@ -15,12 +15,11 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
-{ nixpkgs ? ../../nixpkgs 
+{ nixpkgs ? ../../nixpkgs
+, grep ? { outPath = ../../grep; }
 }:
 
 let
-  pkgs = import nixpkgs {};
-
   meta = {
     homepage = http://www.gnu.org/software/grep/;
     description = "GNU implementation of the Unix grep command";
@@ -39,69 +38,22 @@ let
       "Rob Vermaas <rob.vermaas@gmail.com>"
     ];
   };
-
-  succeedOnFailure = true;
-  keepBuildDirectory = true;
-
-  jobs = rec {
-
-    tarball = 
-      { grep ? { outPath = ../../grep; }
-      , gnulib ? {outPath = ../../gnulib;}
-      }:
-      pkgs.releaseTools.makeSourceTarball {
-	name = "grep-tarball";
-	src = grep;
-        inherit meta succeedOnFailure keepBuildDirectory;
-
-        autoconfPhase = ''
-          mkdir -p ../gnulib
-          cp -Rv ${gnulib}/* ../gnulib
-          chmod -R 755 ../gnulib
-
-          ./bootstrap --gnulib-srcdir=../gnulib --skip-po --copy
-        '';
-
-	buildInputs = with pkgs; [
-          automake111x
-          pkgconfig
-          texinfo
-          gettext_0_18
-          git 
-          perl
-          rsync
-          xz
-          cvs
-          gperf
-	];
-      };
-
-    build =
-      { system ? "x86_64-linux"
-      , tarball ? jobs.tarball {}
-      }:
-      let pkgs = import nixpkgs {inherit system;};
-      in with pkgs;
-      releaseTools.nixBuild ({
-        name = "grep" ;
-        src = tarball;
-        inherit meta succeedOnFailure keepBuildDirectory;
+in
+  import ../gnu-jobs.nix {
+    name = "grep";
+    src  = grep;
+    inherit nixpkgs meta; 
+    enableGnuCrossBuild = true;
+    
+    customEnv = {
+        
+      tarball = pkgs: {
+	    buildInputs = with pkgs; [ automake111x pkgconfig texinfo gettext_0_18 git perl rsync xz cvs gperf];
+      } ;
+      
+      build = pkgs: (with pkgs; {
         buildInputs = [pcre] ++ lib.optional stdenv.isDarwin libiconv;
-
-      } // lib.optionalAttrs stdenv.isDarwin { NIX_LDFLAGS="-L${libiconv}/lib -liconv"; } );
-
-    coverage =
-      { tarball ? jobs.tarball {}
-      }:
-      with pkgs;
-
-      releaseTools.coverageAnalysis {
-        name = "grep-coverage";
-        src = tarball;
-        inherit meta;
-        buildInputs = [];
-      };
-
-  };
-
-in jobs
+      } // pkgs.lib.optionalAttrs stdenv.isDarwin { NIX_LDFLAGS="-L${libiconv}/lib -liconv"; } );
+      
+    };   
+  }

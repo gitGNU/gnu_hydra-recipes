@@ -16,13 +16,9 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 { nixpkgs ? { outPath = ../../nixpkgs; }
-, gnulib ? { outPath = ../../gnulib; }
 , patchSrc ? { outPath = ../../patch; } }:
 
 let
-  pkgs = import nixpkgs {};
-  crossSystems = (import ../cross-systems.nix) { inherit pkgs; };
-
   meta = {
     description = "GNU Patch, a program to apply differences to files";
 
@@ -38,66 +34,21 @@ let
 
     maintainers =
      [ "Andreas Gruenbacher <agruen@gnu.org>"
-       pkgs.stdenv.lib.maintainers.ludo
+       (import nixpkgs {}).stdenv.lib.maintainers.ludo
      ];
   };
-
-  succeedOnFailure = true;
-  keepBuildDirectory = true;
-
-  jobs = {
-    tarball =
-      with pkgs;
-      releaseTools.sourceTarball {
-        name = "patch";
-        src = patchSrc;
-        buildInputs =
-          [ git xz gettext_0_17 texinfo automake111x
-            bison # the `testing' branch needs it
-          ];
-        autoconfPhase =
-          '' git config submodule.gnulib.url "${gnulib}"
-             ./bootstrap --gnulib-srcdir="${gnulib}" --skip-po
-          '';
-        inherit meta succeedOnFailure keepBuildDirectory;
-      };
-
-    build =
-      { system ? builtins.currentSystem
-      , tarball ? jobs.tarball }:
-
-      let pkgs = import nixpkgs { inherit system; };
-      in
-        pkgs.releaseTools.nixBuild {
-          name = "patch";
-          src = tarball;
-          inherit meta succeedOnFailure keepBuildDirectory;
-        };
-
-    xbuild_gnu =
-      # Cross build to GNU.
-      { tarball ? jobs.tarball }:
-
-      let pkgs = import nixpkgs {
-            crossSystem = crossSystems.i586_pc_gnu;
-          };
-      in
-      (pkgs.releaseTools.nixBuild {
-	name = "patch" ;
-	src = tarball;
-        doCheck = false;
-        inherit meta;
-      }).hostDrv;
-
-    coverage =
-      { tarball ? jobs.tarball }:
-
-      let pkgs = import nixpkgs {};
-      in
-        pkgs.releaseTools.coverageAnalysis {
-          name = "patch-coverage";
-          src = tarball;
-        };
-  };
 in
-  jobs
+  import ../gnu-jobs.nix {
+    name = "patch";
+    src  = patchSrc;
+    inherit nixpkgs meta; 
+    enableGnuCrossBuild = true;
+    
+    customEnv = {
+        
+      tarball = pkgs: {
+        buildInputs = with pkgs; [ git xz gettext_0_17 texinfo automake111x bison]; # the `testing' branch needs it
+      } ;
+      
+    };   
+  }

@@ -16,11 +16,10 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 { nixpkgs ? ../../nixpkgs 
+, rcs ? { outPath = ../../rcs; }
 }:
 
 let
-  pkgs = import nixpkgs {};
-
   meta = {
     homepage = http://www.gnu.org/software/rcs/;
     description = "The Revision Control System (RCS) manages multiple revisions of files.";
@@ -41,58 +40,33 @@ let
   };
 
   configureFlags = "RCS_PRETEST=acknowledged";
-
-  succeedOnFailure = true;
-  keepBuildDirectory = true;
-
-  jobs = rec {
-
-    tarball = 
-      { rcs ? { outPath = ../../rcs; }
-      , gnulib ? {outPath = ../../gnulib;}
-      }:
-      pkgs.releaseTools.makeSourceTarball {
-	name = "rcs-tarball";
-	src = rcs;
-        inherit meta configureFlags succeedOnFailure keepBuildDirectory;
+in
+  import ../gnu-jobs.nix {
+    name = "rcs";
+    src  = rcs;
+    inherit nixpkgs meta; 
+    
+    customEnv = {
+        
+      tarball = pkgs: {
+        buildInputs = with pkgs; [ automake111x autoconf ed texinfo emacs];
         autoconfPhase = ''
-          cp -Rv ${gnulib} ../gnulib
-          chmod -R a+rwx ../gnulib
           export PATH=$PATH:../gnulib
           sh autogen.sh
         '';
-        buildInputs = with pkgs; [ automake111x autoconf ed texinfo emacs];
-      };
-
-    build =
-      { system ? "x86_64-linux"
-      , tarball ? jobs.tarball {}
-      }:
-      let pkgs = import nixpkgs {inherit system;};
-      in with pkgs;
-      releaseTools.nixBuild {
-        name = "rcs" ;
-        src = tarball;
-        inherit meta configureFlags succeedOnFailure keepBuildDirectory;
-
-        buildInputs = with pkgs; [ed];
-
-        succeedOnFailure = true;
-        keepBuildDirectory = true;
+        inherit configureFlags;
       } ;
-
-    coverage =
-      { tarball ? jobs.tarball {}
-      }:
-      with pkgs;
-
-      releaseTools.coverageAnalysis {
-        name = "rcs-coverage";
-        src = tarball;
-        inherit meta configureFlags;
-        buildInputs = with pkgs; [ed];
+      
+      build = pkgs: {
+        buildInputs = [pkgs.ed];  
+        inherit configureFlags;
       };
 
-  };
+      coverage = pkgs: {
+        buildInputs = [pkgs.ed];  
+        inherit configureFlags;
+      };
+      
+    };   
+  }
 
-in jobs

@@ -37,44 +37,23 @@ let
      [ 
      ];
   };
-
-  succeedOnFailure = true;
-  keepBuildDirectory = true;
-
-  jobs = {
-    tarball =
-      with pkgs;
-      releaseTools.sourceTarball {
-        name = "libredwg";
-        src = libredwgSrc;
-        buildInputs =
-          [ gettext_0_17 texinfo automake111x python swig
-          ];
-        dontBuild = false;
-        inherit meta succeedOnFailure keepBuildDirectory;
-      };
-
-    build =
-      { system ? builtins.currentSystem
-      , tarball ? jobs.tarball }:
-
-      let pkgs = import nixpkgs { inherit system; };
-      in
-        pkgs.releaseTools.nixBuild {
-          name = "libredwg";
-          src = tarball;
-          inherit meta succeedOnFailure keepBuildDirectory;
-        };
-
-    coverage =
-      { tarball ? jobs.tarball }:
-
-      let pkgs = import nixpkgs {};
-      in
-        pkgs.releaseTools.coverageAnalysis {
-          name = "libredwg-coverage";
-          src = tarball;
-        };
-  };
 in
-  jobs
+  import ../gnu-jobs.nix {
+    name = "libredwg";
+    src  = libredwgSrc;
+    inherit nixpkgs meta;
+    enableGnuCrossBuild = true; 
+    
+    customEnv = {
+        
+      tarball = pkgs: {
+        buildInputs = with pkgs; [ gettext_0_17 texinfo automake111x python swig ];
+        dontBuild = false;
+        autoconfPhase = ''
+          ./autogen.sh
+        '';
+      } ;
+      
+    };   
+  }
+

@@ -15,90 +15,65 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
-{nixpkgs ? ../../nixpkgs}:
+{ nixpkgs ? ../../nixpkgs
+, tarSrc ? {outPath = ../../tar;}
+, paxutils ? {outPath = ../../paxutils;}
+}:
 let
-  pkgs = import nixpkgs { system = "i686-linux"; };
-  crossSystems = (import ../cross-systems.nix) { inherit pkgs; };
-
   buildInputsFrom = pkgs: [ pkgs.gettext_0_18 ];
+  meta = {
+    homepage = http://www.gnu.org/software/tar/;
+    description = "GNU implementation of the `tar' archiver";
 
-  succeedOnFailure = true;
-  keepBuildDirectory = true;
+    longDescription = ''
+      The Tar program provides the ability to create tar archives, as
+      well as various other kinds of manipulation.  For example, you
+      can use Tar on previously created archives to extract files, to
+      store additional files, or to update or list files which were
+      already stored.
 
-  jobs = {
+      Initially, tar archives were used to store files conveniently on
+      magnetic tape.  The name "Tar" comes from this use; it stands
+      for tape archiver.  Despite the utility's name, Tar can direct
+      its output to available devices, files, or other programs (using
+      pipes), it can even access remote devices or files (as
+      archives).
+    '';
 
-    tarball =
-      { tarSrc ? {outPath = ../../tar;}
-      , gnulib ? {outPath = ../../gnulib;}
-      , paxutils ? {outPath = ../../paxutils;}
-      }:
+    license = "GPLv3+";
 
-      pkgs.releaseTools.sourceTarball {
-        name = "tar-tarball";
-        src = tarSrc;
+    maintainers = [];
+  };
 
+in
+  import ../gnu-jobs.nix {
+    name = "tar";
+    src  = tarSrc;
+    inherit nixpkgs meta; 
+    enableGnuCrossBuild = true;
+    
+    customEnv = {
+        
+      tarball = pkgs: {
         PAXUTILS_SRCDIR = paxutils;
+          
         autoconfPhase = ''
           # Disable Automake's `check-news' so that "make dist" always works.
           sed -i "configure.ac" -es/gnits/gnu/g
 
-          cp -Rv ${gnulib} ../gnulib
-          chmod -R 755 ../gnulib
-
           ./bootstrap --gnulib-srcdir=../gnulib --skip-po --copy
         '';
-
-        inherit succeedOnFailure keepBuildDirectory;
-        
-        buildInputs = with pkgs;
-         [ git texinfo bison
-           cvs # for `autopoint'
-           man rsync perl cpio automake111x xz
-         ] ++ buildInputsFrom pkgs;
-      };
-
-    build =
-      { tarball ? jobs.tarball {}
-      , system ? "x86_64-linux"
-      }:
-
-      let pkgs = import nixpkgs {inherit system;};
-      in with pkgs;
-      releaseTools.nixBuild {
-        name = "tar" ;
-        src = tarball;
+        buildInputs = with pkgs; [ git texinfo bison cvs man rsync perl cpio automake111x xz ] ++ buildInputsFrom pkgs;
+      } ;
+      
+      build = pkgs: {
         buildInputs = buildInputsFrom pkgs;
-        inherit succeedOnFailure keepBuildDirectory;
       };
-
-    xbuild_gnu =
-      # Cross build to GNU.
-      { tarball ? jobs.tarball {}
-      }:
-
-      let pkgs = import nixpkgs {
-            crossSystem = crossSystems.i586_pc_gnu;
-          };
-      in
-      (pkgs.releaseTools.nixBuild {
-        name = "tar" ;
-        src = tarball;
-        doCheck = false;
-      }).hostDrv;
-
-    coverage =
-      { tarball ? jobs.tarball {}
-      }:
-
-      with pkgs;
-
-      releaseTools.coverageAnalysis {
-        name = "tar-coverage";
-        src = tarball;
+      
+      coverage = pkgs: {
         buildInputs = buildInputsFrom pkgs;
         schedulingPriority = 50;
       };
-
-  };
-
-in jobs
+      
+    };   
+  }

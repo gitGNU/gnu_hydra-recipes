@@ -16,6 +16,7 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 { nixpkgs ? ../../nixpkgs
+, diffutils ? {outPath = ../../diffutils;}
 }:
 let
   pkgs = import nixpkgs {};
@@ -32,31 +33,16 @@ let
 
   };
 
-  succeedOnFailure = true;
-  keepBuildDirectory = true;
+in
+  import ../gnu-jobs.nix {
+    name = "diffutils";
+    src  = diffutils;
+    inherit nixpkgs meta; 
+    enableGnuCrossBuild = true;
 
-  jobs = rec {
-
-    tarball = 
-      { diffutils ? {outPath = ../../diffutils;}
-      , gnulib ? {outPath = ../../gnulib;}
-      }:
-      with pkgs;
-
-      pkgs.releaseTools.makeSourceTarball {
-        name = "diffutils-tarball";
-        src = diffutils;
-        inherit meta succeedOnFailure keepBuildDirectory;
-
-        autoconfPhase = ''
-          mkdir -p ../gnulib
-          cp -Rv ${gnulib}/* ../gnulib
-          chmod -R 755 ../gnulib
-
-          ./bootstrap --gnulib-srcdir=../gnulib --skip-po --copy
-        '';
-
-        buildInputs = [
+    customEnv = {
+      tarball = pkgs: {
+        buildInputs = with pkgs; [
           git
           gettext_0_17
           cvs
@@ -69,36 +55,12 @@ let
           help2man
           xz
         ] ;
+      } ;
+      
+      coverage = pkgs: {
+        schedulingPriority = 50;  
       };
-
-    build =
-      { system ? "x86_64-linux"
-      , tarball ? jobs.tarball {}
-      }:
-
-      let pkgs = import nixpkgs {inherit system;};
-      in with pkgs;
-      releaseTools.nixBuild {
-        name = "diffutils" ;
-        src = tarball;
-        inherit meta succeedOnFailure keepBuildDirectory;
-        buildInputs = [];
-      };
-
-    coverage =
-      { tarball ? jobs.tarball {}
-      }:
-      with pkgs;
-
-      releaseTools.coverageAnalysis {
-        name = "diffutils-coverage";
-        src = tarball;
-        inherit meta;
-        buildInputs = [];
-        schedulingPriority = 50;
-      };
-
-  };
-
+      
+    };   
+  }
   
-in jobs

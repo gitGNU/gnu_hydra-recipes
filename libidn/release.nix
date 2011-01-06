@@ -15,7 +15,9 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
-{ nixpkgs ? ../../nixpkgs }:
+{ nixpkgs ? ../../nixpkgs 
+, libidnSrc ? { outPath = ../../libidn ; rev = 1234; }
+}:
 
 let
   pkgs = import nixpkgs {};
@@ -41,7 +43,7 @@ let
     '';
 
     license = "LGPLv2+";
-    maintainers = [ "libidn-commit@gnu.org" pkgs.stdenv.lib.maintainers.ludo ];
+    maintainers = [ "libidn-commit@gnu.org" (import nixpkgs {}).stdenv.lib.maintainers.ludo ];
   };
 
   buildInputsFrom = pkgs: with pkgs;
@@ -49,29 +51,24 @@ let
       docbook_xsl docbook_xml_dtd_412
       libxml2 /* for the setup hook */
     ]
-
     # The following packages aren't available on non-GNU platforms.
     ++ stdenv.lib.optionals stdenv.isLinux [ gcj mono gnome.gtkdoc ];
 
-  succeedOnFailure = true;
-  keepBuildDirectory = true;
-
-  jobs = {
-
-    tarball =
-      { libidnSrc ? { outPath = ../../libidn ; rev = 1234; } }:
-
-      pkgs.releaseTools.sourceTarball {
-	name = "libidn-tarball";
-	src = libidnSrc;
-
-        # `help2man' wants to run the programs.
+in
+  import ../gnu-jobs.nix {
+    name = "libidn";
+    src  = libidnSrc;
+    inherit nixpkgs meta; 
+    
+    customEnv = {
+        
+      tarball = pkgs: {
         dontBuild = false;
 
         patches = [ ./interpreter-path.patch ./mono-without-binfmt_misc.patch ];
 
-	autoconfPhase =
-	  '' # If `git describe' doesn't work, keep the default version
+        autoconfPhase = ''
+             # If `git describe' doesn't work, keep the default version
              # string since otherwise the `stringprep_check_version' tests
              # fail.
              if git describe > /dev/null
@@ -106,45 +103,26 @@ let
         configureFlags =
           [ "--enable-gtk-doc" "--enable-java" "--enable-csharp=mono" ];
 
-	buildInputs = (buildInputsFrom pkgs)
+        buildInputs = (buildInputsFrom pkgs)
           ++ (with pkgs;
                [ autoconf automake111x libtool gettext_0_17
-	         git texinfo gperf gengetopt transfig texLive help2man
+             git texinfo gperf gengetopt transfig texLive help2man
                  ghostscript # for `fig2dev'
                  cvs # for `autopoint'
-	       ]);
-
-        inherit meta succeedOnFailure keepBuildDirectory;
-
-      };
-
-    build =
-      { tarball ? jobs.tarball {}, system ? "x86_64-linux"}:
-
-      let pkgs = import nixpkgs { inherit system; };
-      in
-        with pkgs;
-        releaseTools.nixBuild {
-          name = "libidn" ;
-          src = tarball;
+           ]);
+      } ;
+      
+      build = pkgs: {
           preConfigure = "export JAR=gjar MONO_SHARED_DIR=$TMPDIR";
-          configureFlags = stdenv.lib.optional stdenv.isLinux "--enable-java";
+          configureFlags = pkgs.stdenv.lib.optional pkgs.stdenv.isLinux "--enable-java";
           buildInputs = buildInputsFrom pkgs;
-          inherit meta succeedOnFailure keepBuildDirectory;
-        };
-
-    coverage =
-      { tarball }:
-
-      pkgs.releaseTools.coverageAnalysis {
-	name = "libidn-coverage";
-	src = tarball;
+      };
+      
+      coverage = pkgs: {
         preConfigure = "export JAR=gjar MONO_SHARED_DIR=$TMPDIR";
         configureFlags = "--enable-java";
-	buildInputs = buildInputsFrom pkgs;
-        inherit meta;
+        buildInputs = buildInputsFrom pkgs;
       };
-
-  };
-
-in jobs
+      
+    };   
+  }

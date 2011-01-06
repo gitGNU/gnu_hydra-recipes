@@ -15,6 +15,7 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 { nixpkgs ? ../../nixpkgs 
+, zile ? { outPath = ../../zile; }
 }:
 
 let
@@ -50,68 +51,33 @@ let
     ];
   };
 
-  pkgs = import nixpkgs {};
-
-  succeedOnFailure = true;
-  keepBuildDirectory = true;
-
-  jobs = rec {
-
-    tarball = 
-      { zile ? { outPath = ../../zile; }
-      , gnulib ? { outPath = ../../gnulib; }
-      }: 
-      with pkgs;
-      releaseTools.makeSourceTarball {
-	name = "zile-tarball";
-	src = zile;
-        inherit meta succeedOnFailure keepBuildDirectory;
-
+in
+  import ../gnu-jobs.nix {
+    name = "zile";
+    src  = zile;
+    inherit nixpkgs meta; 
+    
+    customEnv = {
+        
+      tarball = pkgs: {
+        HELP2MAN = "${pkgs.help2man}/bin/help2man";
+        buildInputs = with pkgs; [ ncurses help2man lua5 perl ];
         dontBuild = false;
-
         autoconfPhase = ''
-          mkdir -p ../gnulib
-          cp -Rv ${gnulib}/* ../gnulib
-          chmod -R 755 ../gnulib
-          export GNULIB_SRCDIR=../gnulib
           ./autogen.sh
         '';
-
-        HELP2MAN = "${help2man}/bin/help2man";
-	buildInputs = [
-          ncurses
-          help2man
-          lua5
-          perl
-	];
-      };
-
-    build =
-      { system ? "x86_64-linux"
-      , tarball ? jobs.tarball {}
-      }:
-      let pkgs = import nixpkgs { inherit system;} ;
-      in with pkgs;
-      releaseTools.nixBuild {
-	name = "zile" ;
-	src = tarball;
-        inherit meta succeedOnFailure keepBuildDirectory;
+      } ;
+      
+      build = pkgs: {
         TERM="xterm";
-	buildInputs = [ncurses];
+        buildInputs = with pkgs; [ncurses];
       };
-
-    coverage =
-      { tarball ? jobs.tarball {} }:
-      with pkgs;
-
-      releaseTools.coverageAnalysis {
-        name = "zile-coverage";
-        src = tarball;
-        inherit meta;
+      
+      coverage = pkgs: {
         TERM="xterm";
-        buildInputs = [ncurses];
+        buildInputs = with pkgs; [ncurses];
       };
+      
+    };   
+  }
 
-  };
-
-in jobs

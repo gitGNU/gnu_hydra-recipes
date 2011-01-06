@@ -17,11 +17,10 @@
 
 { nixpkgs ? ../../nixpkgs 
 , gzip ? { outPath = ../../gzip; }
-, gnulib ? {outPath = ../../gnulib;}
 }:
 
 let
-  pkgs = import nixpkgs {};
+  basepkgs = import nixpkgs {};
 
   buildInputsFrom = pkgs: with pkgs;
     # less(1), for zless's unit tests
@@ -56,25 +55,17 @@ let
     ];
   };
 
-  succeedOnFailure = true;
-  keepBuildDirectory = true;
+in 
+  import ../gnu-jobs.nix {
+    name = "gzip";
+    src  = gzip;
+    inherit nixpkgs meta; 
+    enableGnuCrossBuild = true;
 
-  jobs = rec {
-
-    tarball =
-      pkgs.releaseTools.sourceTarball {
-	name = "gzip-tarball";
-	src = gzip;
-
-        autoconfPhase = ''
-          mkdir -p ../gnulib
-          cp -Rv "${gnulib}/"* ../gnulib
-          chmod -R 755 ../gnulib
-
-          ./bootstrap --gnulib-srcdir=../gnulib --skip-po --copy
-        '';
-
-	buildInputs = with pkgs; [
+    customEnv = {
+        
+      tarball = pkgs: {
+        buildInputs = with pkgs; [
           automake111x
           texinfo
           gettext_0_17
@@ -82,33 +73,17 @@ let
           perl
           rsync
           xz
-	];
+        ];
+      } ;
+      
+      build = pkgs: {
+        buildInputs = buildInputsFrom pkgs ++ basepkgs.lib.optional (pkgs.stdenv.system == "i686-cygwin") [pkgs.ncurses]; 
+      } ;
 
-        inherit meta succeedOnFailure keepBuildDirectory;
-      };
+      coverage = pkgs: {
+        buildInputs = buildInputsFrom pkgs; 
+      } ;
+      
+    };   
+  }
 
-    build =
-      { system ? "x86_64-linux"
-      }:
-      let pkgs = import nixpkgs {inherit system;};
-      in with pkgs;
-      releaseTools.nixBuild {
-	name = "gzip" ;
-	src = tarball;
-	buildInputs = buildInputsFrom pkgs ++ lib.optional (system == "i686-cygwin") [pkgs.ncurses]; 
-        inherit meta succeedOnFailure keepBuildDirectory;
-      };
-
-    coverage =
-      with pkgs;
-
-      releaseTools.coverageAnalysis {
-        name = "gzip-coverage";
-        src = tarball;
-        buildInputs = buildInputsFrom pkgs;
-        inherit meta;
-      };
-
-  };
-
-in jobs
