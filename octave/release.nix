@@ -25,6 +25,9 @@ let
   
   buildInputsFrom = pkgs: with pkgs; [gfortran readline ncurses perl qhull blas liblapack pcre imagemagick gnuplot fftw zlib ghostscript transfig xfig pstoedit hdf5 texinfo qrupdate suitesparse curl fltk11 texLive] ;
   
+  succeedOnFailure = true;
+  keepBuildDirectory = true;
+
   jobs = rec {
 
     tarball = 
@@ -35,7 +38,7 @@ let
       releaseTools.makeSourceTarball {
         name = "octave-tarball";
         src = octave;
-        inherit meta;
+        inherit meta succeedOnFailure keepBuildDirectory;
         dontBuild = false;
         
         autoconfPhase = ''
@@ -61,7 +64,7 @@ let
       releaseTools.nixBuild {
         name = "octave" ;
         src = tarball;
-        inherit meta;
+        inherit meta succeedOnFailure keepBuildDirectory;
         buildInputs = buildInputsFrom pkgs;
       };
 

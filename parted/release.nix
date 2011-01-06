@@ -49,6 +49,9 @@ let
   buildInputsFrom = pkgs: with pkgs;
     [ devicemapper libuuid gettext_0_18 readline ];
 
+  succeedOnFailure = true;
+  keepBuildDirectory = true;
+
   jobs = {
     tarball =
       with pkgs;
@@ -63,7 +66,7 @@ let
           '' git config submodule.gnulib.url "${gnulib}"
              ./bootstrap --gnulib-srcdir="${gnulib}" --skip-po
           '';
-        inherit meta;
+        inherit meta succeedOnFailure keepBuildDirectory;
       };
 
     build =
@@ -75,16 +78,6 @@ let
         pkgs.releaseTools.nixBuild {
           name = "parted";
           src = tarball;
-          failureHook =
-            '' if [ -f tests/test-suite.log ]
-               then
-                   header 'tests/test-suite.log'
-                   echo
-                   echo "build failed, dumping test log..."
-                   cat tests/test-suite.log
-                   stopNest
-               fi
-            '';
           buildInputs = buildInputsFrom pkgs;
 
           preCheck =
@@ -92,7 +85,7 @@ let
             '' export PATH="${pkgs.utillinuxng}/sbin:$PATH"
             '';
 
-          inherit meta;
+          inherit meta succeedOnFailure keepBuildDirectory;
         };
 
     xbuild_gnu =

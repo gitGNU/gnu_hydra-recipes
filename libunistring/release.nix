@@ -53,6 +53,9 @@ let
 
   inherit (pkgs) releaseTools;
 
+  succeedOnFailure = true;
+  keepBuildDirectory = true;
+
   jobs = rec {
 
     tarball =
@@ -84,7 +87,7 @@ let
           wget perl gperf
 	];
 
-        inherit meta;
+        inherit meta succeedOnFailure keepBuildDirectory;
       };
 
     build =
@@ -102,7 +105,7 @@ let
             stdenv.lib.optional (stdenv.isDarwin
                                  || stdenv.system == "i686-cygwin")
               libiconv;
-          inherit meta;
+          inherit meta succeedOnFailure keepBuildDirectory;
         };
 
     coverage =

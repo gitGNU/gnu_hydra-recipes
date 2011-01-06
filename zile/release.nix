@@ -52,6 +52,9 @@ let
 
   pkgs = import nixpkgs {};
 
+  succeedOnFailure = true;
+  keepBuildDirectory = true;
+
   jobs = rec {
 
     tarball = 
@@ -62,7 +65,7 @@ let
       releaseTools.makeSourceTarball {
 	name = "zile-tarball";
 	src = zile;
-        inherit meta;
+        inherit meta succeedOnFailure keepBuildDirectory;
 
         dontBuild = false;
 
@@ -92,7 +95,7 @@ let
       releaseTools.nixBuild {
 	name = "zile" ;
 	src = tarball;
-        inherit meta;
+        inherit meta succeedOnFailure keepBuildDirectory;
         TERM="xterm";
 	buildInputs = [ncurses];
       };

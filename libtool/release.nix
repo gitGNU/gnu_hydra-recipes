@@ -94,7 +94,7 @@ let
           name = "libtool";
           src = tarball;
           buildInputs = [ autoconf automake ];
-          inherit preCheck failureHook;
+          inherit preCheck succeedOnFailure keepBuildDirectory;
         };
 
     xbuild_gnu =

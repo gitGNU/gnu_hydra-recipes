@@ -42,6 +42,9 @@ let
 
   configureFlags = "RCS_PRETEST=acknowledged";
 
+  succeedOnFailure = true;
+  keepBuildDirectory = true;
+
   jobs = rec {
 
     tarball = 
@@ -51,7 +54,7 @@ let
       pkgs.releaseTools.makeSourceTarball {
 	name = "rcs-tarball";
 	src = rcs;
-        inherit meta configureFlags; 
+        inherit meta configureFlags succeedOnFailure keepBuildDirectory;
         autoconfPhase = ''
           cp -Rv ${gnulib} ../gnulib
           chmod -R a+rwx ../gnulib
@@ -70,7 +73,8 @@ let
       releaseTools.nixBuild {
         name = "rcs" ;
         src = tarball;
-        inherit meta configureFlags;
+        inherit meta configureFlags succeedOnFailure keepBuildDirectory;
+
         buildInputs = with pkgs; [ed];
 
         succeedOnFailure = true;

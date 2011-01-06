@@ -22,6 +22,9 @@ let
 
   buildInputsFrom = pkgs: [ pkgs.gettext_0_18 ];
 
+  succeedOnFailure = true;
+  keepBuildDirectory = true;
+
   jobs = {
 
     tarball =
@@ -45,6 +48,8 @@ let
           ./bootstrap --gnulib-srcdir=../gnulib --skip-po --copy
         '';
 
+        inherit succeedOnFailure keepBuildDirectory;
+        
         buildInputs = with pkgs;
          [ git texinfo bison
            cvs # for `autopoint'
@@ -63,14 +68,7 @@ let
         name = "tar" ;
         src = tarball;
         buildInputs = buildInputsFrom pkgs;
-        failureHook =
-          '' if [ -f tests/testsuite.log ]
-             then
-                 echo
-                 echo "build failed, dumping test log..."
-                 cat tests/testsuite.log
-             fi
-          '';
+        inherit succeedOnFailure keepBuildDirectory;
       };
 
     xbuild_gnu =

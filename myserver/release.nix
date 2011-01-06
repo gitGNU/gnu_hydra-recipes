@@ -44,6 +44,9 @@ let
     [ libgcrypt libevent libidn gnutls libxml2 zlib texinfo cppunit
       libtasn1  # somehow libbase64 wants libtasn1
     ];
+    
+  succeedOnFailure = true;
+  keepBuildDirectory = true;
 
   jobs = rec {
 
@@ -75,7 +78,7 @@ let
                 gettext_0_17 cvs  # cvs is used by `autopoint'
               ]);
 
-        inherit meta;
+        inherit meta succeedOnFailure keepBuildDirectory;
       };
 
     build =
@@ -89,7 +92,7 @@ let
           name = "myserver";
           src = tarball;
           buildInputs = buildInputsFrom pkgs;
-          inherit meta;
+          inherit meta succeedOnFailure keepBuildDirectory;
         };
 
     coverage =

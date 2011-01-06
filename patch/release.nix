@@ -42,6 +42,9 @@ let
      ];
   };
 
+  succeedOnFailure = true;
+  keepBuildDirectory = true;
+
   jobs = {
     tarball =
       with pkgs;
@@ -56,7 +59,7 @@ let
           '' git config submodule.gnulib.url "${gnulib}"
              ./bootstrap --gnulib-srcdir="${gnulib}" --skip-po
           '';
-        inherit meta;
+        inherit meta succeedOnFailure keepBuildDirectory;
       };
 
     build =
@@ -68,15 +71,7 @@ let
         pkgs.releaseTools.nixBuild {
           name = "patch";
           src = tarball;
-          failureHook =
-            '' if [ -f tests/test-suite.log ]
-               then
-                   echo
-                   echo "build failed, dumping test log..."
-                   cat tests/test-suite.log
-               fi
-            '';
-          inherit meta;
+          inherit meta succeedOnFailure keepBuildDirectory;
         };
 
     xbuild_gnu =
