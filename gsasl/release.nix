@@ -47,6 +47,9 @@ let
     [ gettext_0_17 pkgconfig perl gss ghostscript ]
     ++ stdenv.lib.optional stdenv.isLinux valgrind;
 
+  succeedOnFailure = true;
+  keepBuildDirectory = true;
+
   jobs = rec {
 
     tarball =
@@ -74,7 +77,7 @@ let
                 texinfo texLive
               ]);
 
-        inherit meta;
+        inherit meta succeedOnFailure keepBuildDirectory;
       };
 
     build =
@@ -89,7 +92,7 @@ let
           src = tarball;
           configureFlags = "";
           buildInputs = (buildInputsFrom pkgs) ++ [ libgcrypt libidn ];
-          inherit meta;
+          inherit meta succeedOnFailure keepBuildDirectory;
         };
 
     coverage =

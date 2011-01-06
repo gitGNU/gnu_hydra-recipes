@@ -43,6 +43,9 @@ let
 
   buildInputsFrom = pkgs: with pkgs; [ gettext_0_17 texinfo perl ];
 
+  succeedOnFailure = true;
+  keepBuildDirectory = true;
+
   # Build out-of-tree; don't produce self rpaths.
   preConfigure =
     ''
@@ -177,7 +180,7 @@ let
              mv -v glibc-*.tar.{bz2,gz,xz} "$out/tarballs"
           '';
 
-        inherit meta;
+        inherit meta succeedOnFailure keepBuildDirectory;
       };
 
     build =
@@ -212,7 +215,7 @@ let
           # install".
           checkPhase = "make -k check || true";
 
-          inherit preConfigure meta;
+          inherit preConfigure meta succeedOnFailure keepBuildDirectory;
         };
 
      xbuild_sparc64 =

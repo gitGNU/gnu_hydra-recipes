@@ -40,6 +40,9 @@ let
     ];
   };
 
+  succeedOnFailure = true;
+  keepBuildDirectory = true;
+
   jobs = rec {
 
     tarball = 
@@ -49,7 +52,7 @@ let
       pkgs.releaseTools.makeSourceTarball {
 	name = "grep-tarball";
 	src = grep;
-        inherit meta;
+        inherit meta succeedOnFailure keepBuildDirectory;
 
         autoconfPhase = ''
           mkdir -p ../gnulib
@@ -82,7 +85,7 @@ let
       releaseTools.nixBuild ({
         name = "grep" ;
         src = tarball;
-        inherit meta;
+        inherit meta succeedOnFailure keepBuildDirectory;
         buildInputs = [pcre] ++ lib.optional stdenv.isDarwin libiconv;
 
         succeedOnFailure = true;

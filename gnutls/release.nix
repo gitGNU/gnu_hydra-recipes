@@ -50,6 +50,9 @@ let
     ++ stdenv.lib.optional stdenv.isLinux valgrind
     ++ stdenv.lib.optional (stdenv.isDarwin || stdenv.isBSD) libiconv;
 
+  succeedOnFailure = true;
+  keepBuildDirectory = true;
+
   jobs = rec {
 
     tarball =
@@ -107,7 +110,7 @@ let
                 texinfo texLive
               ]);
 
-        inherit meta;
+        inherit meta succeedOnFailure keepBuildDirectory;
       };
 
     build =
@@ -125,7 +128,7 @@ let
           configureFlags =
             "--with-lzo --with-libtasn1-prefix=${libtasn1} --enable-guile";
           buildInputs = (buildInputsFrom pkgs) ++ [ libtasn1 libgcrypt ];
-          inherit meta;
+          inherit meta succeedOnFailure keepBuildDirectory;
         };
 
     coverage =

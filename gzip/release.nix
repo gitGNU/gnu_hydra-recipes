@@ -56,6 +56,9 @@ let
     ];
   };
 
+  succeedOnFailure = true;
+  keepBuildDirectory = true;
+
   jobs = rec {
 
     tarball =
@@ -81,7 +84,7 @@ let
           xz
 	];
 
-        inherit meta;
+        inherit meta succeedOnFailure keepBuildDirectory;
       };
 
     build =
@@ -93,7 +96,7 @@ let
 	name = "gzip" ;
 	src = tarball;
 	buildInputs = buildInputsFrom pkgs ++ lib.optional (system == "i686-cygwin") [pkgs.ncurses]; 
-        inherit meta;
+        inherit meta succeedOnFailure keepBuildDirectory;
       };
 
     coverage =

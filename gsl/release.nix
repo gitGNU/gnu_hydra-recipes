@@ -43,6 +43,9 @@ let
 
   inherit (pkgs) releaseTools;
 
+  succeedOnFailure = true;
+  keepBuildDirectory = true;
+
   jobs = rec {
 
     tarball =
@@ -62,7 +65,7 @@ let
           with pkgs;
             [ autoconf automake111x git texinfo];
 
-        inherit meta;
+        inherit meta succeedOnFailure keepBuildDirectory;
       };
 
     build =
@@ -75,7 +78,7 @@ let
         pkgs.releaseTools.nixBuild {
           name = "gsl";
           src = tarball;
-          inherit meta;
+          inherit meta succeedOnFailure keepBuildDirectory;
         };
 
     coverage =
