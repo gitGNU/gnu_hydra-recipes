@@ -37,6 +37,9 @@ let
 
   inherit (pkgs) releaseTools;
 
+  succeedOnFailure = true;
+  keepBuildDirectory = true;
+
   jobs = {
 
     tarball =
@@ -67,7 +70,7 @@ let
           libxml2 /* for the setup hook */
 	];
 
-        inherit meta;
+        inherit meta succeedOnFailure keepBuildDirectory;
       };
 
     build =
@@ -80,7 +83,7 @@ let
         pkgs.releaseTools.nixBuild {
           name = "libtasn1" ;
           src = tarball;
-          inherit meta;
+          inherit meta succeedOnFailure keepBuildDirectory;
         };
 
     coverage =

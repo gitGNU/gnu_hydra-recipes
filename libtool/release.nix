@@ -41,16 +41,10 @@ let
        unset NIX_CROSS_LDFLAGS_AFTER
     '';
 
-  failureHook =
-    '' if [ -f tests/testsuite.log ]
-       then
-           echo
-           echo "build failed, dumping test log..."
-           cat tests/testsuite.log
-       fi
-    '';
-
   inherit (pkgs) releaseTools;
+
+  succeedOnFailure = true;
+  keepBuildDirectory = true;
 
   jobs = rec {
 
@@ -83,6 +77,8 @@ let
                done ) || exit 1
              echo "environment looks good"
           '';
+          inherit succeedOnFailure keepBuildDirectory;
+          
       };
 
     build =
@@ -120,7 +116,8 @@ let
         # The test suite can run in cross-compilation mode.
         doCheck = true;
 
-        inherit preCheck failureHook;
+        inherit preCheck succeedOnFailure keepBuildDirectory;
+
       }).hostDrv;
 
     manual =

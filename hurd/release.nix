@@ -41,6 +41,9 @@ let
     maintainers = [ pkgs.stdenv.lib.maintainers.ludo ];
   };
 
+  succeedOnFailure = true;
+  keepBuildDirectory = true;
+
   jobs = {
     tarball =
       # "make dist" should work even non-natively and even without a
@@ -83,7 +86,7 @@ let
           '';
         buildNativeInputs = [ pkgs.machHeaders pkgs.mig pkgs.texinfo ];
         buildInputs = [ pkgs.parted /* not the cross-GNU one */ pkgs.libuuid ];
-        inherit meta;
+        inherit meta succeedOnFailure keepBuildDirectory;
       };
 
     # Cross build from GNU/Linux.
@@ -103,7 +106,7 @@ let
           propagatedBuildNativeInputs = [ pkgs.machHeaders ];
           buildNativeInputs = [ pkgs.mig ];
           buildInputs = [ parted pkgs.libuuid ];
-          inherit meta;
+          inherit meta succeedOnFailure keepBuildDirectory;
         }).hostDrv;
 
     # Same without dependency on Parted.
@@ -177,7 +180,7 @@ let
           src = tarball;
           propagatedBuildNativeInputs = [ pkgs.machHeaders ];
           buildNativeInputs = [ pkgs.mig ];
-          inherit meta;
+          inherit meta succeedOnFailure keepBuildDirectory;
         }).hostDrv;
    };
 in

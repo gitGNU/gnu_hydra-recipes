@@ -45,6 +45,9 @@ let
     # On Darwin libintl is needed.
     stdenv.lib.optional stdenv.isDarwin gettext_0_17;
 
+  succeedOnFailure = true;
+  keepBuildDirectory = true;
+
   jobs = rec {
 
     tarball =
@@ -64,7 +67,7 @@ let
 	       subversion texinfo transfig ghostscript
 	      ]);
 
-        inherit meta;
+        inherit meta succeedOnFailure keepBuildDirectory;
       };
 
     build =
@@ -80,7 +83,7 @@ let
           src = tarball;
           buildInputs = (buildInputsFrom pkgs);
           propagatedBuildInputs = [ libgpgerror ];
-          inherit meta;
+          inherit meta succeedOnFailure keepBuildDirectory;
         };
 
     coverage =

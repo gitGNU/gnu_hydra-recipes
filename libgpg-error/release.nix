@@ -24,6 +24,9 @@ let
 
   buildInputsFrom = pkgs: with pkgs; [ gettext_0_17 ];
 
+  succeedOnFailure = true;
+  keepBuildDirectory = true;
+
   jobs = rec {
 
     tarball =
@@ -45,6 +48,8 @@ let
              rm -fv m4/libtool* m4/lt* libtool build-aux/lt*
              libtoolize --install --force
           '';
+
+        inherit succeedOnFailure keepBuildDirectory;
       };
 
     build =
@@ -58,6 +63,8 @@ let
           name = "libgpgerror" ;
           src = tarball;
           buildInputs = buildInputsFrom pkgs;
+          inherit succeedOnFailure keepBuildDirectory;
+          
         };
 
   };

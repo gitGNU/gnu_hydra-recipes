@@ -49,6 +49,9 @@ let
     # `netstat'.
     (lib.optional stdenv.isLinux nettools);
 
+  succeedOnFailure = true;
+  keepBuildDirectory = true;
+
   jobs = rec {
 
     tarball =
@@ -84,7 +87,7 @@ let
                 texinfo help2man
               ]);
 
-        inherit preBuild meta;
+        inherit preBuild meta succeedOnFailure keepBuildDirectory;
       };
 
     build =
@@ -101,7 +104,7 @@ let
             ++ (pkgs.lib.optional pkgs.stdenv.isLinux pkgs.nettools);
           configureFlags =
             [ "--with-ncurses-include-dir=${pkgs.ncurses}/include" ];
-          inherit preBuild meta;
+          inherit preBuild meta succeedOnFailure keepBuildDirectory;
         };
 
     build_shishi =
