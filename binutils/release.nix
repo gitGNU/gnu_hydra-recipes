@@ -40,7 +40,16 @@ let
 
   inherit (pkgs) releaseTools;
 
-  checkPhase = "make -k check";
+  checkPhase =
+    # The `ld' test suite assumes that zlib and libstdc++ are in the loader's
+    # search path, so help it.
+    let dollar = "\$"; in
+    '' export LD_LIBRARY_PATH="${pkgs.zlib}/lib${dollar}{LD_LIBRARY_PATH+:}$LD_LIBRARY_PATH"
+       export LD_LIBRARY_PATH="$(dirname $(gcc -print-file-name=libstdc++.so)):$LD_LIBRARY_PATH"
+       echo "\$LD_LIBRARY_PATH is \`$LD_LIBRARY_PATH'"
+       make -k check
+    '';
+
   succeedOnFailure = true;
   keepBuildDirectory = true;
 
