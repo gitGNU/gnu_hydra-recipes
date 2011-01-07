@@ -1,6 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
-   Copyright (C) 2010  Ludovic Courtès <ludo@gnu.org>
-   Copyright (C) 2010  Rob Vermaas <rob.vermaas@gmail.com>
+   Copyright (C) 2011  Rob Vermaas <rob.vermaas@gmail.com>
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -44,7 +43,7 @@ let
           export GNULIB_SRCDIR=../gnulib
 
           mkdir -p gnulib
-          cp -Rv ${gnulib}/* gnulib
+          cp -Rv "${gnulib}/"* gnulib
           chmod -R 755 gnulib
         '';
 
