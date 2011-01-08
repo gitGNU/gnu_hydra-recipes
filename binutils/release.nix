@@ -94,7 +94,7 @@ let
           inherit meta checkPhase succeedOnFailure keepBuildDirectory;
         };
 
-    buildGold =
+    build_gold =
       { system ? "x86_64-linux"
       , tarball ? jobs.tarball
       }:
