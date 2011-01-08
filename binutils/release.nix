@@ -106,7 +106,11 @@ let
           src = tarball;
           configureFlags = "--with-lib-path=${pkgs.zlib}/lib --enable-gold";
           buildInputs = with pkgs;
-            [ dejagnu zlib flex2535 bison ];
+            [ dejagnu zlib flex2535 bison
+
+              # Some Gold tests require this:
+              bc
+            ];
 
           inherit meta checkPhase succeedOnFailure keepBuildDirectory;
         };
