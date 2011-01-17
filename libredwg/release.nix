@@ -50,8 +50,12 @@ in
         buildInputs = with pkgs; [ gettext_0_17 texinfo automake111x python swig ];
         dontBuild = false;
         autoconfPhase = ''
-          ./autogen.sh
+          . autogen.sh
         '';
+      } ;
+      
+      build = pkgs: {
+        buildInputs = with pkgs; [ python swig ];
       } ;
       
     };   
