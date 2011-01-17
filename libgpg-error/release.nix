@@ -30,7 +30,7 @@ let
   jobs = rec {
 
     tarball =
-      { libgpgerrorSrc ? { outPath = /data/src/libgpg-error; }
+      { libgpgerrorSrc ? { outPath = ../../libgpg-error; }
       }:
 
       releaseTools.makeSourceTarball {
@@ -39,7 +39,7 @@ let
 
 	buildInputs = (buildInputsFrom pkgs) ++ (with pkgs; [
 	  autoconf automake111x libtool
-	  subversion texinfo
+	  texinfo git
 	]);
 
         preAutoconf =
@@ -48,6 +48,8 @@ let
              rm -fv m4/libtool* m4/lt* libtool build-aux/lt*
              libtoolize --install --force
           '';
+
+        configureFlags = "--enable-maintainer-mode";
 
         inherit succeedOnFailure keepBuildDirectory;
       };
