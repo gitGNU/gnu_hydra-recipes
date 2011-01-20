@@ -42,7 +42,6 @@ in
     name = "libredwg";
     src  = libredwgSrc;
     inherit nixpkgs meta;
-    enableGnuCrossBuild = true; 
     
     customEnv = {
         
@@ -54,9 +53,9 @@ in
         '';
       } ;
       
-      build = pkgs: {
+      build = pkgs: ({
         buildInputs = with pkgs; [ python swig ];
-      } ;
+      } // pkgs.lib.optionalAttrs (pkgs.stdenv.system == "i686-freebsd") { NIX_LDFLAGS="-lpthread"; } );
       
       coverage = pkgs: {
         buildInputs = with pkgs; [ python swig ];
