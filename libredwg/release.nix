@@ -58,6 +58,10 @@ in
         buildInputs = with pkgs; [ python swig ];
       } ;
       
+      coverage = pkgs: {
+        buildInputs = with pkgs; [ python swig ];
+      } ;
+      
     };   
   }
 
