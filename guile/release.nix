@@ -43,6 +43,10 @@ let
     libunistring pkgconfig boehmgc libffi
   ];
 
+  buildOutOfSourceTree = true;
+  succeedOnFailure = true;
+  keepBuildDirectory = true;
+
   /* Return the default configuration flags.  */
   defaultConfigureFlags = pkgs:
      with pkgs;
@@ -89,12 +93,13 @@ let
          in
            with pkgs;
            releaseTools.nixBuild {
-             inherit name meta;
+             inherit name;
              src = tarball;
              configureFlags =
                (defaultConfigureFlags pkgs) ++ configureFlags;
              buildInputs = buildInputsFrom pkgs;
-             buildOutOfSourceTree = true;
+             inherit meta buildOutOfSourceTree
+               succeedOnFailure keepBuildDirectory;
            });
 
   /* The exotic configurations under test.  */
@@ -105,9 +110,6 @@ let
       [ "--enable-guile-debug" ]
       [ "CPPFLAGS=-DSCM_DEBUG=1" ]
     ];
-
-  succeedOnFailure = true;
-  keepBuildDirectory = true;
 
   jobs = rec {
 
@@ -215,8 +217,7 @@ let
              echo "doc manual $out/share/doc/guile/guile.html index.html" >> "$out/nix-support/hydra-build-products"
              echo "doc-pdf manual $out/share/doc/guile/guile.pdf" >> "$out/nix-support/hydra-build-products"
           '';
-        buildOutOfSourceTree = true;
-        inherit meta succeedOnFailure keepBuildDirectory;
+        inherit meta buildOutOfSourceTree succeedOnFailure keepBuildDirectory;
       };
 
     # The default build, executed on all platforms.
@@ -233,8 +234,7 @@ let
           src = tarball;
           configureFlags = defaultConfigureFlags pkgs;
           buildInputs = buildInputsFrom pkgs;
-          buildOutOfSourceTree = true;
-          inherit meta succeedOnFailure keepBuildDirectory;
+          inherit meta buildOutOfSourceTree succeedOnFailure keepBuildDirectory;
         };
 
     # Check what it's like to build with an old compiler.
@@ -264,9 +264,8 @@ let
           buildInputs = [ pkgs.gcc34 ] ++
             (map use_gcc3 (buildInputsFrom pkgs));
 
-          buildOutOfSourceTree = true;
           preUnpack = "gcc --version";
-          inherit meta succeedOnFailure keepBuildDirectory;
+          inherit meta buildOutOfSourceTree succeedOnFailure keepBuildDirectory;
         };
 
     # Check what it's like to build with an old compiler.
@@ -292,9 +291,8 @@ let
             ];
           makeFlags = [ "V=1" ];
           buildInputs = buildInputsFrom pkgs;
-          buildOutOfSourceTree = true;
           patches = [ ./tinycc-isnan.patch ];
-          inherit meta succeedOnFailure keepBuildDirectory;
+          inherit meta buildOutOfSourceTree succeedOnFailure keepBuildDirectory;
         };
   }
 
