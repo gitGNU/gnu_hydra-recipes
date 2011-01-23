@@ -245,13 +245,25 @@ let
       let
         system = "x86_64-linux";
         pkgs = import nixpkgs { inherit system; };
+        use_gcc3 = pkg:
+          if pkg ? override
+          then pkg.override (with pkgs;
+                 { stdenv = overrideGCC stdenv gcc34; })
+          else pkg;
       in
         with pkgs;
         releaseTools.nixBuild {
           name = "guile";
           src = tarball;
           configureFlags = defaultConfigureFlags pkgs;
-          buildInputs = [ pkgs.gcc34 ] ++ (buildInputsFrom pkgs);
+
+          /* Use GCC 3.x for Guile itself and for all its dependencies.
+             The reason is that current BDW-GC CVS built with GCC 4.5 doesn't
+             work with Guile built with 3.x (namely `fluids.test' segfaults
+             in `uw_frame_state_for', called from `__pthread_unwind'.).  */
+          buildInputs = [ pkgs.gcc34 ] ++
+            (map use_gcc3 (buildInputsFrom pkgs));
+
           buildOutOfSourceTree = true;
           preUnpack = "gcc --version";
           inherit meta succeedOnFailure keepBuildDirectory;
