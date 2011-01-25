@@ -36,7 +36,6 @@ mapTestOn {
   ballAndPaddle = linux;
   bash = linux;
   bashInteractive = linux;
-  bashReal = linux;
   binutils = linux;
   bison = linux;
   bison24 = linux;
@@ -100,7 +99,6 @@ mapTestOn {
   gnumake = linux;
   gnunet = linux;
   gnupatch = linux;
-  gnupg2 = linux;
   gnused = linux;
   #gnused_4_2 = linux;
   gnutar = linux;
