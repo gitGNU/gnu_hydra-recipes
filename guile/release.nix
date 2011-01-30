@@ -234,7 +234,16 @@ let
           src = tarball;
           configureFlags = defaultConfigureFlags pkgs;
           buildInputs = buildInputsFrom pkgs;
-          inherit meta buildOutOfSourceTree succeedOnFailure keepBuildDirectory;
+
+          buildOutOfSourceTree =
+            # Work around the clock skew of the FreeBSD box at
+            # `hydra.nixos.org'.  See
+            # <http://yellowgrass.org/issue/hydra.nixos.org/11>.
+            if system == "i686-freebsd"
+            then false
+            else buildOutOfSourceTree;
+
+          inherit meta succeedOnFailure keepBuildDirectory;
         };
 
     # Check what it's like to build with an old compiler.
