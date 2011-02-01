@@ -65,7 +65,12 @@ let
           "--with-libgmp-prefix=${gmp}"
         ]
      ++ (stdenv.lib.optional (! (stdenv ? glibc))
-        "--with-libiconv-prefix=${libiconv}"));
+        "--with-libiconv-prefix=${libiconv}")
+
+     # Many shared libraries are missing on Cygwin, which prevents libtool
+     # from actually building the shared libguile.  So explicitly disable
+     # shared libraries so that tests relying on them are skipped.
+     ++ (stdenv.lib.optional (stdenv.isCygwin) "--disable-shared"));
 
   /* Return a name/value attribute set where the value is a function suitable
      as a Hydra build function.  */
