@@ -52,7 +52,6 @@ in
     name = "bison";
     src  = bison;
     inherit nixpkgs meta; 
-    enableGnuCrossBuild = true;
 
     customEnv = {
         
@@ -86,9 +85,6 @@ in
         keepBuildDirectory = true;
       };      
 
-      xbuild_gnu = pkgs: {
-        buildInputs = [pkgs.m4];
-      };      
     };   
   }
 
