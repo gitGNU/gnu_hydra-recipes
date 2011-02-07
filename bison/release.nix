@@ -82,6 +82,8 @@ in
 
       coverage = pkgs: {
         buildInputs = [pkgs.m4 pkgs.perl];
+        succeedOnFailure = true;
+        keepBuildDirectory = true;
       };      
 
       xbuild_gnu = pkgs: {
