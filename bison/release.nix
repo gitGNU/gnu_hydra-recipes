@@ -77,11 +77,11 @@ in
       } ;
  
       build = pkgs: {
-        buildInputs = [pkgs.m4];
+        buildInputs = [pkgs.m4 pkgs.perl];
       };      
 
       coverage = pkgs: {
-        buildInputs = [pkgs.m4];
+        buildInputs = [pkgs.m4 pkgs.perl];
       };      
 
       xbuild_gnu = pkgs: {
