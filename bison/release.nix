@@ -79,6 +79,14 @@ in
       build = pkgs: {
         buildInputs = [pkgs.m4];
       };      
+
+      coverage = pkgs: {
+        buildInputs = [pkgs.m4];
+      };      
+
+      xbuild_gnu = pkgs: {
+        buildInputs = [pkgs.m4];
+      };      
     };   
   }
 
