@@ -16,6 +16,7 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 { nixpkgs ? ../../nixpkgs 
+, cppi ? { outPath = ../../cppi ; rev = 1234; }
 }:
 
 let
@@ -41,70 +42,24 @@ let
     ];
   };
 
-  pkgs = import nixpkgs {};
-
-  succeedOnFailure = true;
-  keepBuildDirectory = true;
-
-  jobs = rec {
-
-    tarball = 
-      { cppi ? { outPath = ../../cppi; }
-      , gnulib ? {outPath = ../../gnulib;}
-      }: 
-      with pkgs;
-      releaseTools.makeSourceTarball {
-	name = "cppi-tarball";
-	src = cppi;
-        inherit meta succeedOnFailure keepBuildDirectory;
-
-        autoconfPhase = ''
-          mkdir -p ../gnulib
-          cp -Rv ${gnulib}/* ../gnulib
-          chmod -R 755 ../gnulib
-
-          ./bootstrap --gnulib-srcdir=../gnulib --skip-po --copy
-        '';
-
-	buildInputs = [
-          automake111x
-          texinfo
-          gettext_0_17
-          git 
-          wget
-          perl
-          rsync
-          flex2535
-          help2man
-          gperf
-          cvs
-	];
-      };
-
-    build =
-      { system ? "x86_64-linux"
-      , tarball ? jobs.tarball {}
-      }:
-      let pkgs = import nixpkgs { inherit system;} ;
-      in with pkgs;
-      releaseTools.nixBuild {
-	name = "cppi" ;
-	src = tarball;
-        inherit meta succeedOnFailure keepBuildDirectory;
-	buildInputs = [];
-      };
-
-    coverage =
-      { tarball ? jobs.tarball {} }:
-      with pkgs;
-
-      releaseTools.coverageAnalysis {
-        name = "cppi-coverage";
-        src = tarball;
-        inherit meta;
-        buildInputs = [];
-      };
-
+  buildFun = pkgs: {
+    preHook = ''
+      export src=$(ls $src/tarballs/*.tar.xz | sort | head -1)
+    '';
+    buildInputs = [pkgs.xz];
   };
+in
+  import ../gnu-jobs.nix {
+    name = "cppi";
+    src  = cppi;
+    inherit nixpkgs meta;
 
-in jobs
+    customEnv = {
+      tarball = pkgs: {
+        buildInputs = with pkgs; [ git texinfo bison cvs man rsync perl cpio automake111x xz gperf help2man gettext_0_17 flex];
+        dontBuild = false;
+      } ;
+      build = buildFun;
+      coverage = buildFun;
+    };
+  }
