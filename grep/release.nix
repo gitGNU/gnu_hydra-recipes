@@ -52,7 +52,7 @@ in
       } ;
       
       build = pkgs: (with pkgs; {
-        buildInputs = [pcre] ++ lib.optional stdenv.isDarwin libiconv;
+        buildInputs = lib.optional (stdenv.system != "i686-cygwin") [pcre] ++ lib.optional stdenv.isDarwin libiconv;
       } // pkgs.lib.optionalAttrs stdenv.isDarwin { NIX_LDFLAGS="-L${libiconv}/lib -liconv"; } );
       
     };   
