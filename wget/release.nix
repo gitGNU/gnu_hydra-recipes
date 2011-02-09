@@ -32,7 +32,6 @@ in
     name = "wget";
     src  = wget;
     inherit nixpkgs meta; 
-#    enableGnuCrossBuild = true;
 
     customEnv = {
         
@@ -40,18 +39,23 @@ in
         buildInputs = with pkgs; [
           automake111x
           texinfo
-          gettext
+          gettext_0_17
           bazaar 
           git
+          cvs
           bison
           perl
           rsync
           xz
           help2man
+          flex
         ];
-        dontBuild = false;
       } ;
-      
+
+      build = pkgs: {
+        buildInputs = [pkgs.gnutls];
+        configureFlags = "--with-ssl=gnutls";
+      };      
     };   
   }
 
