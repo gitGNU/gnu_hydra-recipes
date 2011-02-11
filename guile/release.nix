@@ -169,7 +169,8 @@ let
                  -e's/"<stdout>"/"c-tokenize.c"/g'
           '';
 
-        inherit meta succeedOnFailure keepBuildDirectory;
+        inherit succeedOnFailure keepBuildDirectory;
+        meta = meta // { schedulingPriority = "200"; };
       };
 
     coverage =
@@ -248,7 +249,8 @@ let
             then false
             else buildOutOfSourceTree;
 
-          inherit meta succeedOnFailure keepBuildDirectory;
+          inherit succeedOnFailure keepBuildDirectory;
+          meta = meta // { schedulingPriority = "200"; };
         };
 
     # Check what it's like to build with an old compiler.
