@@ -125,7 +125,7 @@ let
     let
       crosspkgs = import nixpkgs { system = from; crossSystem = to; };
     in
-      crosspkgs.releaseTools.nixBuild ({
+      (crosspkgs.releaseTools.nixBuild {
         name = "guile";
         src = tarball;
         preConfigure = "export GUILE_FOR_BUILD=${native_guile}/bin/guile";
@@ -136,6 +136,7 @@ let
             libunistring pkgconfig boehmgc libffi
           ];
         doCheck = false;
+        inherit meta buildOutOfSourceTree succeedOnFailure keepBuildDirectory;
       }).hostDrv;
 
   jobs = rec {
