@@ -37,6 +37,7 @@ let
   };
 
   pkgs = import nixpkgs {};
+  crossSystems = (import ../cross-systems.nix) { inherit pkgs; };
 
   buildInputsFrom = pkgs: with pkgs; [
     readline libtool gmp gawk makeWrapper
@@ -115,6 +116,27 @@ let
       [ "--enable-guile-debug" ]
       [ "CPPFLAGS=-DSCM_DEBUG=1" ]
     ];
+
+  makeCrossBuild = from: to:
+    { tarball ? jobs.tarball {},
+      native_guile  # a native Guile build
+    }:
+
+    let
+      crosspkgs = import nixpkgs { system = from; crossSystem = to; };
+    in
+      crosspkgs.releaseTools.nixBuild ({
+        name = "guile";
+        src = tarball;
+        preConfigure = "export GUILE_FOR_BUILD=${native_guile}/bin/guile";
+        buildNativeInputs =
+          [ native_guile crosspkgs.gawk crosspkgs.makeWrapper ];
+        buildInputs = with crosspkgs;
+          [ readline libtool gmp
+            libunistring pkgconfig boehmgc libffi
+          ];
+        doCheck = false;
+      }).hostDrv;
 
   jobs = rec {
 
@@ -310,6 +332,15 @@ let
           patches = [ ./tinycc-isnan.patch ];
           inherit meta buildOutOfSourceTree succeedOnFailure keepBuildDirectory;
         };
+
+
+    xbuild_gnu =
+      # Cross build to GNU.
+      makeCrossBuild "i686-linux" (crossSystems.i586_pc_gnu);
+
+    xbuild_mingw =
+      # Cross build to MinGW.
+      makeCrossBuild "i686-linux" (crossSystems.i686_pc_mingw32);
   }
 
   //

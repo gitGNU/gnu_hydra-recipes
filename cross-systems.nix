@@ -1,5 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
-   Copyright (C) 2010  Ludovic Courtès <ludo@gnu.org>
+   Copyright (C) 2010, 2011  Ludovic Courtès <ludo@gnu.org>
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -58,5 +58,12 @@
     withTLS = true;
     platform = pkgs.platforms.pc;
     libc = "glibc";
+  };
+
+  i686_pc_mingw32 = {
+    config = "i686-pc-mingw32";
+    arch = "x86";
+    libc = "msvcrt"; # This distinguishes the mingw (non posix) toolchain
+    platform = pkgs.platforms.pc;
   };
 }
