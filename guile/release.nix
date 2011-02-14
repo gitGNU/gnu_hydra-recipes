@@ -129,6 +129,11 @@ let
         name = "guile";
         src = tarball;
         preConfigure = "export GUILE_FOR_BUILD=${native_guile}/bin/guile";
+
+        configureFlags =
+          # Trick to have -I...-libunistring/include in CPPFLAGS.
+          [ "--with-libunistring-prefix=${crosspkgs.libunistring}" ];
+
         makeFlags = [ "V=1" ];
 
         buildNativeInputs =
