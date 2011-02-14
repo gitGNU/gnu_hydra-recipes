@@ -132,7 +132,7 @@ let
 
         configureFlags =
           # Trick to have -I...-libunistring/include in CPPFLAGS.
-          [ "--with-libunistring-prefix=${crosspkgs.libunistring}" ];
+          [ "--with-libunistring-prefix=${crosspkgs.libunistring.hostDrv}" ];
 
         makeFlags = [ "V=1" ];
 
