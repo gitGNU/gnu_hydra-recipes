@@ -129,12 +129,18 @@ let
         name = "guile";
         src = tarball;
         preConfigure = "export GUILE_FOR_BUILD=${native_guile}/bin/guile";
+        makeFlags = [ "V=1" ];
+
         buildNativeInputs =
           [ native_guile crosspkgs.gawk crosspkgs.makeWrapper ];
+
         buildInputs = with crosspkgs;
-          [ readline libtool gmp
-            libunistring pkgconfig boehmgc libffi
-          ];
+          [ libtool gmp libunistring pkgconfig boehmgc libffi ]
+
+          # XXX: ncurses fails to build on MinGW.
+          ++ (crosspkgs.stdenv.lib.optional (to == crossSystem.i686_pc_mingw32)
+                readline);
+
         doCheck = false;
         inherit meta buildOutOfSourceTree succeedOnFailure keepBuildDirectory;
       }).hostDrv;
