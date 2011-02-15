@@ -143,7 +143,7 @@ let
           [ libtool gmp libunistring pkgconfig boehmgc libffi ]
 
           # XXX: ncurses fails to build on MinGW.
-          ++ (crosspkgs.stdenv.lib.optional (to == crossSystems.i686_pc_mingw32)
+          ++ (crosspkgs.stdenv.lib.optional (to != crossSystems.i686_pc_mingw32)
                 readline);
 
         doCheck = false;
