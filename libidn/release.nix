@@ -1,5 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
-   Copyright (C) 2010  Ludovic Courtès <ludo@gnu.org>
+   Copyright (C) 2010, 2011  Ludovic Courtès <ludo@gnu.org>
    Copyright (C) 2010  Rob Vermaas <rob.vermaas@gmail.com>
 
    This program is free software: you can redistribute it and/or modify
@@ -58,8 +58,10 @@ in
   import ../gnu-jobs.nix {
     name = "libidn";
     src  = libidnSrc;
-    inherit nixpkgs meta; 
-    
+    useLatestGnulib = false;
+
+    inherit nixpkgs meta;
+
     customEnv = {
         
       tarball = pkgs: {
