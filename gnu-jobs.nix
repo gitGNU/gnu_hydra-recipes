@@ -21,6 +21,7 @@
 , customJobs ? pkgs: {}
 , nixpkgs
 , enableGnuCrossBuild ? false
+, useLatestGnulib ? true
 }:
     
 let
@@ -30,16 +31,13 @@ let
   succeedOnFailure = true;
   keepBuildDirectory = true;
 
-  jobs = (rec {
-    tarball = 
-      { gnulib ? {outPath = ../gnulib;}
-      }:
+  tarballFun = gnulib :
       pkgs.releaseTools.makeSourceTarball ({
         name = "${name}-tarball";
         inherit src meta succeedOnFailure keepBuildDirectory;
 
         prePhases = "setupGnulib";
-        setupGnulib = ''
+        setupGnulib = pkgs.lib.optionalString useLatestGnulib ''
           export GNULIB_SRCDIR=../gnulib
 
           mkdir -p gnulib
@@ -48,9 +46,13 @@ let
         '';
 
         autoconfPhase = ''
-          ./bootstrap --gnulib-srcdir=../gnulib --skip-po --copy
+          ./bootstrap ${pkgs.lib.optionalString useLatestGnulib "--gnulib-srcdir=../gnulib"} --skip-po --copy
         '';
       } // ( pkgs.lib.optionalAttrs (customEnv ? tarball) (customEnv.tarball pkgs) ) );
+
+  jobs = (rec {
+    tarball = 
+      if useLatestGnulib then { gnulib ? {outPath = ../gnulib;} }: tarballFun gnulib else tarballFun null;
 
     build =
       { system ? "x86_64-linux"
