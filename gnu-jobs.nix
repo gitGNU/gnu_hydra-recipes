@@ -36,19 +36,21 @@ let
         name = "${name}-tarball";
         inherit src meta succeedOnFailure keepBuildDirectory;
 
-        prePhases = "setupGnulib";
-        setupGnulib = pkgs.lib.optionalString useLatestGnulib ''
-          export GNULIB_SRCDIR=../gnulib
-
-          mkdir -p gnulib
-          cp -Rv "${gnulib}/"* gnulib
-          chmod -R 755 gnulib
-        '';
-
         autoconfPhase = ''
           ./bootstrap ${pkgs.lib.optionalString useLatestGnulib "--gnulib-srcdir=../gnulib"} --skip-po --copy
         '';
-      } // ( pkgs.lib.optionalAttrs (customEnv ? tarball) (customEnv.tarball pkgs) ) );
+      }
+      // ( pkgs.lib.optionalAttrs useLatestGnulib {
+             prePhases = "setupGnulib";
+             setupGnulib = ''
+               export GNULIB_SRCDIR=../gnulib
+
+               mkdir -p gnulib
+               cp -Rv "${gnulib}/"* gnulib
+               chmod -R 755 gnulib
+             '';
+           })
+      // ( pkgs.lib.optionalAttrs (customEnv ? tarball) (customEnv.tarball pkgs) ) );
 
   jobs = (rec {
     tarball = 
