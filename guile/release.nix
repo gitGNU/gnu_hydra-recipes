@@ -204,7 +204,7 @@ let
           '';
 
         inherit succeedOnFailure keepBuildDirectory;
-        meta = meta // { schedulingPriority = "200"; };
+        meta = meta // { schedulingPriority = "100"; };
       };
 
     coverage =
@@ -284,7 +284,7 @@ let
             else buildOutOfSourceTree;
 
           inherit succeedOnFailure keepBuildDirectory;
-          meta = meta // { schedulingPriority = "200"; };
+          meta = meta // { schedulingPriority = "150"; };
         };
 
     # Check what it's like to build with an old compiler.
