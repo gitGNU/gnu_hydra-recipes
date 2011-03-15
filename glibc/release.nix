@@ -141,7 +141,7 @@ let
       name = "glibc-hurd-patches";
       src = glibcHurd;
       buildInputs = with pkgs; [ git gitAndTools.topGit ];
-      phases = "buildPhase";
+      phases = "unpackPhase buildPhase";
       buildPhase =
         # Assume Hydra called `nix-prefetch-git', which ran
         # "tg remote --populate origin" (Nixpkgs r26305).
