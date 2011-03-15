@@ -1,5 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
-   Copyright (C) 2010  Ludovic Courtès <ludo@gnu.org>
+   Copyright (C) 2010, 2011  Ludovic Courtès <ludo@gnu.org>
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -14,7 +14,8 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
-{ nixpkgs ? ../../nixpkgs }:
+{ nixpkgs ? ../../nixpkgs
+, glibcHurd ? null }:
 
 let
   meta = {
@@ -134,6 +135,34 @@ let
         inherit propagatedBuildNativeInputs CPATH preConfigure meta;
       }).hostDrv;
 
+  hurd_patches =
+    # Patch set to apply to upstream glibc.
+    releaseTools.nixBuild {
+      name = "glibc-hurd-patches";
+      src = glibcHurd;
+      buildInputs = with pkgs; [ git gitAndTools.topGit ];
+      phases = "buildPhase";
+      buildPhase =
+        # Assume Hydra called `nix-prefetch-git', which ran
+        # "tg remote --populate origin" (Nixpkgs r26305).
+        '' tg info
+
+           tg export --linearize for-upstream-glibc
+           git checkout for-upstream-glibc
+           git format-patch
+
+           ensureDir "$out"
+           mv -v [0-9]*.patch "$out"
+
+           ensureDir "$out/nix-support"
+           for patch n "$out/"*.patch
+           do
+             echo "patch none $patch" >> \
+               "$out/nix-support/hydra-build-products"
+           done
+        '';
+     };
+
   jobs = rec {
 
     tarball =
@@ -232,6 +261,12 @@ let
      xbuild_gnu =
        # Cross-build for GNU (aka. GNU/Hurd.)
        makeCrossBuild null crossSystems.i586_pc_gnu;
-  };
+  }
+
+  //
+
+  (if glibcHurd != null
+   then { inherit hurd_patches; }
+   else { });
 
 in jobs
