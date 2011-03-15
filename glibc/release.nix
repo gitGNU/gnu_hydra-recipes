@@ -145,7 +145,9 @@ let
       buildPhase =
         # Assume Hydra called `nix-prefetch-git', which ran
         # "tg remote --populate origin" (Nixpkgs r26305).
-        '' tg info
+        '' git reset --hard origin/tschwinge/Roger_Whittaker
+
+           tg info
 
            tg export --linearize for-upstream-glibc
            git checkout for-upstream-glibc
@@ -161,6 +163,9 @@ let
                "$out/nix-support/hydra-build-products"
            done
         '';
+
+      inherit succeedOnFailure keepBuildDirectory;
+      meta = meta // { description = "Hurd patches for the GNU C Library"; };
      };
 
   jobs = rec {
