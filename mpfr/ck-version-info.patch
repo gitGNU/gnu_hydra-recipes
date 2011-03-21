@@ -1,0 +1,12 @@
+Remove absolute path to `perl'.
+
+--- a/tools/ck-version-info	(revision 7595)
++++ b/tools/ck-version-info	(working copy)
+@@ -1,4 +1,6 @@
+-#!/usr/bin/env perl
++eval '(exit $?0)' && eval 'exec perl -wS "$0" ${1+"$@"}'
++  & eval 'exec perl -wS "$0" $argv:q'
++    if 0;
+ 
+ # Note: this script must not be used to build MPFR due to the
+ # dependency on perl, but this is OK for "make dist".
