@@ -53,6 +53,7 @@ in
 	buildInputs = (buildInputsFrom pkgs)
           ++ (with pkgs; [ texinfo automake111x ]);
         autoconfPhase = "./.bootstrap";
+        configureFlags = [ "--enable-maintainer-mode" ];
       };
 
       build = pkgs: {
