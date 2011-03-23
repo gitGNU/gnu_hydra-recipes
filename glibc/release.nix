@@ -145,7 +145,7 @@ let
       buildPhase =
         # Assume Hydra called `nix-prefetch-git', which ran
         # "tg remote --populate origin" (Nixpkgs r26305).
-        '' git checkout origin/tschwinge/Roger_Whittaker
+        '' git checkout tschwinge/Roger_Whittaker
 
            tg info
 
