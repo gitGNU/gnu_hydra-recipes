@@ -53,36 +53,12 @@ let
         name = "hurd-tarball";
         src = hurdSrc;
         configureFlags = "--build=i586-pc-gnu";  # cheat
-        patches =
-          [ ./dist-pfinet.patch
-            ./dist-mach-defpager.patch
-          ];
         postPatch =
-          '' # `mach-defpager' depends on code from `serverboot', but the
-             # latter is no longer included in "make dist" and no longer
-             # built.  Thus copy useful code from there.  See also
-             # `dist-mach-defpager.patch'.
-             ( cd serverboot &&                                       \
-               mv -v default_pager.c kalloc.c wiring.[ch] queue.h     \
-                  ../mach-defpager )
-
-             echo "removing \`-o root' from makefiles..."
+          '' echo "removing \`-o root' from makefiles..."
              for mf in {utils,daemons}/Makefile
              do
                sed -i "$mf" -e's/-o root//g'
              done
-          '';
-        preDist =
-          '' echo "adding missing \`ChangeLog' files (due to commit f91f5eb5)..."
-             for i in *
-             do
-               if [ -d "$i" ] && [ ! -f "$i/ChangeLog" ]
-               then
-                   : > "$i/ChangeLog"
-               fi
-             done
-
-             : > "fatfs/EXTENSIONS"
           '';
         buildNativeInputs = [ pkgs.machHeaders pkgs.mig pkgs.texinfo ];
         buildInputs = [ pkgs.parted /* not the cross-GNU one */ pkgs.libuuid ];
