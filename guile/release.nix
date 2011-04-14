@@ -318,8 +318,8 @@ let
           inherit meta buildOutOfSourceTree succeedOnFailure keepBuildDirectory;
         };
 
-    # Check what it's like to build with an old compiler.
-    build_tinycc =
+    # Check what it's like to build with another C compiler
+    /* build_tinycc =
       { tarball ? jobs.tarball {}
       }:
 
@@ -343,6 +343,7 @@ let
           buildInputs = buildInputsFrom pkgs;
           inherit meta buildOutOfSourceTree succeedOnFailure keepBuildDirectory;
         };
+     */
 
 
     xbuild_gnu =
