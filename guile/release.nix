@@ -341,7 +341,6 @@ let
             ];
           makeFlags = [ "V=1" ];
           buildInputs = buildInputsFrom pkgs;
-          patches = [ ./tinycc-isnan.patch ];
           inherit meta buildOutOfSourceTree succeedOnFailure keepBuildDirectory;
         };
 
