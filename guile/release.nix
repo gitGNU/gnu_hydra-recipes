@@ -113,6 +113,7 @@ let
     [ [ "--without-threads" ]
       [ "--disable-deprecated" "--disable-discouraged" ]
       [ "--disable-networking" ]
+      [ "--disable-posix" ]
       [ "--enable-guile-debug" ]
       [ "CPPFLAGS=-DSCM_DEBUG=1" ]
     ];
