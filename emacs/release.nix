@@ -79,7 +79,11 @@ in
         buildInputs = with pkgs; [ texinfo ncurses ];
         configureFlags ="--with-crt-dir=${pkgs.stdenv.glibc}/lib" ;
       };      
+
+      coverage = pkgs: {
+        buildInputs = with pkgs; [ texinfo ncurses ];
+        configureFlags ="--with-crt-dir=${pkgs.stdenv.glibc}/lib --enable-profiling" ;
+      };      
       
-      coverage = build;
     };   
   }
