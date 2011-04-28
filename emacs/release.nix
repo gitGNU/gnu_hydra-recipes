@@ -51,7 +51,7 @@ in
     inherit nixpkgs meta; 
     enableGnuCrossBuild = true;
     useLatestGnulib = false;    
-    customEnv = {
+    customEnv = rec {
         
       tarball = pkgs: {
         configureFlags ="--with-crt-dir=${pkgs.stdenv.glibc}/lib" ;
