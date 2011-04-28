@@ -76,7 +76,12 @@ in
 
       build = pkgs: {
         buildInputs = with pkgs; [ texinfo ncurses ];
-        configureFlags = with pkgs; stdenv.lib.optionalString (stdenv ? glibc) "--with-crt-dir=${stdenv.glibc}/lib" ;
+        configureFlags = 
+          with pkgs; 
+          (if stdenv.isDarwin then 
+             "--with-xpm=no --with-jpeg=no --with-png=no --with-gif=no --with-tiff=no" 
+           else 
+             stdenv.lib.optionalString (stdenv ? glibc) "--with-crt-dir=${stdenv.glibc}/lib") ;
       };      
 
       coverage = pkgs: {
