@@ -76,13 +76,12 @@ in
 
       build = pkgs: {
         buildInputs = with pkgs; [ texinfo ncurses ];
-        configureFlags ="--with-crt-dir=${pkgs.stdenv.glibc}/lib" ;
+        configureFlags = with pkgs; stdenv.lib.optionalString (stdenv ? glibc) "--with-crt-dir=${stdenv.glibc}/lib" ;
       };      
 
       coverage = pkgs: {
         buildInputs = with pkgs; [ texinfo ncurses ];
-        CPPFLAGS="-DPROFILING=1";
-        configureFlags ="--with-crt-dir=${pkgs.stdenv.glibc}/lib" ;
+        configureFlags ="--with-crt-dir=${pkgs.stdenv.glibc}/lib --enable-profiling" ;
       };      
       
     };   
