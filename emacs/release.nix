@@ -49,7 +49,6 @@ in
     name = "emacs";
     src  = emacs;
     inherit nixpkgs meta; 
-    enableGnuCrossBuild = true;
     useLatestGnulib = false;    
     customEnv = rec {
         
@@ -82,7 +81,8 @@ in
 
       coverage = pkgs: {
         buildInputs = with pkgs; [ texinfo ncurses ];
-        configureFlags ="--with-crt-dir=${pkgs.stdenv.glibc}/lib --enable-profiling" ;
+        CPPFLAGS="-DPROFILING=1";
+        configureFlags ="--with-crt-dir=${pkgs.stdenv.glibc}/lib" ;
       };      
       
     };   
