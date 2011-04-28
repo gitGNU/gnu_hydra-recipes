@@ -76,8 +76,10 @@ in
       } ;
 
       build = pkgs: {
-        buildInputs = with pkgs; [ texinfo ncurses bazaar];
+        buildInputs = with pkgs; [ texinfo ncurses ];
         configureFlags ="--with-crt-dir=${pkgs.stdenv.glibc}/lib" ;
       };      
+      
+      coverage = build;
     };   
   }
