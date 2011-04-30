@@ -1,5 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
-   Copyright (C) 2010  Ludovic Courtès <ludo@gnu.org>
+   Copyright (C) 2011  Ludovic Courtès <ludo@gnu.org>
    Copyright (C) 2011  Rob Vermaas <rob.vermaas@gmail.com>
 
    This program is free software: you can redistribute it and/or modify
@@ -79,7 +79,13 @@ in
         configureFlags = 
           with pkgs; 
           (if stdenv.isDarwin then 
-             "--with-xpm=no --with-jpeg=no --with-png=no --with-gif=no --with-tiff=no" 
+             [ "--with-xpm=no" "--with-jpeg=no" "--with-png=no"
+               "--with-gif=no" "--with-tiff=no"
+
+               # Make sure `configure' doesn't pick /usr/lib.
+               "--x-libraries=${xlibs.libX11}/lib"
+               "--x-includes=${xlibs.libX11}/include"
+             ]
            else 
              stdenv.lib.optionalString (stdenv ? glibc) "--with-crt-dir=${stdenv.glibc}/lib") ;
       };      
