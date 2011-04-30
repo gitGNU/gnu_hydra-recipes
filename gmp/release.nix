@@ -65,6 +65,6 @@ in
       };
 
       coverage = pkgs: { buildInputs = (buildInputsFrom pkgs); };
-      xbuild_gnu = pkgs: { buildInputs = (buildInputsFrom pkgs); };
+      xbuild_gnu = pkgs: { buildNativeInputs = (buildInputsFrom pkgs); };
     };
   }
