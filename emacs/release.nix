@@ -61,56 +61,56 @@ in
   import ../gnu-jobs.nix {
     name = "emacs";
     src  = emacs;
-    inherit nixpkgs meta; 
-    useLatestGnulib = false;    
+    inherit nixpkgs meta;
+    useLatestGnulib = false;
     customEnv = rec {
-        
+
       tarball = pkgs: {
-        configureFlags ="--with-crt-dir=${pkgs.stdenv.glibc}/lib" ;
-        buildInputs = with pkgs; [ texinfo ncurses bazaar];
+	configureFlags ="--with-crt-dir=${pkgs.stdenv.glibc}/lib" ;
+	buildInputs = with pkgs; [ texinfo ncurses bazaar];
 
-        autoconfPhase = '' 
-          ./autogen.sh
-        '';
+	autoconfPhase = ''
+	  ./autogen.sh
+	'';
 
-        preConfigure = ''
-          for i in Makefile.in ./src/Makefile.in ./lib-src/Makefile.in ./leim/Makefile.in; do
-            substituteInPlace $i --replace /bin/pwd pwd
-          done
-        '';
+	preConfigure = ''
+	  for i in Makefile.in ./src/Makefile.in ./lib-src/Makefile.in ./leim/Makefile.in; do
+	    substituteInPlace $i --replace /bin/pwd pwd
+	  done
+	'';
 
-        distPhase = ''  
-          make bootstrap
-          ./make-dist --tar
-          ensureDir $out/tarballs
-          cp -pvd *.tar.gz $out/tarballs
-        '';
+	distPhase = ''
+	  make bootstrap
+	  ./make-dist --tar
+	  ensureDir $out/tarballs
+	  cp -pvd *.tar.gz $out/tarballs
+	'';
       } ;
 
       build = pkgs: {
-        buildInputs = buildInputsFrom pkgs;
+	buildInputs = buildInputsFrom pkgs;
 
-        configureFlags =
-          with pkgs;
-          [ # Make sure `configure' doesn't pick /usr/lib on impure platforms
-            # such as Darwin.
-            "--x-libraries=${xlibs.libX11}/lib"
-            "--x-includes=${xlibs.libX11}/include"
-          ]
-          ++
-          (if stdenv.isDarwin then
-             [ "--with-xpm=no" "--with-jpeg=no" "--with-png=no"
-               "--with-gif=no" "--with-tiff=no"
-             ]
-           else
-             (stdenv.lib.optional (stdenv ? glibc)
-               [ "--with-crt-dir=${stdenv.glibc}/lib" ]));
-      };      
+	configureFlags =
+	  with pkgs;
+	  [ # Make sure `configure' doesn't pick /usr/lib on impure platforms
+	    # such as Darwin.
+	    "--x-libraries=${xlibs.libX11}/lib"
+	    "--x-includes=${xlibs.libX11}/include"
+	  ]
+	  ++
+	  (if stdenv.isDarwin then
+	     [ "--with-xpm=no" "--with-jpeg=no" "--with-png=no"
+	       "--with-gif=no" "--with-tiff=no"
+	     ]
+	   else
+	     (stdenv.lib.optional (stdenv ? glibc)
+	       [ "--with-crt-dir=${stdenv.glibc}/lib" ]));
+      };
 
       coverage = pkgs: {
-        buildInputs = buildInputsFrom pkgs;
-        configureFlags ="--with-crt-dir=${pkgs.stdenv.glibc}/lib --enable-profiling" ;
-      };      
-      
-    };   
+	buildInputs = buildInputsFrom pkgs;
+	configureFlags ="--with-crt-dir=${pkgs.stdenv.glibc}/lib --enable-profiling" ;
+      };
+
+    };
   }
