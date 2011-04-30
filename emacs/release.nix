@@ -44,6 +44,19 @@ let
     license = "GPLv3+";
   };
 
+  # Return the list of dependencies.
+  buildInputsFrom = pkgs: with pkgs;
+    [ texinfo ncurses pkgconfig
+      x11 libpng libjpeg libungif
+      libtiff librsvg ]
+    ++ (with xorg; [ libXft libXpm ])
+
+    # Optional dependencies that fail to build on non-GNU platforms.
+    ++ (stdenv.lib.optionals stdenv.isLinux [ gtkLibs.gtk dbus gnutls ])
+
+    # Fallback for Darwin.
+    ++ (stdenv.lib.optional stdenv.isDarwin xlibs.libXaw);
+
 in
   import ../gnu-jobs.nix {
     name = "emacs";
@@ -75,23 +88,27 @@ in
       } ;
 
       build = pkgs: {
-        buildInputs = with pkgs; [ texinfo ncurses ];
-        configureFlags = 
-          with pkgs; 
-          (if stdenv.isDarwin then 
+        buildInputs = buildInputsFrom pkgs;
+
+        configureFlags =
+          with pkgs;
+          [ # Make sure `configure' doesn't pick /usr/lib on impure platforms
+            # such as Darwin.
+            "--x-libraries=${xlibs.libX11}/lib"
+            "--x-includes=${xlibs.libX11}/include"
+          ]
+          ++
+          (if stdenv.isDarwin then
              [ "--with-xpm=no" "--with-jpeg=no" "--with-png=no"
                "--with-gif=no" "--with-tiff=no"
-
-               # Make sure `configure' doesn't pick /usr/lib.
-               "--x-libraries=${xlibs.libX11}/lib"
-               "--x-includes=${xlibs.libX11}/include"
              ]
-           else 
-             stdenv.lib.optionalString (stdenv ? glibc) "--with-crt-dir=${stdenv.glibc}/lib") ;
+           else
+             (stdenv.lib.optional (stdenv ? glibc)
+               [ "--with-crt-dir=${stdenv.glibc}/lib" ]));
       };      
 
       coverage = pkgs: {
-        buildInputs = with pkgs; [ texinfo ncurses ];
+        buildInputs = buildInputsFrom pkgs;
         configureFlags ="--with-crt-dir=${pkgs.stdenv.glibc}/lib --enable-profiling" ;
       };      
       
