@@ -39,6 +39,7 @@ let
   };
 
   buildInputsFrom = pkgs: [ pkgs.gnum4 ];
+  configureFlags = [ "--enable-cxx" ];
 in
   import ../gnu-jobs.nix {
     name = "gmp";
@@ -62,9 +63,17 @@ in
              ln -sv configfsf.guess config.guess
           '';
         buildInputs = (buildInputsFrom pkgs);
+        inherit configureFlags;
       };
 
-      coverage = pkgs: { buildInputs = (buildInputsFrom pkgs); };
-      xbuild_gnu = pkgs: { buildNativeInputs = (buildInputsFrom pkgs); };
+      coverage = pkgs: {
+        buildInputs = (buildInputsFrom pkgs);
+        inherit configureFlags;
+      };
+
+      xbuild_gnu = pkgs: {
+        buildNativeInputs = (buildInputsFrom pkgs);
+        inherit configureFlags;
+      };
     };
   }
