@@ -47,12 +47,12 @@ let
   # Return the list of dependencies.
   buildInputsFrom = pkgs: with pkgs;
     [ texinfo ncurses pkgconfig
-      x11 libpng libjpeg libungif
-      libtiff librsvg ]
+      x11 libpng libjpeg libungif libtiff ]
     ++ (with xorg; [ libXft libXpm ])
 
     # Optional dependencies that fail to build on non-GNU platforms.
-    ++ (stdenv.lib.optionals stdenv.isLinux [ gtkLibs.gtk dbus gnutls ])
+    ++ (stdenv.lib.optionals stdenv.isLinux
+         [ gtkLibs.gtk librsvg dbus gnutls ])
 
     # Fallback for Darwin.
     ++ (stdenv.lib.optional stdenv.isDarwin xlibs.libXaw);
