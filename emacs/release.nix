@@ -98,7 +98,7 @@ in
 	    "--x-includes=${xlibs.libX11}/include"
 	  ]
 	  ++
-	  (if stdenv.isDarwin then
+	  (if stdenv.isDarwin || stdenv.system == "i686-cygwin" then
 	     [ "--with-xpm=no" "--with-jpeg=no" "--with-png=no"
 	       "--with-gif=no" "--with-tiff=no"
 	     ]
