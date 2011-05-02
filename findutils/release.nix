@@ -52,7 +52,7 @@ let
 	name = "findutils-tarball";
 	src = findutilsSrc;
 	buildInputs =
-          [ automake111x gettext_0_17 gperf bison groff git
+          [ automake111x gettext gperf bison groff git
             texinfo xz
             cvs # for `autopoint'
           ];
