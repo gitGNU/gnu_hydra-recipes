@@ -27,7 +27,7 @@ let
     ];
   };
 
-  buildInputsFrom = pkgs: [pkgs.gnutls];
+  buildInputsFrom = pkgs: with pkgs; [gnutls perl];
 in 
   import ../gnu-jobs.nix {
     name = "wget";
