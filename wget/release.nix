@@ -29,7 +29,7 @@ let
 
   buildInputsFrom = pkgs: with pkgs; [openssl perl];
   configureFlags = "--with-ssl=openssl";
-  preConfigure = ''
+  preConfigure = pkgs: ''
     sed -i 's|/usr/bin/env|${pkgs.coreutils}/bin/env|' tests/run-px
     find . -name "*.pl" | xargs sed -i 's|/usr/bin/env|${pkgs.coreutils}/bin/env|' 
   '';
@@ -63,12 +63,14 @@ in
 
       build = pkgs: {
         buildInputs = buildInputsFrom pkgs;
-        inherit configureFlags preConfigure; 
+        inherit configureFlags ; 
+        preConfigure = preConfigure pkgs;
       };      
 
       coverage = pkgs: {
         buildInputs = buildInputsFrom pkgs;
-        inherit configureFlags preConfigure; 
+        inherit configureFlags; 
+        preConfigure = preConfigure pkgs;
       };      
     };   
   }
