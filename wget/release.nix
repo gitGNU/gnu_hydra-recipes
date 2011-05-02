@@ -28,6 +28,7 @@ let
   };
 
   buildInputsFrom = pkgs: with pkgs; [openssl perl];
+  configureFlags = "--with-ssl=openssl";
 in 
   import ../gnu-jobs.nix {
     name = "wget";
@@ -52,7 +53,7 @@ in
           flex
         ] ++ buildInputsFrom pkgs;
 
-        configureFlags = "--with-ssl=openssl"; 
+        inherit configureFlags ; 
 
         preConfigure = ''
           sed -i 's|/usr/bin/env|${pkgs.coreutils}/bin/env|' tests/run-px
@@ -61,10 +62,12 @@ in
 
       build = pkgs: {
         buildInputs = buildInputsFrom pkgs;
+        inherit configureFlags ; 
       };      
 
       coverage = pkgs: {
         buildInputs = buildInputsFrom pkgs;
+        inherit configureFlags ; 
       };      
     };   
   }
