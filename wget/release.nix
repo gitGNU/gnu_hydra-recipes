@@ -27,7 +27,7 @@ let
     ];
   };
 
-  buildInputsFrom = pkgs: with pkgs; [gnutls perl];
+  buildInputsFrom = pkgs: with pkgs; [openssl perl];
 in 
   import ../gnu-jobs.nix {
     name = "wget";
@@ -51,6 +51,9 @@ in
           help2man
           flex
         ] ++ buildInputsFrom pkgs;
+
+        configureFlags = "--with-ssl=openssl"; 
+
         preConfigure = ''
           sed -i 's|/usr/bin/env|${pkgs.coreutils}/bin/env|' tests/run-px
         '';
