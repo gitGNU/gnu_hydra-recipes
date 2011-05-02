@@ -107,7 +107,7 @@ in
 
         buildInputs = (buildInputsFrom pkgs)
           ++ (with pkgs;
-               [ autoconf automake111x libtool gettext_0_17
+               [ autoconf automake111x libtool gettext
              git texinfo gperf gengetopt transfig texLive help2man
                  ghostscript # for `fig2dev'
                  cvs # for `autopoint'

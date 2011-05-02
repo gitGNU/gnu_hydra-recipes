@@ -44,7 +44,7 @@ let
   inherit (pkgs) releaseTools;
 
   buildInputsFrom = pkgs: with pkgs;
-    [ gettext_0_17 pkgconfig perl gss ghostscript ]
+    [ gettext pkgconfig perl gss ghostscript ]
     ++ stdenv.lib.optional stdenv.isLinux valgrind;
 
   succeedOnFailure = true;
