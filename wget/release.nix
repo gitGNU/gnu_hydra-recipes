@@ -27,6 +27,7 @@ let
     ];
   };
 
+  buildInputsFrom = pkgs: [pkgs.gnutls];
 in 
   import ../gnu-jobs.nix {
     name = "wget";
@@ -49,12 +50,15 @@ in
           xz
           help2man
           flex
-        ];
+        ] ++ buildInputsFrom pkgs;;
       } ;
 
       build = pkgs: {
-        buildInputs = [pkgs.gnutls];
-        configureFlags = "--with-ssl=gnutls";
+        buildInputs = buildInputsFrom pkgs;
+      };      
+
+      coverage = pkgs: {
+        buildInputs = buildInputsFrom pkgs;
       };      
     };   
   }
