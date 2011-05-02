@@ -29,6 +29,11 @@ let
 
   buildInputsFrom = pkgs: with pkgs; [openssl perl];
   configureFlags = "--with-ssl=openssl";
+  preConfigure = ''
+    sed -i 's|/usr/bin/env|${pkgs.coreutils}/bin/env|' tests/run-px
+    find . -name "*.pl" | xargs sed -i 's|/usr/bin/env|${pkgs.coreutils}/bin/env|' 
+  '';
+
 in 
   import ../gnu-jobs.nix {
     name = "wget";
@@ -54,20 +59,16 @@ in
         ] ++ buildInputsFrom pkgs;
 
         inherit configureFlags ; 
-
-        preConfigure = ''
-          sed -i 's|/usr/bin/env|${pkgs.coreutils}/bin/env|' tests/run-px
-        '';
       } ;
 
       build = pkgs: {
         buildInputs = buildInputsFrom pkgs;
-        inherit configureFlags ; 
+        inherit configureFlags preConfigure; 
       };      
 
       coverage = pkgs: {
         buildInputs = buildInputsFrom pkgs;
-        inherit configureFlags ; 
+        inherit configureFlags preConfigure; 
       };      
     };   
   }
