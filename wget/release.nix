@@ -50,7 +50,7 @@ in
           xz
           help2man
           flex
-        ] ++ buildInputsFrom pkgs;;
+        ] ++ buildInputsFrom pkgs;
       } ;
 
       build = pkgs: {
