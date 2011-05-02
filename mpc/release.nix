@@ -36,9 +36,7 @@ let
 
     license = "LGPLv3+";
 
-    maintainers =
-     [ (import nixpkgs {}).stdenv.lib.maintainers.ludo
-     ];
+    maintainers = [ "Andreas Enge <andreas.enge@inria.fr>" ];
   };
 in
   import ../gnu-jobs.nix {
