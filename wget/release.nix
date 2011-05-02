@@ -51,6 +51,9 @@ in
           help2man
           flex
         ] ++ buildInputsFrom pkgs;
+        preConfigure = ''
+          sed -i 's|/usr/bin/env|${pkgs.coreutils}/bin/env|' tests/run-px
+        '';
       } ;
 
       build = pkgs: {
