@@ -78,7 +78,7 @@ let
          cpio = override "cpio" origPkgs.cpio cpio;
          gnutar = override "tar" origPkgs.gnutar tar;
          gnugrep = override "grep" origPkgs.gnugrep grep;
-         guile_1_9 = override "guile" origPkgs.guile_1_9 guile;
+         guile_2_0 = override "guile" origPkgs.guile_2_0 guile;
          inetutils = override "inetutils" origPkgs.inetutils inetutils;
          gnupatch = override "patch" origPkgs.gnupatch patch;
        };
@@ -115,7 +115,7 @@ let
       pkgs.gdb
 
       # Last but not least...
-      pkgs.guile_1_9
+      pkgs.guile_2_0
     ];
 
   makeIso =
