@@ -52,7 +52,7 @@ let
         '';
 
         buildInputs = [
-          flex2535 git gperf bison automake111x] ++ buildInputsFrom pkgs ;
+          flex2535 git gperf bison automake111x mercurial] ++ buildInputsFrom pkgs ;
       };
 
     build =
