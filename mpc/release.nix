@@ -36,7 +36,10 @@ let
 
     license = "LGPLv3+";
 
-    maintainers = [ "Andreas Enge <andreas.enge@inria.fr>" ];
+    maintainers =
+      [ "Paul Zimmermann <Paul.Zimmermann@loria.fr>"
+        "Andreas Enge <andreas.enge@inria.fr>"
+      ];
   };
 in
   import ../gnu-jobs.nix {
