@@ -133,7 +133,7 @@ let
 
           # Don't build the GRUB menu builder script, since we don't need it
           # here and it causes a cyclic dependency.
-          boot.loader.grub.enable = pkgs.lib.mkOverride 0 {} false;
+          boot.loader.grub.enable = pkgs.lib.mkOverrideTemplate 0 {} false ;
         };
 
       c = (import "${nixos}/lib/eval-config.nix" {
