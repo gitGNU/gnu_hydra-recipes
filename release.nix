@@ -27,7 +27,6 @@
   /* Source tarballs of the latest GNU packages.  */
 #, glibc     ? (import glibc/release.nix {}).tarball {}
 , coreutils ? (import coreutils/release.nix {}).tarball {}
-, cpio      ? (import cpio/release.nix {}).tarball {}
 , guile     ? (import guile/release.nix {}).tarball {}
 , grep      ? (import grep/release.nix {}).tarball {}
 , inetutils ? (import inetutils/release.nix {}).tarball {}
@@ -75,7 +74,6 @@ let
          */
 
          coreutils = override "coreutils" origPkgs.coreutils coreutils;
-         cpio = override "cpio" origPkgs.cpio cpio;
          gnutar = override "tar" origPkgs.gnutar tar;
          gnugrep = override "grep" origPkgs.gnugrep grep;
          guile_2_0 = override "guile" origPkgs.guile_2_0 guile;
