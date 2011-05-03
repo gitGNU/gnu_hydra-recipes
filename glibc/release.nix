@@ -149,9 +149,13 @@ let
 
            tg info
 
-           tg export --linearize for-upstream-glibc
-           git checkout for-upstream-glibc
-           git format-patch
+           # XXX: This method is broken, see
+           # <http://lists.gnu.org/archive/html/bug-hurd/2011-03/msg00064.html>.
+           #tg export --linearize for-upstream-glibc git checkout
+           #for-upstream-glibc git format-patch
+
+           # Do a raw diff against this `baseline' commit.
+           git diff ea42a20caed5b343ff20a0d4622ae6c17b77161b
 
            ensureDir "$out"
            mv -v [0-9]*.patch "$out"
