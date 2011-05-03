@@ -161,7 +161,7 @@ let
            mv -v [0-9]*.patch "$out"
 
            ensureDir "$out/nix-support"
-           for patch n "$out/"*.patch
+           for patch in "$out/"*.patch
            do
              echo "patch none $patch" >> \
                "$out/nix-support/hydra-build-products"
