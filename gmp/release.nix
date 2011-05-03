@@ -58,10 +58,6 @@ in
       };
 
       build = pkgs: {
-        preConfigure =
-          '' rm -v config.guess
-             ln -sv configfsf.guess config.guess
-          '';
         buildInputs = (buildInputsFrom pkgs);
         inherit configureFlags;
       };
