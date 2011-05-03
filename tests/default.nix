@@ -16,13 +16,12 @@
 
 { nixpkgs ? ../../nixpkgs
 , nixos ? ../../nixos
-, services ? ../../services
 , system ? builtins.currentSystem
 , gnuConfigOptions
 }:
 
-with import "${nixos}/lib/testing.nix" { inherit nixpkgs services system; };
-with import "${nixos}/lib/build-vms.nix" { inherit nixpkgs services system; };
+with import "${nixos}/lib/testing.nix" { inherit nixpkgs system; };
+with import "${nixos}/lib/build-vms.nix" { inherit nixpkgs system; };
 
 let
   call = f: f { inherit nixpkgs system pkgs; };

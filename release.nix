@@ -183,7 +183,6 @@ in
 
         testsuite = import ./tests {
              inherit nixpkgs nixos system gnuConfigOptions;
-             services = "${nixos}/services";
            };
       in {
         version = testsuite.version.test;
