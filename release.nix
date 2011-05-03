@@ -129,7 +129,7 @@ let
           gnu = true;
           system.nixosVersion = version;
           nixpkgs.config.packageOverrides = latestGNUPackages;
-          installer.basePackages = gnuSystemPackages pkgs;
+          environment.systemPackages = gnuSystemPackages pkgs;
 
           # Don't build the GRUB menu builder script, since we don't need it
           # here and it causes a cyclic dependency.
