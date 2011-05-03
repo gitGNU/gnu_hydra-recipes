@@ -25,7 +25,7 @@
 , nixos ? { outPath = ../nixos; rev = 0; }
 
   /* Source tarballs of the latest GNU packages.  */
-, glibc     ? (import glibc/release.nix {}).tarball {}
+#, glibc     ? (import glibc/release.nix {}).tarball {}
 , coreutils ? (import coreutils/release.nix {}).tarball {}
 , cpio      ? (import cpio/release.nix {}).tarball {}
 , guile     ? (import guile/release.nix {}).tarball {}
@@ -55,9 +55,10 @@ let
             '';
         });
 
-       glibcNew = glibc;
+#       glibcNew = glibc;
      in
        {
+         /*
          # The bootstrap tools on x86_64 contain an old version of GNU as,
          # which doesn't support `gnu_indirect_function', leading to a build
          # failure when multi-arch support is enabled.  Thus, build with
@@ -71,6 +72,7 @@ let
            configureFlags = origPkgs.glibc.configureFlags ++ [ "--disable-multi-arch" ];
            preUnpack = '' src="$(echo $src/tarballs/*.bz2)" '';
          });
+         */
 
          coreutils = override "coreutils" origPkgs.coreutils coreutils;
          cpio = override "cpio" origPkgs.cpio cpio;
