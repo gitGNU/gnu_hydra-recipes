@@ -18,7 +18,6 @@
 { nixpkgs ? ../../nixpkgs
 , cpioSrc ? {outPath = ../../cpio;}
 , paxutils ? {outPath = ../../paxutils;}
-, gnulib ? {outPath = ../../gnulib;}
 }:
 
 let
