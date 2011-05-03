@@ -155,7 +155,7 @@ let
            #for-upstream-glibc git format-patch
 
            # Do a raw diff against this `baseline' commit.
-           git diff ea42a20caed5b343ff20a0d4622ae6c17b77161b
+           git diff ea42a20caed5b343ff20a0d4622ae6c17b77161b > glibc-hurd.patch
 
            ensureDir "$out"
            mv -v [0-9]*.patch "$out"
