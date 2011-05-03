@@ -15,7 +15,12 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
-{nixpkgs ? ../../nixpkgs}:
+{ nixpkgs ? ../../nixpkgs
+, cpioSrc ? {outPath = ../../cpio;}
+, paxutils ? {outPath = ../../paxutils;}
+, gnulib ? {outPath = ../../gnulib;}
+}:
+
 let
   pkgs = import nixpkgs {};
   crossSystems = (import ../cross-systems.nix) { inherit pkgs; };
@@ -43,80 +48,23 @@ let
     maintainers = [ "Sergey Poznyakoff <gray@gnu.org.ua>" ];
   };
 
-  buildInputsFrom = pkgs: [];
-
   succeedOnFailure = true;
   keepBuildDirectory = true;
 
-  jobs = rec {
+in 
+  import ../gnu-jobs.nix {
+    name = "cpio";
+    src  = cpioSrc;
+    inherit nixpkgs meta;
+    enableGnuCrossBuild = true;
 
-    tarball =
-      { cpioSrc ? {outPath = ../../cpio;}
-      , paxutils ? {outPath = ../../paxutils;}
-      , gnulib ? {outPath = ../../gnulib;}
-      }:
+    customEnv = {
 
-      with pkgs;
+      tarball = pkgs: {
+        PAXUTILS_SRCDIR = paxutils;
+        buildInputs = with pkgs; [ git texinfo bison cvs man rsync perl cpio automake111x xz gettext m4];
+      } ;
 
-      pkgs.releaseTools.sourceTarball {
-        name = "cpio-tarball";
-        src = cpioSrc;
+    };
+}
 
-        autoconfPhase = ''
-          cp -Rv ${gnulib} ../gnulib
-          chmod -R 755 ../gnulib
-          cp -Rv ${paxutils} ../paxutils
-          chmod -R 755 ../paxutils
-
-          ./bootstrap --gnulib-srcdir=../gnulib --paxutils-srcdir=../paxutils --skip-po --copy
-        '';
-
-        buildInputs = [
-          git
-          gettext_0_17
-          cvs
-          texinfo
-          man
-          rsync
-          gnum4
-          bison
-          automake111x
-        ] ++ buildInputsFrom pkgs;
-
-        inherit meta succeedOnFailure keepBuildDirectory;
-      };
-
-    build =
-      { tarball ? jobs.tarball {}
-      , system ? "x86_64-linux"
-      }:
-
-      let pkgs = import nixpkgs {inherit system;};
-      in with pkgs;
-      releaseTools.nixBuild {
-        name = "cpio" ;
-        src = tarball;
-        buildInputs = buildInputsFrom pkgs;
-        inherit meta succeedOnFailure keepBuildDirectory;
-      };
-
-    xbuild_gnu =
-      # Cross build to GNU.
-      { tarball ? jobs.tarball {}
-      }:
-
-      let pkgs = import nixpkgs {
-            crossSystem = crossSystems.i586_pc_gnu;
-          };
-      in
-      (pkgs.releaseTools.nixBuild {
-	name = "cpio" ;
-	src = tarball;
-        buildInputs = buildInputsFrom pkgs;
-        doCheck = false;
-        inherit meta succeedOnFailure keepBuildDirectory;
-      }).hostDrv;
-
-  };
-
-in jobs
