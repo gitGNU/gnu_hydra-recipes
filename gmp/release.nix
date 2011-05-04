@@ -39,7 +39,7 @@ let
   };
 
   buildInputsFrom = pkgs: [ pkgs.gnum4 ];
-  configureFlags = [ "--enable-cxx" ];
+  configureFlags = [ "--enable-cxx" "--enable-fat" ];
 in
   import ../gnu-jobs.nix {
     name = "gmp";
