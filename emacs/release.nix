@@ -21,7 +21,7 @@
 
 let
   meta = {
-    description = "GNU Emacs 24.x, the extensible, customizable text editor";
+    description = "GNU Emacs, the extensible, customizable text editor";
 
     longDescription = ''
       GNU Emacs is an extensible, customizable text editor—and more.  At its
@@ -42,6 +42,8 @@ let
 
     homepage = http://www.gnu.org/software/emacs/;
     license = "GPLv3+";
+
+    maintainers = [ "emacs-buildstatus@gnu.org" ];
   };
 
   # Return the list of dependencies.
