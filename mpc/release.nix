@@ -57,7 +57,14 @@ in
         autoconfPhase = "autoreconf -vfi";
       };
 
-      build = pkgs: { buildInputs = [ gmp mpfr ]; };
+      build = pkgs: {
+        configureFlags =
+          # On Cygwin GMP is compiled statically, so build MPC statically.
+          pkgs.stdenv.lib.optionals pkgs.stdenv.isCygwin
+            [ "--enable-static" "--disable-shared" ];
+
+        buildInputs = [ gmp mpfr ];
+      };
       coverage = pkgs: { buildInputs = [ gmp mpfr ]; };
       xbuild_gnu = pkgs: { buildInputs = [ gmp_xgnu mpfr_xgnu ]; };
     };
