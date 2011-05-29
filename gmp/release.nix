@@ -39,7 +39,10 @@ let
   };
 
   buildInputsFrom = pkgs: [ pkgs.gnum4 ];
-  configureFlags = [ "--enable-cxx" "--enable-fat" ];
+  configureFlagsFor = stdenv:
+    [ "--enable-cxx" ]
+    ++ (stdenv.lib.optional (stdenv.system != "i686-darwin")
+          [ "--enable-fat" ]);
 in
   import ../gnu-jobs.nix {
     name = "gmp";
@@ -59,17 +62,17 @@ in
 
       build = pkgs: {
         buildInputs = (buildInputsFrom pkgs);
-        inherit configureFlags;
+        configureFlags = configureFlagsFor pkgs.stdenv;
       };
 
       coverage = pkgs: {
         buildInputs = (buildInputsFrom pkgs);
-        inherit configureFlags;
+        configureFlags = configureFlagsFor pkgs.stdenv;
       };
 
       xbuild_gnu = pkgs: {
         buildNativeInputs = (buildInputsFrom pkgs);
-        inherit configureFlags;
+        configureFlags = configureFlagsFor pkgs.stdenv;
       };
     };
   }
