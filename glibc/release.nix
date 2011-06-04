@@ -15,7 +15,7 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 { nixpkgs ? ../../nixpkgs
-, glibcHurd ? null }:
+, glibcHurd ? false }:
 
 let
   meta = {
@@ -175,9 +175,10 @@ let
   jobs = rec {
 
     tarball =
-      { glibcSrc ? { outPath = /data/src/glibc; } }:
+      { glibcSrc ? { outPath = /data/src/glibc; }
+      , hurdPatches ? false }:
 
-      releaseTools.sourceTarball {
+      releaseTools.sourceTarball ({
 	name = "glibc-tarball";
 	src = glibcSrc;
 
@@ -219,7 +220,21 @@ let
           '';
 
         inherit meta succeedOnFailure keepBuildDirectory;
-      };
+      }
+
+      //
+
+      (if hurdPatches != false
+       then {
+         postPatch =
+           '' for p in ${hurdPatches}/[0-9]*.patch
+              do
+                echo "applying patch \`$p'..."
+                patch --batch -p1 < $p || exit 1
+              done
+           '';
+       }
+       else { }));
 
     build =
       # Native builds.
@@ -274,7 +289,7 @@ let
 
   //
 
-  (if glibcHurd != null
+  (if glibcHurd != false
    then { inherit hurd_patches; }
    else { });
 
