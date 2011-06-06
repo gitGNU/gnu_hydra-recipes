@@ -39,8 +39,9 @@ let
   # tarballs.
   latestGNUPackages = origPkgs:
     let
-      override = pkgName: origPkg: latestPkg:
-        origPkgs.lib.overrideDerivation origPkg (origAttrs: {
+      none = origAttrs : {};
+      override = pkgName: origPkg: latestPkg: extraAttrs:
+        origPkgs.lib.overrideDerivation origPkg (origAttrs: ({
           name = "${pkgName}-${latestPkg.version}";
           src = latestPkg;
           patches = [];
@@ -52,7 +53,7 @@ let
                   src=$(ls -1 "$src/tarballs/"*.tar.bz2 "$src/tarballs/"*.tar.gz | sort | head -1)
               fi
             '';
-        });
+        } // (extraAttrs origAttrs)));
 
 #       glibcNew = glibc;
      in
@@ -73,12 +74,12 @@ let
          });
          */
 
-         coreutils = override "coreutils" origPkgs.coreutils coreutils;
-         gnutar = override "tar" origPkgs.gnutar tar;
-         gnugrep = override "grep" origPkgs.gnugrep grep;
-         guile_2_0 = override "guile" origPkgs.guile_2_0 guile;
-         inetutils = override "inetutils" origPkgs.inetutils inetutils;
-         gnupatch = override "patch" origPkgs.gnupatch patch;
+         coreutils = override "coreutils" origPkgs.coreutils coreutils none;
+         gnutar = override "tar" origPkgs.gnutar tar none;
+         gnugrep = override "grep" origPkgs.gnugrep grep none;
+         guile_2_0 = override "guile" origPkgs.guile_2_0 guile none;
+         inetutils = override "inetutils" origPkgs.inetutils inetutils (origAttrs : { buildInputs = origAttrs.buildInputs ++ [origPkgs.nettools]; } );
+         gnupatch = override "patch" origPkgs.gnupatch patch none;
        };
 
   # List of base packages for the ISO.
