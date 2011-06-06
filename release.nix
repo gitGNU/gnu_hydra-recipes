@@ -32,6 +32,7 @@
 , inetutils ? (import inetutils/release.nix {}).tarball {}
 , tar       ? (import tar/release.nix {}).tarball {}
 , patch     ? (import patch/release.nix {}).tarball {}
+, emacs     ? (import emacs/release.nix {}).tarball {}
 }:
 
 let
@@ -80,6 +81,7 @@ let
          guile_2_0 = override "guile" origPkgs.guile_2_0 guile none;
          inetutils = override "inetutils" origPkgs.inetutils inetutils (origAttrs : { doCheck = false; } );
          gnupatch = override "patch" origPkgs.gnupatch patch none;
+         emacs = override "emacs" origPkgs.emacs emacs none;
        };
 
   # List of base packages for the ISO.
