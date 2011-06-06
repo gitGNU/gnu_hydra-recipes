@@ -176,7 +176,7 @@ in
 
     iso_graphical = makeIso {
       module = ./modules/installer/cd-dvd/installation-cd-graphical.nix;
-      type = "graphical";
+      description = "minimal";
     };
 
     tests =
