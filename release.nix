@@ -78,7 +78,7 @@ let
          gnutar = override "tar" origPkgs.gnutar tar none;
          gnugrep = override "grep" origPkgs.gnugrep grep none;
          guile_2_0 = override "guile" origPkgs.guile_2_0 guile none;
-         inetutils = override "inetutils" origPkgs.inetutils inetutils (origAttrs : { buildInputs = origAttrs.buildInputs ++ [origPkgs.nettools]; } );
+         inetutils = override "inetutils" origPkgs.inetutils inetutils (origAttrs : { doCheck = false; } );
          gnupatch = override "patch" origPkgs.gnupatch patch none;
        };
 
