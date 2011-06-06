@@ -174,6 +174,11 @@ in
       description = "minimal";
     };
 
+    iso_graphical = makeIso {
+      module = ./modules/installer/cd-dvd/installation-cd-graphical.nix;
+      type = "graphical";
+    };
+
     tests =
       { system ? "x86_64-linux" }:
 
