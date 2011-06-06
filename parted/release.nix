@@ -1,5 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
-   Copyright (C) 2010  Ludovic Courtès <ludo@gnu.org>
+   Copyright (C) 2010, 2011  Ludovic Courtès <ludo@gnu.org>
    Copyright (C) 2010  Rob Vermaas <rob.vermaas@gmail.com>
 
    This program is free software: you can redistribute it and/or modify
@@ -43,7 +43,7 @@ let
   };
 
   buildInputsFrom = pkgs: with pkgs;
-    [ devicemapper libuuid gettext_0_18 readline ];
+    [ devicemapper libuuid gettext_0_18 readline check ];
 
 in
   import ../gnu-jobs.nix {
