@@ -192,6 +192,6 @@ in
 
         # Selected NixOS tests.
         login = testsuite.login.test;
-        portmap = testsuite.portmap.test;
+        portmap = testsuite.openssh.test;
       };
   }

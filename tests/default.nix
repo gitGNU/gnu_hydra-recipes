@@ -83,5 +83,5 @@ in
 
     # Selected NixOS tests.
     login = apply (import "${nixos}/tests/login.nix");
-    portmap = apply (import "${nixos}/tests/portmap.nix");
+    openssh = apply (import "${nixos}/tests/openssh.nix");
   }
