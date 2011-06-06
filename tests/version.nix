@@ -19,14 +19,14 @@
 let
   commands =
     [ "ldd" "touch" "tar" "cpio" "grep" "patch"
-      "ifconfig" "guile"
+      "ifconfig" "guile" "emacs"
     ];
 in
 {
   machine = { config, pkgs, ... }: {
     # Extra packages wanted in the global environment.
     environment.systemPackages =
-      [ pkgs.cpio pkgs.guile_1_9 pkgs.inetutils ];
+      [ pkgs.cpio pkgs.guile_2_0 pkgs.inetutils pkgs.emacs];
   };
 
   testScript =
