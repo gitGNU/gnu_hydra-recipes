@@ -100,6 +100,7 @@ let
         pkgs.releaseTools.nixBuild {
           name = "inetutils";
           src = tarball;
+          VERBOSE = 1;
           buildInputs = [ pkgs.ncurses ]
             ++ (pkgs.lib.optional pkgs.stdenv.isLinux pkgs.nettools);
           configureFlags =
