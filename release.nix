@@ -174,11 +174,6 @@ in
       description = "minimal";
     };
 
-    iso_graphical = makeIso {
-      module = "installer/cd-dvd/installation-cd-graphical.nix";
-      description = "graphical";
-    };
-
     tests =
       { system ? "x86_64-linux" }:
 
@@ -197,6 +192,5 @@ in
 
         # Selected NixOS tests.
         login = testsuite.login.test;
-        openssh = testsuite.openssh.test;
       };
   }
