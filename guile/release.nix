@@ -116,6 +116,7 @@ let
       [ "--disable-posix" ]
       [ "--enable-guile-debug" ]
       [ "CPPFLAGS=-DSCM_DEBUG=1" ]
+      [ "CPPFLAGS=-DSCM_DEBUG_TYPING_STRICTNESS=2" ]
     ];
 
   makeCrossBuild = from: to:
