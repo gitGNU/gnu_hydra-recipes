@@ -16,7 +16,7 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 { nixpkgs ? ../../nixpkgs 
-, bison ? { outPath = ../../bison; }
+, bison ? { outPath = ../../bison; rev = "1234"; }
 }:
 
 let
@@ -47,6 +47,13 @@ let
     ];
   };
 
+  m4 = pkgs : with pkgs; lib.overrideDerivation pkgs.m4 (args: { 
+    name = "m4-1.4.16";
+    src = fetchurl {
+      url = mirror://gnu/m4/m4-1.4.16.tar.bz2;
+      sha256 = "035r7ma272j2cwni2961jp22k6bn3n9xwn3b3qbcn2yrvlghql22";
+    };
+  });
 in 
   import ../gnu-jobs.nix {
     name = "bison";
@@ -71,6 +78,7 @@ in
           rsync
           xz
           help2man
+          (m4 pkgs)
         ];
         dontBuild = false;
       } ;
