@@ -84,11 +84,11 @@ in
       } ;
  
       build = pkgs: {
-        buildInputs = [pkgs.m4 pkgs.perl];
+        buildInputs = [(m4 pkgs) pkgs.perl];
       };      
 
       coverage = pkgs: {
-        buildInputs = [pkgs.m4 pkgs.perl];
+        buildInputs = [(m4 pkgs) pkgs.perl];
         succeedOnFailure = true;
         keepBuildDirectory = true;
       };      
