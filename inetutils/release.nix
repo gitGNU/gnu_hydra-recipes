@@ -60,6 +60,7 @@ let
       }:
 
       releaseTools.sourceTarball {
+
 	name = "inetutils-tarball";
 	src = inetutilsSrc;
 
@@ -101,11 +102,19 @@ let
           name = "inetutils";
           src = tarball;
           VERBOSE = 1;
-          buildInputs = [ pkgs.ncurses ]
+          buildInputs = [ pkgs.ncurses pkgs.procps ]
             ++ (pkgs.lib.optional pkgs.stdenv.isLinux pkgs.nettools);
           configureFlags =
             [ "--with-ncurses-include-dir=${pkgs.ncurses}/include" ];
           inherit preBuild meta succeedOnFailure keepBuildDirectory;
+
+          preConfigure = '' 
+            export PATH=$PATH:${pkgs.nettools}/sbin
+            export USER=`${pkgs.coreutils}/bin/whoami`
+          '';
+
+          # needed because make check need /etc/protocols
+          __noChroot=true; 
         };
 
     build_shishi =
