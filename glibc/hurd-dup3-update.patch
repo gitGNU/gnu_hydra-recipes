@@ -1,0 +1,37 @@
+Make `dup3' for GNU similar than that for GNU/Linux.
+See <http://lists.gnu.org/archive/html/bug-hurd/2011-06/msg00013.html>.
+
+diff --git a/include/unistd.h b/include/unistd.h
+index 1dbf170..b812dcc 100644
+--- a/include/unistd.h
++++ b/include/unistd.h
+@@ -79,8 +79,7 @@ char *__canonicalize_directory_name_internal (__const char *__thisdir,
+ extern int __dup (int __fd);
+ extern int __dup2 (int __fd, int __fd2);
+ libc_hidden_proto (__dup2)
+-extern int __dup3 (int __fd, int __fd2, int __flags);
+-libc_hidden_proto (__dup3)
++libc_hidden_proto (dup3)
+ extern int __execve (__const char *__path, char *__const __argv[],
+ 		     char *__const __envp[]);
+ extern long int __pathconf (__const char *__path, int __name);
+diff --git a/sysdeps/mach/hurd/dup3.c b/sysdeps/mach/hurd/dup3.c
+index 1e03eed..178ee16 100644
+--- a/sysdeps/mach/hurd/dup3.c
++++ b/sysdeps/mach/hurd/dup3.c
+@@ -28,7 +28,7 @@
+    open on the same file as FD is, and setting FD2's flags according to FLAGS.
+    Return FD2 or -1.  */
+ int
+-__dup3 (int fd, int fd2, int flags)
++dup3 (int fd, int fd2, int flags)
+ {
+   struct hurd_fd *d;
+ 
+@@ -137,5 +137,4 @@ __dup3 (int fd, int fd2, int flags)
+ 
+   return fd2;
+ }
+-libc_hidden_def (__dup3)
+-weak_alias (__dup3, dup3)
++libc_hidden_def (dup3)
