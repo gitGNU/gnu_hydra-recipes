@@ -132,7 +132,8 @@ let
 
         buildNativeInputs = (buildInputsFrom pkgs) ++ extraBuildInputs;
         doCheck = false;
-        inherit propagatedBuildNativeInputs CPATH preConfigure meta;
+        inherit propagatedBuildNativeInputs CPATH preConfigure meta
+          succeedOnFailure keepBuildDirectory;
       }).hostDrv;
 
   hurd_patches =
