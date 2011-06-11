@@ -16,7 +16,6 @@
 
 { nixpkgs ? ../../nixpkgs
 , hurdSrc ? { outPath = /data/src/hurd/hurd; }
-, parted ? (import ../parted/release.nix {}).xbuild_gnu {}
 }:
 
 let
@@ -68,6 +67,7 @@ let
     # Cross build from GNU/Linux.
     xbuild =
       { tarball ? jobs.tarball
+      , parted ? (import ../parted/release.nix {}).xbuild_gnu {}
       }:
 
       let
