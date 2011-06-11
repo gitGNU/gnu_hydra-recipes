@@ -53,7 +53,7 @@ let
         name = "hurd-tarball";
         src = hurdSrc;
         configureFlags = "--build=i586-pc-gnu";  # cheat
-        postPatch =
+        postConfigure =
           '' echo "removing \`-o root' from makefiles..."
              for mf in {utils,daemons}/Makefile
              do
