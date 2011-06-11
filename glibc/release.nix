@@ -183,10 +183,9 @@ let
 	src = glibcSrc;
 
         patches =
-          (map (x: "${nixpkgs}/pkgs/development/libraries/glibc-2.11/${x}")
-               [ "locale-override.patch"       # NixOS-specific
+          (map (x: "${nixpkgs}/pkgs/development/libraries/glibc-2.12/${x}")
+               [ "nix-locale-archive.patch"    # NixOS-specific
                  "rpcgen-path.patch"           # submit upstream?
-                 "stack-protector-link.patch"  # submit upstream?
                ])
           ++ [ ./ignore-git-diff.patch
                ./add-local-changes-to-tarball.patch
