@@ -158,6 +158,72 @@ let
           buildNativeInputs = [ pkgs.mig ];
           inherit meta succeedOnFailure keepBuildDirectory;
         }).hostDrv;
+
+    # A bare bones QEMU disk image with GNU/Hurd on partition 1.
+    # FIXME: Currently hangs at "start ext2fs:".
+    qemu_image =
+      { build ? (jobs.xbuild_without_parted {})
+      , mach ? ((import ../gnumach/release.nix {}).build {}) }:
+
+      let
+        size = 1024; fullName = "QEMU Disk Image of GNU/Hurd";
+        pkgs = import nixpkgs {
+          system = "x86_64-linux";               # build platform
+          crossSystem = crossSystems.i586_pc_gnu; # host platform
+        };
+      in
+        pkgs.vmTools.runInLinuxVM (pkgs.stdenv.mkDerivation {
+          name = "hurd-qemu-image";
+          preVM = pkgs.vmTools.createEmptyImage { inherit size fullName; };
+
+          # Software cross-compiled for GNU to be installed.
+          gnuDerivations =
+            [ mach build
+              pkgs.bash.hostDrv pkgs.coreutils.hostDrv
+              pkgs.findutils.hostDrv pkgs.gnused.hostDrv
+            ];
+
+          # Command to build the disk image.
+          buildCommand = let hd = "vda"; dollar = "\\\$"; in ''
+            ${pkgs.parted}/sbin/parted /dev/${hd} \
+               mklabel msdos mkpart primary ext2 1MiB 100MiB
+            mknod /dev/${hd}1 b 254 1
+
+            ${pkgs.e2fsprogs}/sbin/mke2fs -o hurd -F /dev/${hd}1
+            mkdir /mnt
+            ${pkgs.utillinux}/bin/mount -t ext2 /dev/${hd}1 /mnt
+
+            mkdir -p /mnt/nix/store
+            cp -rv "/nix/store/"*-gnu /mnt/nix/store
+
+            mkdir /mnt/bin /mnt/dev
+            ln -sv "${build}/hurd" /mnt/hurd
+            ln -sv "${pkgs.bash.hostDrv}/bin/bash" /mnt/bin/sh
+
+            mkdir -p /mnt/boot/grub
+            ln -sv "${mach}/boot/gnumach" /mnt/boot
+            cat > /mnt/boot/grub/grub.cfg <<EOF
+set timeout=5
+search.file /boot/gnumach
+
+menuentry "GNU (wannabe NixOS GNU/Hurd)" {
+  multiboot /boot/gnumach root=device:hd0s1
+  module  /hurd/ext2fs.static ext2fs --readonly \
+     --multiboot-command-line='${dollar}{kernel-command-line}' \
+     --host-priv-port='${dollar}{host-port}' \
+     --device-master-port='${dollar}{device-port}' \
+     --exec-server-task='${dollar}{exec-task}' -T typed '${dollar}{root}' \
+     '\$(task-create)' '\$(task-resume)'
+  module ${pkgs.glibc.hostDrv}/lib/ld.so.1 exec /hurd/exec '\$(exec-task=task-create)'
+}
+EOF
+
+            ${pkgs.grub2}/sbin/grub-install --no-floppy \
+              --boot-directory /mnt/boot /dev/${hd}
+
+            ${pkgs.utillinux}/bin/umount /mnt
+          '';
+        });
    };
 in
   jobs
