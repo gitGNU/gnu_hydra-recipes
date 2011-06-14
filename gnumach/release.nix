@@ -68,9 +68,13 @@ let
           src = tarball;
 
           configureFlags =
-            # Always enable dependency tracking.  See
-            # <http://lists.gnu.org/archive/html/bug-hurd/2010-05/msg00137.html>.
-            [ "--enable-dependency-tracking" ];
+            [ # Always enable dependency tracking.  See
+              # <http://lists.gnu.org/archive/html/bug-hurd/2010-05/msg00137.html>.
+              "--enable-dependency-tracking"
+
+              # Enable the kernel debugger.
+              "--enable-kdb"
+            ];
 
           buildNativeInputs = [ pkgs.mig ];
           inherit meta succeedOnFailure keepBuildDirectory;
