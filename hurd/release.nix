@@ -162,7 +162,7 @@ let
     # A bare bones QEMU disk image with GNU/Hurd on partition 1.
     # FIXME: Currently hangs at "start ext2fs:".
     qemu_image =
-      { build ? (jobs.xbuild_without_parted {})
+      { xbuild ? (jobs.xbuild_without_parted {})
       , mach ? ((import ../gnumach/release.nix {}).build {}) }:
 
       let
@@ -178,7 +178,7 @@ let
 
           # Software cross-compiled for GNU to be installed.
           gnuDerivations =
-            [ mach build
+            [ mach xbuild
               pkgs.bash.hostDrv pkgs.coreutils.hostDrv
               pkgs.findutils.hostDrv pkgs.gnused.hostDrv
             ];
@@ -197,7 +197,7 @@ let
             cp -rv "/nix/store/"*-gnu /mnt/nix/store
 
             mkdir /mnt/bin /mnt/dev
-            ln -sv "${build}/hurd" /mnt/hurd
+            ln -sv "${xbuild}/hurd" /mnt/hurd
             ln -sv "${pkgs.bash.hostDrv}/bin/bash" /mnt/bin/sh
 
             mkdir -p /mnt/boot/grub
