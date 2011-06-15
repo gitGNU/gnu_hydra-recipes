@@ -204,6 +204,7 @@ let
             cp -rv "/nix/store/"*-gnu /mnt/nix/store
 
             mkdir /mnt/bin /mnt/dev
+            mknod /mnt/dev/console c 0 0
             ln -sv "${xbuild}/hurd" /mnt/hurd
             ln -sv "${pkgs.bash.hostDrv}/bin/bash" /mnt/bin/sh
 
