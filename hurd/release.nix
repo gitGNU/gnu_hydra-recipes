@@ -40,7 +40,10 @@ let
     maintainers = [ pkgs.stdenv.lib.maintainers.ludo ];
   };
 
-  succeedOnFailure = true;
+  dontStrip = true;
+  dontCrossStrip = true;
+  NIX_STRIP_DEBUG = false;
+
   keepBuildDirectory = true;
 
   jobs = {
@@ -82,7 +85,9 @@ let
           propagatedBuildNativeInputs = [ pkgs.machHeaders ];
           buildNativeInputs = [ pkgs.mig ];
           buildInputs = [ parted pkgs.libuuid ];
-          inherit meta succeedOnFailure keepBuildDirectory;
+          dontPatchShebangs = true;
+          inherit meta succeedOnFailure keepBuildDirectory
+            dontStrip dontCrossStrip NIX_STRIP_DEBUG;
         }).hostDrv;
 
     # Same without dependency on Parted.
@@ -103,7 +108,9 @@ let
           buildNativeInputs = [ pkgs.mig ];
           buildInputs = [ pkgs.libuuid ];
           configureFlags = [ "--without-parted" ];
-          inherit meta;
+          dontPatchShebangs = true;
+          inherit meta succeedOnFailure keepBuildDirectory
+            dontStrip dontCrossStrip NIX_STRIP_DEBUG;
         }).hostDrv;
 
     # Complete cross bootstrap of GNU from GNU/Linux.
