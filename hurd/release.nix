@@ -44,6 +44,7 @@ let
   dontCrossStrip = true;
   NIX_STRIP_DEBUG = false;
 
+  succeedOnFailure = true;
   keepBuildDirectory = true;
 
   jobs = {
