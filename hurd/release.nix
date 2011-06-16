@@ -42,7 +42,7 @@ let
 
   dontStrip = true;
   dontCrossStrip = true;
-  NIX_STRIP_DEBUG = false;
+  NIX_STRIP_DEBUG = 0;
 
   succeedOnFailure = true;
   keepBuildDirectory = true;
