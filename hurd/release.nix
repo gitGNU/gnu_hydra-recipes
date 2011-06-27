@@ -208,7 +208,11 @@ let
             mkdir /mnt/bin /mnt/dev
             mknod /mnt/dev/console c 0 0
             ln -sv "${xbuild}/hurd" /mnt/hurd
+            ln -sv "${xbuild}/libexec" /mnt/libexec
+
             ln -sv "${pkgs.bash.hostDrv}/bin/bash" /mnt/bin/sh
+
+            mkdir /mnt/servers
 
             mkdir -p /mnt/boot/grub
             ln -sv "${mach}/boot/gnumach" /mnt/boot
