@@ -160,7 +160,7 @@ let
 
       with pkgs;
 
-      pkgs.releaseTools.makeSourceTarball {
+      pkgs.releaseTools.sourceTarball {
         name = "guile-tarball";
         src = guileSrc;
         buildInputs = [
@@ -171,6 +171,7 @@ let
           git
           gnum4  # this should be a propagated build input of Autotools
           texinfo
+          xz
         ] ++ buildInputsFrom pkgs;
 
         # "make dist" needs to generate Texinfo files in `doc/ref' using the
