@@ -61,7 +61,7 @@ in
         
       tarball = pkgs: {
         HELP2MAN = "${pkgs.help2man}/bin/help2man";
-        buildInputs = with pkgs; [ ncurses help2man lua5 perl ];
+        buildInputs = with pkgs; [ ncurses help2man lua5 perl boehmgc];
         dontBuild = false;
         autoconfPhase = ''
           ./autogen.sh
@@ -70,14 +70,15 @@ in
       
       build = pkgs: ({
         TERM="xterm";
-        buildInputs = with pkgs; [ncurses];
+        buildInputs = with pkgs; [ncurses boehmgc];
       } // pkgs.lib.optionalAttrs (pkgs.stdenv.system == "i686-cygwin")  { NIX_LDFLAGS = "-lncurses"; } ) ;
       
       coverage = pkgs: {
         TERM="xterm";
-        buildInputs = with pkgs; [ncurses];
+        buildInputs = with pkgs; [ncurses boehmgc];
       };
       
     };   
   }
+
 
