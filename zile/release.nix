@@ -61,7 +61,7 @@ in
         
       tarball = pkgs: {
         HELP2MAN = "${pkgs.help2man}/bin/help2man";
-        buildInputs = with pkgs; [ ncurses help2man lua5 perl boehmgc];
+        buildInputs = with pkgs; [ ncurses help2man lua5 perl boehmgc m4];
         dontBuild = false;
       } ;
       
