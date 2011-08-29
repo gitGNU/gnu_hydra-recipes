@@ -40,25 +40,54 @@ let
     maintainers =
      [ "Paul Zimmermann <Paul.Zimmermann@loria.fr>" ];
   };
-in
-  import ../gnu-jobs.nix {
-    name = "mpfr";
-    src  = mpfrSrc;
-    inherit nixpkgs meta;
-    useLatestGnulib = false;
-    enableGnuCrossBuild = true;
 
-    customEnv = {
-
-      tarball = pkgs: {
-	buildInputs = [ gmp ]
-          ++ (with pkgs; [ xz zip texinfo automake111x perl ]);
-        autoconfPhase = "autoreconf -vfi";
-        patches = [ ./ck-version-info.patch ];
-      };
-
-      build = pkgs: { buildInputs = [ gmp ]; };
-      coverage = pkgs: { buildInputs = [ gmp ]; };
-      xbuild_gnu = pkgs: { buildInputs = [ gmp_xgnu ]; };
+  # The minimum required GMP version.
+  old_gmp = pkgs:
+    import ../gmp/4.3.2.nix {
+      inherit (pkgs) stdenv fetchurl m4;
     };
-  }
+
+  jobs =
+    import ../gnu-jobs.nix {
+      name = "mpfr";
+      src  = mpfrSrc;
+      inherit nixpkgs meta;
+      useLatestGnulib = false;
+      enableGnuCrossBuild = true;
+
+      customEnv = {
+
+        tarball = pkgs: {
+          buildInputs = [ gmp ]
+            ++ (with pkgs; [ xz zip texinfo automake111x perl ]);
+          autoconfPhase = "autoreconf -vfi";
+          patches = [ ./ck-version-info.patch ];
+        };
+
+        build = pkgs: { buildInputs = [ gmp ]; };
+        coverage = pkgs: { buildInputs = [ gmp ]; };
+        xbuild_gnu = pkgs: { buildInputs = [ gmp_xgnu ]; };
+      };
+    };
+in
+  jobs
+
+  //
+
+  {
+    # Extra job to build with an old GMP.
+    build_with_old_gmp =
+      { system ? "x86_64-linux"
+      , tarball ? jobs.tarball
+      }:
+
+      let
+        pkgs = import nixpkgs { inherit system; };
+        build = jobs.build {};
+      in
+        pkgs.releaseTools.nixBuild ({
+          src = tarball;
+          buildInputs = [ (old_gmp pkgs) ];
+          inherit (build) name meta succeedOnFailure keepBuildDirectory;
+        });
+   }
