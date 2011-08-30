@@ -41,6 +41,9 @@ let
      [ "Paul Zimmermann <Paul.Zimmermann@loria.fr>" ];
   };
 
+  configureFlags = pkgs:
+    pkgs.lib.optional pkgs.stdenv.isLinux [ "--enable-valgrind" ];
+
   preCheck = "export GMP_CHECK_RANDOMIZE=true";
 
   # The minimum required GMP version.
@@ -66,7 +69,12 @@ let
           patches = [ ./ck-version-info.patch ];
         };
 
-        build = pkgs: { buildInputs = [ gmp ]; inherit preCheck; };
+        build = pkgs: {
+          buildInputs = [ pkgs.valgrind gmp ];
+          configureFlags = (configureFlags pkgs);
+          inherit preCheck;
+        };
+
         coverage = pkgs: { buildInputs = [ gmp ]; inherit preCheck; };
         xbuild_gnu = pkgs: { buildInputs = [ gmp_xgnu ]; };
       };
