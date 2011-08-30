@@ -70,7 +70,9 @@ let
         };
 
         build = pkgs: {
-          buildInputs = [ pkgs.valgrind gmp ];
+          buildInputs = [ gmp ]
+            ++ (pkgs.lib.optional pkgs.stdenv.isLinux pkgs.valgrind);
+
           configureFlags = (configureFlags pkgs);
           inherit preCheck;
         };
