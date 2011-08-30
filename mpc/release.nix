@@ -62,10 +62,15 @@ in
       build = pkgs: {
         configureFlags =
           # On Cygwin GMP is compiled statically, so build MPC statically.
-          pkgs.stdenv.lib.optionals pkgs.stdenv.isCygwin
-            [ "--enable-static" "--disable-shared" ];
+          (pkgs.stdenv.lib.optionals pkgs.stdenv.isCygwin
+            [ "--enable-static" "--disable-shared" ])
 
-        buildInputs = [ gmp mpfr ];
+          # Build with Valgrind on GNU/Linux.
+          ++ (pkgs.lib.optional pkgs.stdenv.isLinux "--enable-valgrind-tests");
+
+        buildInputs = [ gmp mpfr ]
+          ++ (pkgs.lib.optional pkgs.stdenv.isLinux pkgs.valgrind);
+
         inherit preCheck;
       };
       coverage = pkgs: { buildInputs = [ gmp mpfr ]; inherit preCheck; };
