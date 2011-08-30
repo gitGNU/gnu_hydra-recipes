@@ -41,6 +41,8 @@ let
      [ "Paul Zimmermann <Paul.Zimmermann@loria.fr>" ];
   };
 
+  preCheck = "export GMP_CHECK_RANDOMIZE=true";
+
   # The minimum required GMP version.
   old_gmp = pkgs:
     import ../gmp/4.3.2.nix {
@@ -64,8 +66,8 @@ let
           patches = [ ./ck-version-info.patch ];
         };
 
-        build = pkgs: { buildInputs = [ gmp ]; };
-        coverage = pkgs: { buildInputs = [ gmp ]; };
+        build = pkgs: { buildInputs = [ gmp ]; inherit preCheck; };
+        coverage = pkgs: { buildInputs = [ gmp ]; inherit preCheck; };
         xbuild_gnu = pkgs: { buildInputs = [ gmp_xgnu ]; };
       };
     };
@@ -89,5 +91,6 @@ in
           src = tarball;
           buildInputs = [ (old_gmp pkgs) ];
           inherit (build) name meta succeedOnFailure keepBuildDirectory;
+          inherit preCheck;
         });
    }

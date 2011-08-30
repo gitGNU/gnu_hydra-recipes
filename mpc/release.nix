@@ -41,6 +41,8 @@ let
         "Andreas Enge <andreas.enge@inria.fr>"
       ];
   };
+
+  preCheck = "export GMP_CHECK_RANDOMIZE=true";
 in
   import ../gnu-jobs.nix {
     name = "mpc";
@@ -64,8 +66,9 @@ in
             [ "--enable-static" "--disable-shared" ];
 
         buildInputs = [ gmp mpfr ];
+        inherit preCheck;
       };
-      coverage = pkgs: { buildInputs = [ gmp mpfr ]; };
+      coverage = pkgs: { buildInputs = [ gmp mpfr ]; inherit preCheck; };
       xbuild_gnu = pkgs: { buildInputs = [ gmp_xgnu mpfr_xgnu ]; };
     };
   }
