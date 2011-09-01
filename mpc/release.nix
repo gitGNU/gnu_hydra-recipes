@@ -54,7 +54,7 @@ in
     customEnv = {
 
       tarball = pkgs: {
-	buildInputs = [ gmp mpfr subversion ]
+	buildInputs = [ gmp mpfr pkgs.subversion ]
           ++ (with pkgs; [ texinfo automake111x ]);
         autoconfPhase = "autoreconf -vfi";
       };
