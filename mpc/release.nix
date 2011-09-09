@@ -47,6 +47,19 @@ let
   # Return true if we should use Valgrind on the given platform.
   useValgrind = stdenv: stdenv.isLinux;
 
+  # The minimum required GMP & MPFR versions.
+
+  old_gmp = pkgs:
+    import ../gmp/4.3.2.nix {
+      inherit (pkgs) stdenv fetchurl m4;
+    };
+
+  old_mpfr = pkgs:
+    import ../mpfr/2.4.2.nix {
+      inherit (pkgs) stdenv fetchurl;
+      gmp = old_gmp pkgs;
+    };
+
   jobs =
     import ../gnu-jobs.nix {
       name = "mpc";
@@ -105,4 +118,24 @@ in
           inherit (build) name meta configureFlags preCheck
             succeedOnFailure keepBuildDirectory;
         });
+
+    # Extra job to build with an MPFR that uses an old GMP & an old MPFR.
+    build_with_old_mpfr_and_old_gmp =
+      { system ? "x86_64-linux"
+      , tarball ? jobs.tarball
+      }:
+
+      let
+        pkgs  = import nixpkgs { inherit system; };
+        gmp   = old_gmp pkgs;
+        mpfr  = old_mpfr pkgs;
+        build = jobs.build {};
+      in
+        pkgs.releaseTools.nixBuild ({
+          src = tarball;
+          buildInputs = [ gmp mpfr ];
+          inherit (build) name meta configureFlags preCheck
+            succeedOnFailure keepBuildDirectory;
+        });
+
    }
