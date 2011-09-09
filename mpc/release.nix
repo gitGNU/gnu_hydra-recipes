@@ -43,6 +43,9 @@ let
   };
 
   preCheck = "export GMP_CHECK_RANDOMIZE=true";
+
+  # Return true if we should use Valgrind on the given platform.
+  useValgrind = stdenv: stdenv.isLinux;
 in
   import ../gnu-jobs.nix {
     name = "mpc";
@@ -65,11 +68,11 @@ in
           (pkgs.stdenv.lib.optionals pkgs.stdenv.isCygwin
             [ "--enable-static" "--disable-shared" ])
 
-          # Build with Valgrind on GNU/Linux.
-          ++ (pkgs.lib.optional pkgs.stdenv.isLinux "--enable-valgrind-tests");
+          ++ (pkgs.lib.optional (useValgrind pkgs.stdenv)
+                "--enable-valgrind-tests");
 
         buildInputs = [ gmp mpfr ]
-          ++ (pkgs.lib.optional pkgs.stdenv.isLinux pkgs.valgrind);
+          ++ (pkgs.lib.optional (useValgrind pkgs.stdenv) pkgs.valgrind);
 
         inherit preCheck;
       };
