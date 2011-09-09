@@ -105,9 +105,8 @@ in
       in
         pkgs.releaseTools.nixBuild ({
           src = tarball;
-          buildInputs = [ gmp ];
+          propagatedBuildInputs = [ gmp ];
           inherit (build) name meta succeedOnFailure keepBuildDirectory;
           inherit preCheck;
-          passthru = { inherit gmp; };
         });
    }

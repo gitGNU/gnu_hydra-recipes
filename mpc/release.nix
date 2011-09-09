@@ -109,12 +109,15 @@ in
 
       let
         pkgs  = import nixpkgs { inherit system; };
-        gmp   = mpfr_with_old_gmp.passthru.gmp;
         build = jobs.build {};
       in
         pkgs.releaseTools.nixBuild ({
           src = tarball;
-          buildInputs = [ gmp mpfr_with_old_gmp ];
+
+          # We assume that `mpfr_with_old_gmp' has GMP has one of its
+          # propagated build inputs.
+          buildInputs = [ mpfr_with_old_gmp ];
+
           inherit (build) name meta configureFlags preCheck
             succeedOnFailure keepBuildDirectory;
         });
