@@ -1,5 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
-   Copyright (C) 2010  Ludovic Courtès <ludo@gnu.org>
+   Copyright (C) 2010, 2011  Ludovic Courtès <ludo@gnu.org>
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
 
 { nixpkgs ? ../../nixpkgs
 , guilerpcSrc ? { outPath = /data/src/guile-rpc; }
-, guile ? (import ../../nixpkgs {}).guile_1_9 }:
+, guile ? (import ../../nixpkgs {}).guile }:
 
 let
   pkgs = import nixpkgs {};
