@@ -10,10 +10,13 @@ stdenv.mkDerivation rec {
 
   buildNativeInputs = [m4];
 
-  configureFlags = (if cxx then [ "--enable-cxx" ] else [ "--disable-cxx" ])
-    ++ (stdenv.lib.optional (stdenv.system != "i686-darwin")
-          [ "--enable-fat" ]);
+  # Even though this isn't recommended, we use this hack because
+  # `--enable-fat' fails to build.
+  preConfigure = "rm -fv config.guess && ln -sv configfsf.guess config.guess";
 
+  configureFlags = (if cxx then [ "--enable-cxx" ] else [ "--disable-cxx" ]);
+
+  enableParallelBuilding = true;
   doCheck = true;
 
   meta = {
