@@ -99,13 +99,15 @@ in
       }:
 
       let
-        pkgs = import nixpkgs { inherit system; };
+        pkgs  = import nixpkgs { inherit system; };
+        gmp   = old_gmp pkgs;
         build = jobs.build {};
       in
         pkgs.releaseTools.nixBuild ({
           src = tarball;
-          buildInputs = [ (old_gmp pkgs) ];
+          buildInputs = [ gmp ];
           inherit (build) name meta succeedOnFailure keepBuildDirectory;
           inherit preCheck;
+          passthru = { inherit gmp; }
         });
    }

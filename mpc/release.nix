@@ -46,37 +46,63 @@ let
 
   # Return true if we should use Valgrind on the given platform.
   useValgrind = stdenv: stdenv.isLinux;
-in
-  import ../gnu-jobs.nix {
-    name = "mpc";
-    src  = mpcSrc;
-    inherit nixpkgs meta;
-    useLatestGnulib = false;
-    enableGnuCrossBuild = true;
 
-    customEnv = {
+  jobs =
+    import ../gnu-jobs.nix {
+      name = "mpc";
+      src  = mpcSrc;
+      inherit nixpkgs meta;
+      useLatestGnulib = false;
+      enableGnuCrossBuild = true;
 
-      tarball = pkgs: {
-	buildInputs = [ gmp mpfr ]
-          ++ (with pkgs; [ subversion texinfo automake111x ]);
-        autoconfPhase = "autoreconf -vfi";
+      customEnv = {
+
+        tarball = pkgs: {
+          buildInputs = [ gmp mpfr ]
+            ++ (with pkgs; [ subversion texinfo automake111x ]);
+          autoconfPhase = "autoreconf -vfi";
+        };
+
+        build = pkgs: {
+          configureFlags =
+            # On Cygwin GMP is compiled statically, so build MPC statically.
+            (pkgs.stdenv.lib.optionals pkgs.stdenv.isCygwin
+              [ "--enable-static" "--disable-shared" ])
+
+            ++ (pkgs.lib.optional (useValgrind pkgs.stdenv)
+                  "--enable-valgrind-tests");
+
+          buildInputs = [ gmp mpfr ]
+            ++ (pkgs.lib.optional (useValgrind pkgs.stdenv) pkgs.valgrind);
+
+          inherit preCheck;
+        };
+        coverage = pkgs: { buildInputs = [ gmp mpfr ]; inherit preCheck; };
+        xbuild_gnu = pkgs: { buildInputs = [ gmp_xgnu mpfr_xgnu ]; };
       };
-
-      build = pkgs: {
-        configureFlags =
-          # On Cygwin GMP is compiled statically, so build MPC statically.
-          (pkgs.stdenv.lib.optionals pkgs.stdenv.isCygwin
-            [ "--enable-static" "--disable-shared" ])
-
-          ++ (pkgs.lib.optional (useValgrind pkgs.stdenv)
-                "--enable-valgrind-tests");
-
-        buildInputs = [ gmp mpfr ]
-          ++ (pkgs.lib.optional (useValgrind pkgs.stdenv) pkgs.valgrind);
-
-        inherit preCheck;
-      };
-      coverage = pkgs: { buildInputs = [ gmp mpfr ]; inherit preCheck; };
-      xbuild_gnu = pkgs: { buildInputs = [ gmp_xgnu mpfr_xgnu ]; };
     };
-  }
+in
+  jobs
+
+  //
+
+  {
+    # Extra job to build with an MPFR that uses an old GMP.
+    build_with_mpfr_with_old_gmp =
+      { system ? "x86_64-linux"
+      , tarball ? jobs.tarball
+      , mpfr_with_old_gmp
+      }:
+
+      let
+        pkgs  = import nixpkgs { inherit system; };
+        gmp   = mpfr_with_old_gmp.passthru.gmp;
+        build = jobs.build {};
+      in
+        pkgs.releaseTools.nixBuild ({
+          src = tarball;
+          buildInputs = [ gmp mpfr_with_old_gmp ];
+          inherit (build) name meta configureFlags preCheck
+            succeedOnFailure keepBuildDirectory;
+        });
+   }
