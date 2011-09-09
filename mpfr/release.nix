@@ -108,6 +108,6 @@ in
           buildInputs = [ gmp ];
           inherit (build) name meta succeedOnFailure keepBuildDirectory;
           inherit preCheck;
-          passthru = { inherit gmp; }
+          passthru = { inherit gmp; };
         });
    }
