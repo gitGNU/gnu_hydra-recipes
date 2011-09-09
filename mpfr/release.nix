@@ -41,9 +41,6 @@ let
      [ "Paul Zimmermann <Paul.Zimmermann@loria.fr>" ];
   };
 
-  configureFlags = pkgs:
-    pkgs.lib.optional pkgs.stdenv.isLinux [ "--enable-valgrind" ];
-
   preCheck = "export GMP_CHECK_RANDOMIZE=true";
 
   # The minimum required GMP version.
@@ -51,6 +48,10 @@ let
     import ../gmp/4.3.2.nix {
       inherit (pkgs) stdenv fetchurl m4;
     };
+
+  # Return true if we should use Valgrind on the given platform.
+  useValgrind = stdenv:
+    stdenv.system == "x86_64-linux";
 
   jobs =
     import ../gnu-jobs.nix {
@@ -71,10 +72,14 @@ let
 
         build = pkgs: {
           buildInputs = [ gmp ]
-            ++ (pkgs.lib.optional pkgs.stdenv.isLinux pkgs.valgrind);
+            ++ (pkgs.lib.optional (useValgrind pkgs.stdenv) pkgs.valgrind);
 
-          configureFlags = (configureFlags pkgs);
-          inherit preCheck;
+          preCheck = preCheck +
+            (if useValgrind pkgs.stdenv
+             then ''
+               export VALGRIND="valgrind -q --error-exitcode=1"
+             ''
+             else "");
         };
 
         coverage = pkgs: { buildInputs = [ gmp ]; inherit preCheck; };
