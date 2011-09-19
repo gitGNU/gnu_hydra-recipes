@@ -99,9 +99,14 @@ in
       }:
 
       let
+        pkgs  = import nixpkgs { inherit system; };
         build = jobs.build { inherit system tarball; };
       in
-        build.override {
+        pkgs.releaseTools.nixBuild ({
+          src = tarball;
+          propagatedBuildInputs = [ gmp ];
+          inherit (build) name meta succeedOnFailure keepBuildDirectory;
+          inherit preCheck;
           preConfigure =
             '' export CC=g++
                echo "using \`$CC' as the compiler"
