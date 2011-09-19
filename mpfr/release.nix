@@ -111,7 +111,7 @@ in
             '' export CC=g++
                echo "using \`$CC' as the compiler"
             '';
-        };
+        });
 
     # Extra job to build with an old GMP.
     build_with_old_gmp =
