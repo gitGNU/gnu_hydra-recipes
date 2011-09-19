@@ -92,6 +92,22 @@ in
   //
 
   {
+    # Extra job with `g++' as the C compiler.
+    build_with_gxx =
+      { system ? "x86_64-linux"
+      , tarball ? jobs.tarball
+      }:
+
+      let
+        build = jobs.build { inherit system tarball; };
+      in
+        build.override {
+          preConfigure =
+            '' export CC=g++
+               echo "using \`$CC' as the compiler"
+            '';
+        };
+
     # Extra job to build with an old GMP.
     build_with_old_gmp =
       { system ? "x86_64-linux"
