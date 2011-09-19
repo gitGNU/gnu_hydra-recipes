@@ -101,7 +101,7 @@ in
       let
         pkgs  = import nixpkgs { inherit system; };
         gmp   = old_gmp pkgs;
-        build = jobs.build {};
+        build = jobs.build { inherit system tarball; };
       in
         pkgs.releaseTools.nixBuild ({
           src = tarball;
