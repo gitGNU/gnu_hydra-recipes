@@ -40,7 +40,7 @@ let
 
   buildInputsFrom = pkgs: [ pkgs.gnum4 ];
   configureFlagsFor = stdenv:
-    [ "--enable-cxx" ]
+    [ "--enable-cxx" "--enable-alloca=debug" ]
     ++ (stdenv.lib.optional (stdenv.system != "i686-darwin")
           [ "--enable-fat" ]);
 in
