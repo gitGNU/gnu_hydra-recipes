@@ -45,7 +45,7 @@ let
   preCheck = "export GMP_CHECK_RANDOMIZE=true";
 
   # Return true if we should use Valgrind on the given platform.
-  useValgrind = stdenv: stdenv.isLinux;
+  useValgrind = stdenv: stdenv.isLinux || stdenv.isDarwin;
 
   # The minimum required GMP & MPFR versions.
 

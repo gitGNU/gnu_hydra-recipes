@@ -51,7 +51,8 @@ let
 
   # Return true if we should use Valgrind on the given platform.
   useValgrind = stdenv:
-    stdenv.system == "x86_64-linux";
+    stdenv.system == "x86_64-linux"
+    || stdenv.system == "x86_64-darwin";
 
   jobs =
     import ../gnu-jobs.nix {
