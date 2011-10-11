@@ -42,7 +42,7 @@ let
   crossSystems = (import ../cross-systems.nix) { inherit pkgs; };
 
   buildInputsFrom = pkgs:
-    with pkgs; [ perl gmp ] ++ (stdenv.lib.optional stdenv.isLinux acl);
+    with pkgs; [ perl gmp xz ] ++ (stdenv.lib.optional stdenv.isLinux acl);
 
   succeedOnFailure = true;
   keepBuildDirectory = true;
@@ -69,7 +69,6 @@ let
           texinfo   
           rsync
           cvs
-          xz
         ] ++ buildInputsFrom pkgs;
 
         dontBuild = false;
