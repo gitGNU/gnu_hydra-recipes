@@ -185,7 +185,10 @@ let
           name = "hurd-qemu-image";
           preVM = pkgs.vmTools.createEmptyImage { inherit size fullName; };
           postVM =
-            '' echo "qemu-image $out/disk-image.qcow2" >> \
+            '' echo "saving build products..."
+               cp -prvd out "$out"
+               ensureDir "$out/nix-support"
+               echo "qemu-image $out/disk-image.qcow2" >> \
                  $out/nix-support/hydra-build-products
             '';
 
