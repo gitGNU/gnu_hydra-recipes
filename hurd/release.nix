@@ -184,6 +184,10 @@ let
         pkgs.vmTools.runInLinuxVM (pkgs.stdenv.mkDerivation {
           name = "hurd-qemu-image";
           preVM = pkgs.vmTools.createEmptyImage { inherit size fullName; };
+          postVM =
+            '' echo "qemu-image $out/disk-image.qcow2" >> \
+                 $out/nix-support/hydra-build-products
+            '';
 
           # Software cross-compiled for GNU to be installed.
           gnuDerivations =
