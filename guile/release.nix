@@ -226,8 +226,8 @@ let
 
         postCheck =
           '' echo "running Scheme code coverage analysis, be patient..."
-             rm -v "test-suite/tests/poe.test"  # for bug #29616
-             stdbuf -o 0 -e 0 ./check-guile --coverage
+             stdbuf -o 0 -e 0 ./check-guile --coverage || \
+               echo "Tests failed, but ignoring the problem."
 
              # Publish the raw LCOV info file.
              cp -v guile.info "$out/"
