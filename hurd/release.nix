@@ -183,12 +183,9 @@ let
       in
         pkgs.vmTools.runInLinuxVM (pkgs.stdenv.mkDerivation {
           name = "hurd-qemu-image";
-          preVM = pkgs.vmTools.createEmptyImage { inherit size fullName; };
-          postVM =
-            '' echo "saving build products..."
-               cp -prvd out "$out"
-               ensureDir "$out/nix-support"
-               echo "qemu-image $out/disk-image.qcow2" >> \
+          preVM = pkgs.vmTools.createEmptyImage { inherit size fullName; } +
+            ''
+               echo "qemu-image $diskImage" >> \
                  $out/nix-support/hydra-build-products
             '';
 
