@@ -14,45 +14,48 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
-{ nixpkgs ? ../../nixpkgs 
-}:
+{ nixpkgs ? <nixpkgs> }:
 
 let
   meta = {
   };
 
   pkgs = import nixpkgs {};
-  
-  buildInputsFrom = pkgs: with pkgs; [gfortran readline ncurses perl qhull blas liblapack pcre imagemagick gnuplot fftw zlib ghostscript transfig xfig pstoedit hdf5 texinfo qrupdate suitesparse curl fltk11 texLive] ;
-  
+
+  buildInputsFrom = pkgs: with pkgs;
+    [ gfortran readline ncurses perl qhull blas liblapack pcre imagemagick
+      gnuplot fftw zlib ghostscript transfig xfig pstoedit hdf5 texinfo
+      qrupdate suitesparse curl fltk11 texLive qhull
+    ];
+
   succeedOnFailure = true;
   keepBuildDirectory = true;
 
   jobs = rec {
 
-    tarball = 
-      { octave ? { outPath = ../../octave; }
-      , gnulib ? { outPath = ../../gnulib; }
-      }: 
+    tarball =
+      { octave ? { outPath = <octave>; }
+      , gnulib ? { outPath = <gnulib>; }
+      }:
       with pkgs;
       releaseTools.makeSourceTarball {
-        name = "octave-tarball";
-        src = octave;
-        inherit meta succeedOnFailure keepBuildDirectory;
-        dontBuild = false;
-        
-        autoconfPhase = ''
-          # Disable Automake's `check-news' so that "make dist" always works.
-          sed -i "configure.ac" -es/gnits/gnu/g
+	name = "octave-tarball";
+	src = octave;
+	inherit meta succeedOnFailure keepBuildDirectory;
+	dontBuild = false;
 
-          cp -Rv ${gnulib} ../gnulib
-          chmod -R 755 ../gnulib
+	autoconfPhase = ''
+	  # Disable Automake's `check-news' so that "make dist" always works.
+	  sed -i "configure.ac" -es/gnits/gnu/g
 
-          ./autogen.sh --gnulib-srcdir=../gnulib --skip-po --copy
-        '';
+	  cp -Rv ${gnulib} ../gnulib
+	  chmod -R 755 ../gnulib
 
-        buildInputs = [
-          flex2535 git gperf bison automake111x mercurial] ++ buildInputsFrom pkgs ;
+	  ./autogen.sh --gnulib-srcdir=../gnulib --skip-po --copy
+	'';
+
+	buildInputs = [
+	  flex2535 git gperf bison automake111x mercurial] ++ buildInputsFrom pkgs ;
       };
 
     build =
@@ -62,10 +65,10 @@ let
       let pkgs = import nixpkgs { inherit system;} ;
       in with pkgs;
       releaseTools.nixBuild {
-        name = "octave" ;
-        src = tarball;
-        inherit meta succeedOnFailure keepBuildDirectory;
-        buildInputs = buildInputsFrom pkgs;
+	name = "octave" ;
+	src = tarball;
+	inherit meta succeedOnFailure keepBuildDirectory;
+	buildInputs = buildInputsFrom pkgs;
       };
 
     coverage =
@@ -73,10 +76,10 @@ let
       with pkgs;
 
       releaseTools.coverageAnalysis {
-        name = "octave-coverage";
-        src = tarball;
-        inherit meta;
-        buildInputs = buildInputsFrom pkgs;
+	name = "octave-coverage";
+	src = tarball;
+	inherit meta;
+	buildInputs = buildInputsFrom pkgs;
       };
 
   };
