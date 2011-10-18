@@ -14,7 +14,7 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
-{ nixpkgs ? ../../nixpkgs }:
+{ nixpkgs ? <nixpkgs> }:
 
 let
   meta = {
@@ -46,7 +46,7 @@ let
   inherit (pkgs) releaseTools;
 
   buildInputsFrom = pkgs: with pkgs;
-    [ xz zlib lzo guile gettext_0_17 pkgconfig perl nettle]
+    [ xz zlib lzo gettext_0_17 pkgconfig perl nettle]
     ++ stdenv.lib.optional stdenv.isLinux valgrind
     ++ stdenv.lib.optional (stdenv.isDarwin || stdenv.isBSD) libiconv;
 
@@ -56,7 +56,7 @@ let
   jobs = rec {
 
     tarball =
-      { gnutlsSrc ? { outPath = /data/src/gnutls; }
+      { gnutlsSrc ? { outPath = <gnutls>; }
       , libtasn1 ? pkgs.libtasn1
       , libgcrypt ? pkgs.libgcrypt
       }:
@@ -108,6 +108,7 @@ let
                 gnome.gtkdoc docbook_xsl
                 libxml2 # for its setup-hook
                 texinfo texLive
+                guile
               ]);
 
         inherit meta succeedOnFailure keepBuildDirectory;
@@ -127,8 +128,32 @@ let
           src = tarball;
           configureFlags =
             "--with-lzo --with-libtasn1-prefix=${libtasn1} --enable-guile";
-          buildInputs = (buildInputsFrom pkgs) ++ [ libtasn1 libgcrypt ];
+          buildInputs = (buildInputsFrom pkgs)
+             ++ [ pkgs.guile libtasn1 libgcrypt ];
           inherit meta succeedOnFailure keepBuildDirectory;
+        };
+
+    build_guile_1_8 =
+      { tarball ? jobs.tarball {}
+      , system ? "x86_64-linux"
+      , libtasn1 ? pkgs.libtasn1
+      , libgcrypt ? pkgs.libgcrypt
+      }:
+
+      let pkgs = import nixpkgs { inherit system; };
+      in
+        pkgs.releaseTools.nixBuild {
+          name = "gnutls-with-guile-1.8";
+          src = tarball;
+          configureFlags =
+            "--with-lzo --with-libtasn1-prefix=${libtasn1} --enable-guile";
+          buildInputs = (buildInputsFrom pkgs)
+            ++ [ pkgs.guile_1_8 libtasn1 libgcrypt ];
+          inherit succeedOnFailure keepBuildDirectory;
+          meta = meta // {
+            description = meta.description + " (with Guile 1.8.x)";
+            schedulingPriority = 20;
+          };
         };
 
     coverage =
@@ -142,7 +167,8 @@ let
 	src = tarball;
         configureFlags =
           "--with-lzo --with-libtasn1-prefix=${libtasn1} --enable-guile";
-        buildInputs = (buildInputsFrom pkgs) ++ [ libtasn1 libgcrypt ];
+        buildInputs = (buildInputsFrom pkgs)
+          ++ [ pkgs.guile libtasn1 libgcrypt ];
         # No `meta' so that mail notifications are not sent.
       };
 
@@ -159,7 +185,7 @@ let
           "--with-lzo --with-libtasn1-prefix=${libtasn1} --enable-guile";
         buildInputs = (buildInputsFrom pkgs)
           ++ [ libtasn1 libgcrypt ]
-          ++ [ pkgs.texinfo pkgs.texLive ];
+          ++ (with pkgs; [ guile texinfo texLive ]);
 
         buildPhase = "make -C doc html pdf";
         doCheck = false;
