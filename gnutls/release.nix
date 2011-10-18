@@ -1,5 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
-   Copyright (C) 2010  Ludovic Courtès <ludo@gnu.org>
+   Copyright (C) 2010, 2011  Ludovic Courtès <ludo@gnu.org>
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ let
   inherit (pkgs) releaseTools;
 
   buildInputsFrom = pkgs: with pkgs;
-    [ zlib lzo guile gettext_0_17 pkgconfig perl nettle]
+    [ xz zlib lzo guile gettext_0_17 pkgconfig perl nettle]
     ++ stdenv.lib.optional stdenv.isLinux valgrind
     ++ stdenv.lib.optional (stdenv.isDarwin || stdenv.isBSD) libiconv;
 
