@@ -187,7 +187,7 @@ let
           ++ [ libtasn1 libgcrypt ]
           ++ (with pkgs; [ guile texinfo texLive ]);
 
-        buildPhase = "make -C doc html pdf";
+        buildPhase = "make && make -C doc html pdf";
         doCheck = false;
         installPhase =
           '' make -C doc install-html install-pdf
