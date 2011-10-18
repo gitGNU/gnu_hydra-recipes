@@ -17,7 +17,7 @@ index 61cfa43..a6e7cee 100644
 +	  --transform='s|^\(.*\)$$|$*/\1|g'	\
 +	  -f "$@.new"				\
 +	  `git diff --name-only --diff-filter=ACMT` \
-+	  `git status --porcelain | grep '^\?' | cut -d ' ' -f 2-
++	  `git status --porcelain | grep '^\?' | cut -d ' ' -f 2-`
  	mv -f $@.new $@
  
  # Do `make dist dist-version=X.Y.Z' to make tar files of an older version.
