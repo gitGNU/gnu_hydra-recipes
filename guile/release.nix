@@ -237,7 +237,7 @@ let
 
         inherit succeedOnFailure keepBuildDirectory;
 
-        meta = meta // { schedulingPriority = "20"; };
+        meta = meta // { maxsilent = 10000; schedulingPriority = "20"; };
       };
 
     manual =
