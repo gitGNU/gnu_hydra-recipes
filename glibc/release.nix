@@ -136,6 +136,8 @@ let
              else "--with-fp")
           ];
 
+        makeFlags = ''vardbdir="$out/var/db"'';
+
         buildNativeInputs = (buildInputsFrom pkgs) ++ extraBuildInputs;
         doCheck = false;
         inherit propagatedBuildNativeInputs CPATH preConfigure meta
@@ -265,6 +267,8 @@ let
           postConfigure =
             pkgs.stdenv.lib.optionalString (pkgs.stdenv.system == "i686-linux")
                                            "export NIX_CFLAGS_COMPILE=-U__i686";
+
+          makeFlags = ''vardbdir="$out/var/db"'';
 
           buildInputs = buildInputsFrom pkgs;
 
