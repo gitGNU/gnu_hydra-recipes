@@ -65,7 +65,6 @@ let
           '';
         buildNativeInputs = [ pkgs.machHeaders pkgs.mig pkgs.texinfo ];
         buildInputs = [ pkgs.parted /* not the cross-GNU one */ pkgs.libuuid ];
-        patches = [ ./libthreads-tls-support.patch ];
         inherit meta succeedOnFailure keepBuildDirectory;
       };
 
