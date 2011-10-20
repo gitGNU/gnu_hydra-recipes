@@ -54,6 +54,11 @@ let
 	  ./autogen.sh --gnulib-srcdir=../gnulib --skip-po --copy
 	'';
 
+        configureFlags =
+          [ "--with-qhull-includedir=${qhull}/include"
+            "--with-qhull-libdir=${qhull}/lib"
+          ];
+
 	buildInputs = [
 	  flex2535 git gperf bison automake111x mercurial] ++ buildInputsFrom pkgs ;
       };
