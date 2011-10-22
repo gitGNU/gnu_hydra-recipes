@@ -18,7 +18,7 @@
 {nixpkgs ? ../../nixpkgs}:
 let
   meta = {
-    description = "GNU Guile 1.9, an embeddable Scheme implementation";
+    description = "GNU Guile 2.0, an embeddable Scheme implementation";
 
     longDescription = ''
       GNU Guile is an implementation of the Scheme programming language, with
@@ -104,7 +104,8 @@ let
              configureFlags =
                (defaultConfigureFlags pkgs) ++ configureFlags;
              buildInputs = buildInputsFrom pkgs;
-             inherit meta buildOutOfSourceTree
+             meta = meta // { schedulingPriority = "50"; }; # lower priority
+             inherit buildOutOfSourceTree
                succeedOnFailure keepBuildDirectory;
            });
 
