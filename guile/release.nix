@@ -135,7 +135,11 @@ let
 
         configureFlags =
           # Trick to have -I...-libunistring/include in CPPFLAGS.
-          [ "--with-libunistring-prefix=${crosspkgs.libunistring.hostDrv}" ];
+          [ "--with-libunistring-prefix=${crosspkgs.libunistring.hostDrv}" ] ++
+
+          # `AI_ALL' & co. are missing on MinGW, so `net_db.c' won't build.
+          (crosspkgs.stdenv.lib.optional (to != crossSystems.i686_pc_mingw32)
+                "--disable-networking");
 
         makeFlags = [ "V=1" ];
 
