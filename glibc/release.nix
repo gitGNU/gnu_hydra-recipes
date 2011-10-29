@@ -171,7 +171,7 @@ let
            ensureDir "$out/nix-support"
            for patch in "$out/"*.patch
            do
-             echo "patch none $patch" >> \
+             echo "file patch $patch" >> \
                "$out/nix-support/hydra-build-products"
            done
         '';
