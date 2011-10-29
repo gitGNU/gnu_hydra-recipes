@@ -163,10 +163,7 @@ let
            #tg export --linearize for-upstream-glibc git checkout
            #for-upstream-glibc git format-patch
 
-           # Do a raw diff against this `baseline' commit.  See
-           # <http://thread.gmane.org/gmane.os.hurd.bugs/20133> for "why the
-           # hack?".
-           git diff 187da0aedcd9d0a2fb34477bef41549681ba1273 > 00-glibc-hurd.patch
+           git diff baseline > 00-glibc-hurd.patch
 
            ensureDir "$out"
            mv -v [0-9]*.patch "$out"
