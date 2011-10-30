@@ -39,7 +39,6 @@ let
     ];
   };
 
-  configureFlags = "RCS_PRETEST=acknowledged";
 in
   import ../gnu-jobs.nix {
     name = "rcs";
