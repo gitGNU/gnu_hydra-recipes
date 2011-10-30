@@ -1,4 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
+   Copyright (C) 2011  Thien-Thi Nguyen
    Copyright (C) 2010  Ludovic Courtès <ludo@gnu.org>
    Copyright (C) 2010  Rob Vermaas <rob.vermaas@gmail.com>
 
@@ -15,7 +16,7 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
-{ nixpkgs ? ../../nixpkgs 
+{ nixpkgs ? ../../nixpkgs
 , rcs ? { outPath = ../../rcs; }
 }:
 
@@ -25,9 +26,9 @@ let
     description = "The Revision Control System (RCS) manages multiple revisions of files.";
 
     longDescription = ''
-      The Revision Control System (RCS) manages multiple revisions of files. 
-      RCS automates the storing, retrieval, logging, identification, and merging 
-      of revisions. RCS is useful for text that is revised frequently, including 
+      The Revision Control System (RCS) manages multiple revisions of files.
+      RCS automates the storing, retrieval, logging, identification, and merging
+      of revisions. RCS is useful for text that is revised frequently, including
       source code, programs, documentation, graphics, papers, and form letters.
     '';
 
@@ -43,10 +44,10 @@ in
   import ../gnu-jobs.nix {
     name = "rcs";
     src  = rcs;
-    inherit nixpkgs meta; 
-    
+    inherit nixpkgs meta;
+
     customEnv = {
-        
+
       tarball = pkgs: {
         buildInputs = with pkgs; [ automake111x autoconf ed texinfo emacs groff];
         autoconfPhase = ''
@@ -55,17 +56,17 @@ in
         '';
         inherit configureFlags;
       } ;
-      
+
       build = pkgs: {
-        buildInputs = [pkgs.ed];  
+        buildInputs = [pkgs.ed];
         inherit configureFlags;
       };
 
       coverage = pkgs: {
-        buildInputs = [pkgs.ed];  
+        buildInputs = [pkgs.ed];
         inherit configureFlags;
       };
-      
-    };   
+
+    };
   }
 
