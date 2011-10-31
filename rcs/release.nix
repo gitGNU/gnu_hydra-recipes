@@ -40,6 +40,7 @@ let
     ];
   };
 
+  configureFlags = "";
 in
   import ../gnu-jobs.nix {
     name = "rcs";
