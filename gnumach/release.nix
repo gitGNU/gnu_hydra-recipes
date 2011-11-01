@@ -76,7 +76,7 @@ let
               "--enable-kdb"
             ];
 
-          buildNativeInputs = [ pkgs.mig ];
+          buildNativeInputs = [ pkgs.gnu.mig ];
           inherit meta succeedOnFailure keepBuildDirectory;
         }).hostDrv;
   };

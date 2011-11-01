@@ -63,7 +63,7 @@ let
                sed -i "$mf" -e's/-o root//g'
              done
           '';
-        buildNativeInputs = [ pkgs.machHeaders pkgs.mig pkgs.texinfo ];
+        buildNativeInputs = with pkgs; [ gnu.machHeaders gnu.mig texinfo ];
         buildInputs = [ pkgs.parted /* not the cross-GNU one */ pkgs.libuuid ];
         inherit meta succeedOnFailure keepBuildDirectory;
       };
@@ -83,7 +83,7 @@ let
         (pkgs.releaseTools.nixBuild {
           name = "hurd";
           src = tarball;
-          propagatedBuildNativeInputs = [ pkgs.machHeaders ];
+          propagatedBuildNativeInputs = [ pkgs.gnu.machHeaders ];
           buildNativeInputs = [ pkgs.mig ];
           buildInputs = [ parted pkgs.libuuid ];
           dontPatchShebangs = true;
@@ -105,8 +105,8 @@ let
         (pkgs.releaseTools.nixBuild {
           name = "hurd";
           src = tarball;
-          propagatedBuildNativeInputs = [ pkgs.machHeaders ];
-          buildNativeInputs = [ pkgs.mig ];
+          propagatedBuildNativeInputs = [ pkgs.gnu.machHeaders ];
+          buildNativeInputs = [ pkgs.gnu.mig ];
           buildInputs = [ pkgs.libuuid ];
           configureFlags = [ "--without-parted" ];
           dontPatchShebangs = true;
@@ -145,12 +145,15 @@ let
                else {})));
           in
             {
-              # TODO: Handle `hurdLibpthreadCross', `machHeaders', etc. similarly.
-              glibcCross = override "glibc" pkgs.glibcCross glibcTarball false;
-              hurdCross = override "hurd" pkgs.hurdCross tarball true;
-              hurdHeaders = override "hurd-headers" pkgs.hurdHeaders tarball true;
+              # TODO: Handle `libpthreadCross', `machHeaders', etc. similarly.
+              glibcCross =
+                 override "glibc" pkgs.glibcCross glibcTarball false;
+              hurdCross =
+                 override "hurd" pkgs.gnu.hurdCross tarball true;
+              hurdHeaders =
+                 override "hurd-headers" pkgs.gnu.hurdHeaders tarball true;
               hurdCrossIntermediate =
-                 override "hurd-minimal" pkgs.hurdCrossIntermediate tarball true;
+                 override "hurd-minimal" pkgs.gnu.hurdCrossIntermediate tarball true;
             };
 
         pkgs = import nixpkgs {
@@ -162,8 +165,8 @@ let
         (pkgs.releaseTools.nixBuild {
           name = "hurd";
           src = tarball;
-          propagatedBuildNativeInputs = [ pkgs.machHeaders ];
-          buildNativeInputs = [ pkgs.mig ];
+          propagatedBuildNativeInputs = [ pkgs.gnu.machHeaders ];
+          buildNativeInputs = [ pkgs.gnu.mig ];
           inherit meta succeedOnFailure keepBuildDirectory;
         }).hostDrv;
 
