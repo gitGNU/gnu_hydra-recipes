@@ -84,7 +84,7 @@ let
           name = "hurd";
           src = tarball;
           propagatedBuildNativeInputs = [ pkgs.gnu.machHeaders ];
-          buildNativeInputs = [ pkgs.mig ];
+          buildNativeInputs = [ pkgs.gnu.mig ];
           buildInputs = [ parted pkgs.libuuid ];
           dontPatchShebangs = true;
           inherit meta succeedOnFailure keepBuildDirectory
