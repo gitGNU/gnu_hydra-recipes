@@ -204,6 +204,8 @@ let
              ensureDir "$out/nix-support"
              echo "doc manual $out/share/doc/gnutls/gnutls.html" >> "$out/nix-support/hydra-build-products"
              echo "doc-pdf manual $out/share/doc/gnutls/gnutls.pdf" >> "$out/nix-support/hydra-build-products"
+             echo "doc manual $out/share/doc/gnutls/gnutls-guile.html" >> "$out/nix-support/hydra-build-products"
+             echo "doc-pdf manual $out/share/doc/gnutls/gnutls-guile.pdf" >> "$out/nix-support/hydra-build-products"
           '';
         inherit meta;
       };
