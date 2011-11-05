@@ -177,7 +177,8 @@ let
           "--with-lzo --with-libtasn1-prefix=${libtasn1} --enable-guile";
         buildInputs = (buildInputsFrom pkgs)
           ++ [ pkgs.guile libtasn1 libgcrypt ];
-        # No `meta' so that mail notifications are not sent.
+        # No mail notifications.
+        meta.schedulingPriority = 20;
       };
 
     manual =
