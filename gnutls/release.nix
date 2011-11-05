@@ -95,7 +95,15 @@ let
 
         doCheck = false;
 
-        autoconfPhase = "make";
+        autoconfPhase =
+          # Gnulib wants Gettext 0.18 but `configure.ac' wants 0.17.  Thus,
+          # clean up the mess so that what GnuTLS wants prevails.
+          '' rm -fv po/Makefile.in.in "m4/"*gettext* \
+                   "gl/m4/"*gettext* "gl/m4/"po.m4
+             autopoint --version
+             make
+          '';
+
         configureFlags =
           "--with-lzo --with-libtasn1-prefix=${libtasn1} --enable-guile"
           + " --enable-gtk-doc";
