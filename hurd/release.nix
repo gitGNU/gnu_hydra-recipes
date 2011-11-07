@@ -216,7 +216,13 @@ let
 
             mkdir /mnt/bin /mnt/dev /mnt/tmp
             ln -sv "${xbuild}/hurd" /mnt/hurd
-            ln -sv "${xbuild}/libexec" /mnt/libexec
+
+            # We need to patch things a little.
+            cp -rv "${xbuild}/libexec" /mnt
+            sed -e's|/bin/bash|${pkgs.bash.hostDrv}/bin/bash|g' \
+                -i /mnt/libexec/{rc,runsystem}
+            sed -i /mnt/libexec/runsystem \
+                -e 's|^PATH=|PATH=${pkgs.coreutils.hostDrv}/bin:|g'
 
             ln -sv "${pkgs.bash.hostDrv}/bin/bash" /mnt/bin/sh
 
