@@ -222,7 +222,7 @@ let
             sed -e's|/bin/bash|${pkgs.bash.hostDrv}/bin/bash|g' \
                 -i /mnt/libexec/{rc,runsystem}
             sed -i /mnt/libexec/runsystem \
-                -e 's|^PATH=|PATH=${pkgs.coreutils.hostDrv}/bin:|g'
+                -e 's|^PATH=|PATH=${pkgs.coreutils.hostDrv}/bin:${xbuild}/bin:|g'
 
             ln -sv "${pkgs.bash.hostDrv}/bin/bash" /mnt/bin/sh
 
