@@ -222,6 +222,7 @@ let
             ln -sv "${pkgs.bash.hostDrv}/bin/bash" /mnt/bin/sh
 
             mkdir /mnt/servers
+            touch /mnt/servers/{crash,exec,proc,password,default-pager}
 
             mkdir -p /mnt/boot/grub
             ln -sv "${mach}/boot/gnumach" /mnt/boot
