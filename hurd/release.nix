@@ -214,8 +214,7 @@ let
             # Copy `libgcc_s.so' & co.
             cp -rv "${pkgs.gccCrossStageFinal.gccLibs}" /mnt/nix/store
 
-            mkdir /mnt/bin /mnt/dev
-            mknod /mnt/dev/console c 0 0
+            mkdir /mnt/bin /mnt/dev /mnt/tmp
             ln -sv "${xbuild}/hurd" /mnt/hurd
             ln -sv "${xbuild}/libexec" /mnt/libexec
 
