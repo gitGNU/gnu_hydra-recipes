@@ -211,6 +211,9 @@ let
             mkdir -p /mnt/nix/store
             cp -rv "/nix/store/"*-gnu /mnt/nix/store
 
+            # Copy `libgcc_s.so' & co.
+            cp -rv "${pkgs.gccCrossStageFinal.gccLibs}" /mnt/nix/store
+
             mkdir /mnt/bin /mnt/dev
             mknod /mnt/dev/console c 0 0
             ln -sv "${xbuild}/hurd" /mnt/hurd
