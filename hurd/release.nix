@@ -171,7 +171,6 @@ let
         }).hostDrv;
 
     # A bare bones QEMU disk image with GNU/Hurd on partition 1.
-    # FIXME: Currently hangs at "start ext2fs:".
     qemu_image =
       { xbuild ? (jobs.xbuild_without_parted {})
       , mach ? ((import ../gnumach/release.nix {}).build {}) }:
