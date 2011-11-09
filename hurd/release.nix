@@ -239,7 +239,7 @@ search.file /boot/gnumach
 
 menuentry "GNU (wannabe NixOS GNU/Hurd)" {
   multiboot /boot/gnumach root=device:hd0s1
-  module  /hurd/ext2fs.static ext2fs --readonly \
+  module  /hurd/ext2fs.static ext2fs \
      --multiboot-command-line='${dollar}{kernel-command-line}' \
      --host-priv-port='${dollar}{host-port}' \
      --device-master-port='${dollar}{device-port}' \
