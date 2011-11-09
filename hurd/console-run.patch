@@ -1,0 +1,33 @@
+This patch makes sure /libexec/console-run creates and installs /dev/console
+on the first run without considering it a failure if it didn't exist already.
+
+diff --git a/daemons/console-run.c b/daemons/console-run.c
+index 3ab2629..d120d17 100644
+--- a/daemons/console-run.c
++++ b/daemons/console-run.c
+@@ -81,8 +81,8 @@ main (int argc, char **argv)
+ static int
+ open_console (char **namep)
+ {
+-#define TERMINAL_FIRST_TRY "/hurd/term\0/tmp/console\0device\0console"
+-#define TERMINAL_SECOND_TRY "/hurd/term\0/tmp\0device\0console"
++#define TERMINAL_FIRST_TRY "/hurd/term\0/dev/console\0device\0console"
++#define TERMINAL_SECOND_TRY "/hurd/term\0/tmp/console\0device\0console"
+   mach_port_t term, proc;
+   static char *termname;
+   struct stat st;
+@@ -183,7 +183,13 @@ open_console (char **namep)
+ 
+ 	  if (term != MACH_PORT_NULL)
+ 	    {
+-	      error (0, 0, "Using temporary console %s", termname);
++	      if (try == 1)
++		/* We created /dev/console, started, and installed the
++		   translator on it, so it really isn't a fallback
++		   console.  */
++		fallback = 0;
++	      else
++		error (0, 0, "Using temporary console %s", termname);
+ 	      break;
+ 	    }
+ 	}

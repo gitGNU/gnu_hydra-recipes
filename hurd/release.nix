@@ -47,6 +47,8 @@ let
   succeedOnFailure = true;
   keepBuildDirectory = true;
 
+  patches = [ ./console-run.patch ];
+
   jobs = {
     tarball =
       # "make dist" should work even non-natively and even without a
@@ -87,7 +89,7 @@ let
           buildNativeInputs = [ pkgs.gnu.mig ];
           buildInputs = [ parted pkgs.libuuid pkgs.ncurses ];
           dontPatchShebangs = true;
-          inherit meta succeedOnFailure keepBuildDirectory
+          inherit patches meta succeedOnFailure keepBuildDirectory
             dontStrip dontCrossStrip NIX_STRIP_DEBUG;
         }).hostDrv;
 
@@ -110,7 +112,7 @@ let
           buildInputs = [ pkgs.libuuid pkgs.ncurses ];
           configureFlags = [ "--without-parted" ];
           dontPatchShebangs = true;
-          inherit meta succeedOnFailure keepBuildDirectory
+          inherit patches meta succeedOnFailure keepBuildDirectory
             dontStrip dontCrossStrip NIX_STRIP_DEBUG;
         }).hostDrv;
 
