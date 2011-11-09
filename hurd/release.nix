@@ -85,7 +85,7 @@ let
           src = tarball;
           propagatedBuildNativeInputs = [ pkgs.gnu.machHeaders ];
           buildNativeInputs = [ pkgs.gnu.mig ];
-          buildInputs = [ parted pkgs.libuuid ];
+          buildInputs = [ parted pkgs.libuuid pkgs.ncurses ];
           dontPatchShebangs = true;
           inherit meta succeedOnFailure keepBuildDirectory
             dontStrip dontCrossStrip NIX_STRIP_DEBUG;
@@ -107,7 +107,7 @@ let
           src = tarball;
           propagatedBuildNativeInputs = [ pkgs.gnu.machHeaders ];
           buildNativeInputs = [ pkgs.gnu.mig ];
-          buildInputs = [ pkgs.libuuid ];
+          buildInputs = [ pkgs.libuuid pkgs.ncurses ];
           configureFlags = [ "--without-parted" ];
           dontPatchShebangs = true;
           inherit meta succeedOnFailure keepBuildDirectory
