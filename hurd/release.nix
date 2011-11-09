@@ -193,7 +193,7 @@ let
           # Software cross-compiled for GNU to be installed.
           gnuDerivations =
             [ mach xbuild
-              pkgs.bash.hostDrv pkgs.coreutils.hostDrv
+              pkgs.bashInteractive.hostDrv pkgs.coreutils.hostDrv
               pkgs.findutils.hostDrv pkgs.gnused.hostDrv
             ];
 
@@ -218,12 +218,12 @@ let
 
             # We need to patch things a little.
             cp -rv "${xbuild}/libexec" /mnt
-            sed -e's|/bin/bash|${pkgs.bash.hostDrv}/bin/bash|g' \
+            sed -e's|/bin/bash|${pkgs.bashInteractive.hostDrv}/bin/bash|g' \
                 -i /mnt/libexec/{rc,runsystem}
             sed -i /mnt/libexec/runsystem \
                 -e 's|^PATH=|PATH=${pkgs.coreutils.hostDrv}/bin:${xbuild}/bin:|g'
 
-            ln -sv "${pkgs.bash.hostDrv}/bin/bash" /mnt/bin/sh
+            ln -sv "${pkgs.bashInteractive.hostDrv}/bin/bash" /mnt/bin/sh
 
             mkdir /mnt/servers
             touch /mnt/servers/{crash,exec,proc,password,default-pager}
