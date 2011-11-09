@@ -197,6 +197,7 @@ let
             [ mach xbuild
               pkgs.bashInteractive.hostDrv pkgs.coreutils.hostDrv
               pkgs.findutils.hostDrv pkgs.gnused.hostDrv
+              pkgs.less.hostDrv
             ];
 
           # Command to build the disk image.
