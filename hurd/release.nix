@@ -183,6 +183,47 @@ let
           system = "x86_64-linux";               # build platform
           crossSystem = crossSystems.i586_pc_gnu; # host platform
         };
+
+        translators =
+          # List of translators to install.
+          # FIXME: Use `MAKEDEV'.
+          [ {
+              node = "/dev/time";
+              command = "/hurd/storeio --no-cache time";
+            }
+            {
+              node = "/servers/socket/1";
+              command = "/hurd/pflocal";
+            }
+            {
+              node = "/dev/null";
+              command = "/hurd/null";
+            }
+            {
+              node = "/dev/full";
+              command = "/hurd/null --full";
+            }
+            {
+              node = "/dev/zero";
+              command = "/hurd/storeio -Tzero";
+            }
+            {
+              node = "/dev/vcs";
+              command = "/hurd/console";
+            }
+          ];
+
+        translatorSetup = with pkgs.lib;
+          # Install translators, which cannot be done from GNU/Linux.
+          concatMapStrings (translator:
+                             '' if [ ! -f "${translator.node}" ] || \
+                                   ! showtrans -s "${translator.node}"
+                                then
+                                  settrans -c "${translator.node}" ${translator.command}
+                                fi
+                             '')
+                           translators;
+
       in
         pkgs.vmTools.runInLinuxVM (pkgs.stdenv.mkDerivation {
           name = "hurd-qemu-image";
@@ -219,17 +260,33 @@ let
             mkdir /mnt/bin /mnt/dev /mnt/tmp
             ln -sv "${xbuild}/hurd" /mnt/hurd
 
-            # We need to patch things a little.
-            cp -rv "${xbuild}/libexec" /mnt
-            sed -e's|/bin/bash|${pkgs.bashInteractive.hostDrv}/bin/bash|g' \
-                -i /mnt/libexec/{rc,runsystem}
-            sed -i /mnt/libexec/runsystem \
-                -e 's|^PATH=|PATH=${pkgs.coreutils.hostDrv}/bin:${xbuild}/bin:|g'
-
             ln -sv "${pkgs.bashInteractive.hostDrv}/bin/bash" /mnt/bin/sh
+
+            # We need to patch the boot scripts a little.
+            cp -rv "${xbuild}/libexec" /mnt
+            sed -e 's|/bin/bash|${pkgs.bashInteractive.hostDrv}/bin/bash|g' \
+                -e 's|^PATH=|PATH=${xbuild}/bin:${xbuild}/sbin:${pkgs.coreutils.hostDrv}/bin:|g' \
+                -i /mnt/libexec/{rc,runsystem}
+            sed -e's|/sbin/fsck|${xbuild}/sbin/fsck|g' \
+                -i /mnt/libexec/rc
+            cat >> /mnt/libexec/rc <<EOF
+${translatorSetup}
+EOF
+
+            # The Hurd's `fsck' wants /etc/fstab.
+            mkdir /mnt/etc
+            touch /mnt/etc/fstab
+            for i in "${xbuild}/etc/"*
+            do
+              ln -sv /mnt/etc "$i"
+            done
 
             mkdir /mnt/servers
             touch /mnt/servers/{crash,exec,proc,password,default-pager}
+            mkdir /mnt/servers/socket
+            touch /mnt/servers/socket/{1,2,16}
+            ( cd /mnt/servers/socket ;
+              ln -s 1 local ; ln -s 2 inet ; ln -s 26 inet6 )
 
             mkdir -p /mnt/boot/grub
             ln -sv "${mach}/boot/gnumach" /mnt/boot
