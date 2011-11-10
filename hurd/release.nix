@@ -269,7 +269,7 @@ EOF
             touch /mnt/etc/fstab
             for i in "${xbuild}/etc/"*
             do
-              ln -sv /mnt/etc "$i"
+              ( cd /mnt/etc ; ln -sv "$i" )
             done
 
             mkdir /mnt/servers
