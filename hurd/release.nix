@@ -90,9 +90,22 @@ let
           dontPatchShebangs = true;
 
           patches = [ ./console-run.patch ];
+
+          # Patch absolute paths.
           postPatch =
             '' sed -i daemons/{runttys,getty}.c \
                    -e "s|/bin/login|$out/bin/login|g"
+
+               sed -e 's|/bin/bash|${pkgs.bashInteractive.hostDrv}/bin/bash|g' \
+                   -i utils/login.c
+            '';
+          postInstall =
+            '' sed -e 's|/bin/bash|${pkgs.bashInteractive.hostDrv}/bin/bash|g' \
+                   -e "s|^PATH=|PATH=$out/bin:$out/sbin:${pkgs.coreutils.hostDrv}/bin:${pkgs.gnused.hostDrv}/bin:|g" \
+                   -i "$out/libexec/"{rc,runsystem} "$out/sbin/MAKEDEV"
+
+               sed -e "s|/sbin/fsck|$out/sbin/fsck|g" \
+                   -i "$out/libexec/rc"
             '';
 
           inherit meta succeedOnFailure keepBuildDirectory
@@ -179,45 +192,34 @@ let
           crossSystem = crossSystems.i586_pc_gnu; # host platform
         };
 
-        translators =
-          # List of translators to install.
-          # FIXME: Use `MAKEDEV'.
-          [ {
-              node = "/dev/time";
-              command = "/hurd/storeio --no-cache time";
-            }
-            {
-              node = "/servers/socket/1";
-              command = "/hurd/pflocal";
-            }
-            {
-              node = "/dev/null";
-              command = "/hurd/null";
-            }
-            {
-              node = "/dev/full";
-              command = "/hurd/null --full";
-            }
-            {
-              node = "/dev/zero";
-              command = "/hurd/storeio -Tzero";
-            }
-            {
-              node = "/dev/vcs";
-              command = "/hurd/console";
-            }
+        devices =
+          # List of /dev nodes where a translator is to be installed.
+          [  "time"
+             "null" "full"
+             "zero"
+             "vcs"
+             "tty" "tty1" "tty2" "tty3" "tty4" "tty5" "tty6"
+             "fd"
+             "mem"
+             "klog"
+             "shm"
           ];
 
         translatorSetup = with pkgs.lib;
           # Install translators, which cannot be done from GNU/Linux.
-          concatMapStrings (translator:
-                             '' if [ ! -f "${translator.node}" ] || \
-                                   ! showtrans -s "${translator.node}"
+          '' if ! showtrans -s /servers/socket/1
+             then
+               settrans -c /servers/socket/1 /hurd/pflocal
+             fi
+          '' +
+          concatMapStrings (node:
+                             '' if [ ! -f "${node}" ] || \
+                                   ! showtrans -s "${node}"
                                 then
-                                  settrans -c "${translator.node}" ${translator.command}
+                                  ( cd /dev ; MAKEDEV "${node}" )
                                 fi
                              '')
-                           translators;
+                           devices;
 
       in
         pkgs.vmTools.runInLinuxVM (pkgs.stdenv.mkDerivation {
@@ -257,13 +259,8 @@ let
 
             ln -sv "${pkgs.bashInteractive.hostDrv}/bin/bash" /mnt/bin/sh
 
-            # We need to patch the boot scripts a little.
+            # Patch /libexec/rc to install essential translators (XXX).
             cp -rv "${xbuild}/libexec" /mnt
-            sed -e 's|/bin/bash|${pkgs.bashInteractive.hostDrv}/bin/bash|g' \
-                -e 's|^PATH=|PATH=${xbuild}/bin:${xbuild}/sbin:${pkgs.coreutils.hostDrv}/bin:|g' \
-                -i /mnt/libexec/{rc,runsystem}
-            sed -e's|/sbin/fsck|${xbuild}/sbin/fsck|g' \
-                -i /mnt/libexec/rc
             cat >> /mnt/libexec/rc <<EOF
 ${translatorSetup}
 EOF
@@ -275,6 +272,15 @@ EOF
             do
               ( cd /mnt/etc ; ln -sv "$i" )
             done
+
+            # Users.
+            cat > /mnt/etc/passwd <<EOF
+root:x:0:0:root:/root:${pkgs.bashInteractive.hostDrv}/bin/bash
+EOF
+            cat > /mnt/etc/shadow <<EOF
+root::15174::::::
+EOF
+            chmod 600 /mnt/etc/shadow
 
             mkdir /mnt/servers
             touch /mnt/servers/{crash,exec,proc,password,default-pager}
