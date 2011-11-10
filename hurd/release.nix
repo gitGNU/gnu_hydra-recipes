@@ -88,9 +88,13 @@ let
           buildInputs = [ pkgs.libuuid pkgs.ncurses ]
             ++ (pkgs.stdenv.lib.optional (parted != null) parted);
           dontPatchShebangs = true;
-          inherit patches meta succeedOnFailure keepBuildDirectory
 
           patches = [ ./console-run.patch ];
+          postPatch =
+            '' sed -i daemons/{runttys,getty}.c \
+                   -e "s|/bin/login|$out/bin/login|g"
+            '';
+
           inherit meta succeedOnFailure keepBuildDirectory
             dontStrip dontCrossStrip NIX_STRIP_DEBUG;
         }).hostDrv;
