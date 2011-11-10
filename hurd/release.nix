@@ -47,8 +47,6 @@ let
   succeedOnFailure = true;
   keepBuildDirectory = true;
 
-  patches = [ ./console-run.patch ];
-
   jobs = {
     tarball =
       # "make dist" should work even non-natively and even without a
@@ -87,9 +85,13 @@ let
           src = tarball;
           propagatedBuildNativeInputs = [ pkgs.gnu.machHeaders ];
           buildNativeInputs = [ pkgs.gnu.mig ];
-          buildInputs = [ parted pkgs.libuuid pkgs.ncurses ];
+          buildInputs = [ pkgs.libuuid pkgs.ncurses ]
+            ++ (pkgs.stdenv.lib.optional (parted != null) parted);
           dontPatchShebangs = true;
           inherit patches meta succeedOnFailure keepBuildDirectory
+
+          patches = [ ./console-run.patch ];
+          inherit meta succeedOnFailure keepBuildDirectory
             dontStrip dontCrossStrip NIX_STRIP_DEBUG;
         }).hostDrv;
 
@@ -99,22 +101,11 @@ let
       }:
 
       let
-        pkgs = import nixpkgs {
-          system = "x86_64-linux";                # build platform
-          crossSystem = crossSystems.i586_pc_gnu; # host platform
-        };
+        xbuild = jobs.xbuild { parted = null; inherit tarball; };
       in
-        (pkgs.releaseTools.nixBuild {
-          name = "hurd";
-          src = tarball;
-          propagatedBuildNativeInputs = [ pkgs.gnu.machHeaders ];
-          buildNativeInputs = [ pkgs.gnu.mig ];
-          buildInputs = [ pkgs.libuuid pkgs.ncurses ];
+        pkgs.lib.overrideDerivation xbuild (attrs: {
           configureFlags = [ "--without-parted" ];
-          dontPatchShebangs = true;
-          inherit patches meta succeedOnFailure keepBuildDirectory
-            dontStrip dontCrossStrip NIX_STRIP_DEBUG;
-        }).hostDrv;
+        });
 
     # Complete cross bootstrap of GNU from GNU/Linux.
     xbootstrap =
