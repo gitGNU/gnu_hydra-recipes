@@ -101,7 +101,7 @@ let
             '';
           postInstall =
             '' sed -e 's|/bin/bash|${pkgs.bashInteractive.hostDrv}/bin/bash|g' \
-                   -e "s|^PATH=|PATH=$out/bin:$out/sbin:${pkgs.coreutils.hostDrv}/bin:${pkgs.gnused.hostDrv}/bin:|g" \
+                   -e "s|^PATH=|PATH=$out/bin:$out/sbin:${pkgs.coreutils.hostDrv}/bin:${pkgs.gnused.hostDrv}/bin:/run/current-system/sw/bin:/run/current-system/sw/sbin:|g" \
                    -i "$out/libexec/"{rc,runsystem} "$out/sbin/MAKEDEV"
 
                sed -e "s|/sbin/fsck|$out/sbin/fsck|g" \
@@ -233,6 +233,18 @@ let
                               '')
                             devices);
 
+        # Software cross-compiled and available in the global environment.
+        environment = pkgs.buildEnv {
+          name = "gnu-global-user-environment";
+          paths =
+            [ mach xbuild
+              pkgs.glibc.hostDrv
+              pkgs.bashInteractive.hostDrv pkgs.coreutils.hostDrv
+              pkgs.findutils.hostDrv pkgs.gnused.hostDrv
+              pkgs.less.hostDrv
+            ];
+          ignoreCollisions = true;
+        };
       in
         pkgs.vmTools.runInLinuxVM (pkgs.stdenv.mkDerivation {
           name = "hurd-qemu-image";
@@ -241,14 +253,6 @@ let
                echo "file qemu-image $diskImage" >> \
                  $out/nix-support/hydra-build-products
             '';
-
-          # Software cross-compiled for GNU to be installed.
-          gnuDerivations =
-            [ mach xbuild
-              pkgs.bashInteractive.hostDrv pkgs.coreutils.hostDrv
-              pkgs.findutils.hostDrv pkgs.gnused.hostDrv
-              pkgs.less.hostDrv
-            ];
 
           # Command to build the disk image.
           buildCommand = let hd = "vda"; dollar = "\\\$"; in ''
@@ -261,10 +265,14 @@ let
             ${pkgs.utillinux}/bin/mount -t ext2 /dev/${hd}1 /mnt
 
             mkdir -p /mnt/nix/store
-            cp -rv "/nix/store/"*-gnu /mnt/nix/store
+            cp -rv "/nix/store/"*-gnu "${environment}" /mnt/nix/store
 
             # Copy `libgcc_s.so' & co.
             cp -rv "${pkgs.gccCrossStageFinal.gccLibs}" /mnt/nix/store
+
+            # The global profile (a symlink tree.)
+            mkdir -p /mnt/run/current-system
+            ( cd /mnt/run/current-system ; ln -sv ${environment} sw )
 
             mkdir /mnt/bin /mnt/dev /mnt/tmp
             ln -sv "${xbuild}/hurd" /mnt/hurd
