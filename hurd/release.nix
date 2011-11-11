@@ -282,6 +282,9 @@ root::15174::::::
 EOF
             chmod 600 /mnt/etc/shadow
 
+            # Host name.
+            echo -n nixognu > /mnt/etc/hostname
+
             mkdir /mnt/servers
             touch /mnt/servers/{crash,exec,proc,password,default-pager}
             mkdir /mnt/servers/socket
