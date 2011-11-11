@@ -293,6 +293,7 @@ EOF
 root::15174::::::
 EOF
             chmod 600 /mnt/etc/shadow
+            mkdir /mnt/root
 
             # Host name.
             echo -n nixognu > /mnt/etc/hostname
