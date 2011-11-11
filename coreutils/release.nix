@@ -51,8 +51,8 @@ let
   jobs = rec {
 
     tarball =
-      { coreutilsSrc ? {outPath = ../../coreutils;}
-      , gnulibSrc ? ../../gnulib
+      { coreutilsSrc ? { outPath = <coreutils>; }
+      , gnulibSrc ? <gnulib>
       }:
 
       with pkgs;
@@ -102,7 +102,8 @@ let
         src = tarball;
         buildInputs = buildInputsFrom pkgs ;
         configureFlags = let stdenv = pkgs.stdenv; in
-          stdenv.lib.optional stdenv.isLinux [ "--enable-gcc-warnings" ];
+          [ "--enable-install-program=arch,hostname,su" ]
+          ++ (stdenv.lib.optional stdenv.isLinux [ "--enable-gcc-warnings" ]);
         inherit meta succeedOnFailure keepBuildDirectory;
       };
 
@@ -120,6 +121,7 @@ let
         src = tarball;
         buildInputs = [ pkgs.gmp ];
         buildNativeInputs = with pkgs; [ perl xz ];
+        configureFlags = [ "--enable-install-program=arch,hostname,su" ];
         doCheck = false;
         inherit meta succeedOnFailure keepBuildDirectory;
       }).hostDrv;
@@ -133,6 +135,7 @@ let
       releaseTools.coverageAnalysis {
         name = "coreutils-coverage";
         src = tarball;
+        configureFlags = [ "--enable-install-program=arch,hostname,su" ];
         buildInputs = buildInputsFrom pkgs;
         postCheck =
           # Remove the file that confuses lcov.
