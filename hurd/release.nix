@@ -205,21 +205,33 @@ let
              "shm"
           ];
 
+        servers =
+          [ { node = "/servers/socket/1";
+              command = "/hurd/pflocal";
+            }
+            { node = "/servers/password";
+              command = "/hurd/password";
+            }
+          ];
+
         translatorSetup = with pkgs.lib;
           # Install translators, which cannot be done from GNU/Linux.
-          '' if ! showtrans -s /servers/socket/1
-             then
-               settrans -c /servers/socket/1 /hurd/pflocal
-             fi
-          '' +
-          concatMapStrings (node:
-                             '' if [ ! -f "${node}" ] || \
-                                   ! showtrans -s "${node}"
-                                then
-                                  ( cd /dev ; MAKEDEV "${node}" )
-                                fi
-                             '')
-                           devices;
+          (concatMapStrings (server:
+                              '' if ! showtrans -s "${server.node}"
+                                 then
+                                   settrans -c "${server.node}" ${server.command}
+                                 fi
+                              '')
+                            servers)
+          +
+          (concatMapStrings (node:
+                              '' if [ ! -f "${node}" ] || \
+                                    ! showtrans -s "${node}"
+                                 then
+                                   ( cd /dev ; MAKEDEV "${node}" )
+                                 fi
+                              '')
+                            devices);
 
       in
         pkgs.vmTools.runInLinuxVM (pkgs.stdenv.mkDerivation {
