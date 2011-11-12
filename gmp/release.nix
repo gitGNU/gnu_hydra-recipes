@@ -42,7 +42,11 @@ let
   configureFlagsFor = stdenv:
     [ "--enable-cxx" "--enable-alloca=debug" ]
     ++ (stdenv.lib.optional (stdenv.system != "i686-darwin")
-          [ "--enable-fat" ]);
+          [ "--enable-fat" ])
+
+    # DLLs fail to build on Cygwin, so don't even try.
+    ++ (stdenv.lib.optionals stdenv.isCygwin
+          [ "--disable-shared" "--enable-static" ]);
 in
   import ../gnu-jobs.nix {
     name = "gmp";
