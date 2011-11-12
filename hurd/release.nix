@@ -106,8 +106,13 @@ let
 
                sed -e "s|/sbin/fsck|$out/sbin/fsck|g" \
                    -i "$out/libexec/rc"
+
+               sed -e "s|/bin/login|$out/bin/login|g" \
+                   -e "s|/bin/fmt|${pkgs.coreutils.hostDrv}/bin/fmt|g" \
+                   -i "$out/bin/sush"
             '';
 
+          enableParallelBuild = true;
           inherit meta succeedOnFailure keepBuildDirectory
             dontStrip dontCrossStrip NIX_STRIP_DEBUG;
         }).hostDrv;
