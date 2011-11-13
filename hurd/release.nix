@@ -19,8 +19,10 @@
 }:
 
 let
-  pkgs = import nixpkgs {};
   crossSystems = (import ../cross-systems.nix) { inherit pkgs; };
+
+  pkgs = import nixpkgs {};
+  xpkgs = import nixpkgs { crossSystem = crossSystems.i586_pc_gnu; };
 
   meta = {
     description = "The GNU Hurd, GNU project's replacement for the Unix kernel";
@@ -185,10 +187,14 @@ let
           inherit meta succeedOnFailure keepBuildDirectory;
         }).hostDrv;
 
-    # A bare bones QEMU disk image with GNU/Hurd on partition 1.
+    # A QEMU disk image with GNU/Hurd on partition 1.
     qemu_image =
       { xbuild ? (jobs.xbuild_without_parted {})
-      , mach ? ((import ../gnumach/release.nix {}).build {}) }:
+      , mach ? ((import ../gnumach/release.nix {}).build {})
+      , coreutils ? xpkgs.coreutils.hostDrv
+      , grep ? ((import ../grep/release.nix {}).xbuild_gnu {}) # XXX
+      , guile ? xpkgs.guile.hostDrv
+      }:
 
       let
         size = 1024; fullName = "QEMU Disk Image of GNU/Hurd";
@@ -241,13 +247,15 @@ let
         # Software cross-compiled and available in the global environment.
         environment = pkgs.buildEnv {
           name = "gnu-global-user-environment";
-          paths =
-            [ mach xbuild
-              pkgs.glibc.hostDrv
-              pkgs.bashInteractive.hostDrv pkgs.coreutils.hostDrv
-              pkgs.findutils.hostDrv pkgs.gnused.hostDrv
-              pkgs.less.hostDrv pkgs.gcc.hostDrv pkgs.gnumake.hostDrv
-            ];
+          paths = [ mach xbuild coreutils grep guile ]
+            ++ (with pkgs;
+                pkgs.lib.map (p: p.hostDrv)
+                  [ glibc
+                    bashInteractive
+                    sed findutils
+                    gcc gnumake
+                    less zile
+                  ]);
           ignoreCollisions = true;
         };
       in
@@ -262,7 +270,7 @@ let
           # Command to build the disk image.
           buildCommand = let hd = "vda"; dollar = "\\\$"; in ''
             ${pkgs.parted}/sbin/parted /dev/${hd} \
-               mklabel msdos mkpart primary ext2 1MiB 400MiB
+               mklabel msdos mkpart primary ext2 1MiB 500MiB
             mknod /dev/${hd}1 b 254 1
 
             ${pkgs.e2fsprogs}/sbin/mke2fs -o hurd -F /dev/${hd}1
