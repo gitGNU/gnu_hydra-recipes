@@ -248,6 +248,8 @@ let
         environment = pkgs.buildEnv {
           name = "gnu-global-user-environment";
           paths = [ mach xbuild coreutils grep guile ]
+            ++ [ pkgs.gnu.libpthreadCross ]       # somehow this one doesn't
+                                                  # get pulled automatically
             ++ (with pkgs;
                 map (p: p.hostDrv)
                   [ glibc
@@ -270,7 +272,7 @@ let
           # Command to build the disk image.
           buildCommand = let hd = "vda"; dollar = "\\\$"; in ''
             ${pkgs.parted}/sbin/parted /dev/${hd} \
-               mklabel msdos mkpart primary ext2 1MiB 500MiB
+               mklabel msdos mkpart primary ext2 1MiB 550MiB
             mknod /dev/${hd}1 b 254 1
 
             ${pkgs.e2fsprogs}/sbin/mke2fs -o hurd -F /dev/${hd}1
