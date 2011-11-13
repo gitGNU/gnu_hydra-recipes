@@ -48,6 +48,7 @@ in
     customEnv = {
 
       tarball = pkgs: {
+        dontBuild = false;
         buildInputs = with pkgs;
           [ automake111x pkgconfig texinfo gettext_0_18 git perl
             rsync xz cvs gperf
