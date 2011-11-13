@@ -249,10 +249,10 @@ let
           name = "gnu-global-user-environment";
           paths = [ mach xbuild coreutils grep guile ]
             ++ (with pkgs;
-                pkgs.lib.map (p: p.hostDrv)
+                map (p: p.hostDrv)
                   [ glibc
                     bashInteractive
-                    sed findutils
+                    gnused findutils
                     gcc gnumake
                     less zile
                   ]);
