@@ -246,7 +246,7 @@ let
               pkgs.glibc.hostDrv
               pkgs.bashInteractive.hostDrv pkgs.coreutils.hostDrv
               pkgs.findutils.hostDrv pkgs.gnused.hostDrv
-              pkgs.less.hostDrv
+              pkgs.less.hostDrv pkgs.gcc.hostDrv pkgs.gnumake.hostDrv
             ];
           ignoreCollisions = true;
         };
@@ -262,7 +262,7 @@ let
           # Command to build the disk image.
           buildCommand = let hd = "vda"; dollar = "\\\$"; in ''
             ${pkgs.parted}/sbin/parted /dev/${hd} \
-               mklabel msdos mkpart primary ext2 1MiB 300MiB
+               mklabel msdos mkpart primary ext2 1MiB 400MiB
             mknod /dev/${hd}1 b 254 1
 
             ${pkgs.e2fsprogs}/sbin/mke2fs -o hurd -F /dev/${hd}1
