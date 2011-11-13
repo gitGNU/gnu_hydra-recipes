@@ -248,8 +248,6 @@ let
         environment = pkgs.buildEnv {
           name = "gnu-global-user-environment";
           paths = [ mach xbuild coreutils grep guile ]
-            ++ [ pkgs.gnu.libpthreadCross ]       # somehow this one doesn't
-                                                  # get pulled automatically
             ++ (with pkgs;
                 map (p: p.hostDrv)
                   [ glibc
@@ -281,6 +279,10 @@ let
 
             mkdir -p /mnt/nix/store
             cp -rv "/nix/store/"*-gnu "${environment}" /mnt/nix/store
+
+            # Copy the initial Hurd/Mach headers, libpthread-hurd, etc.,
+            # whose name doesn't match *-gnu.
+            cp -rv "/nix/store/"*hurd* "/nix/store/"*gnumach* /mnt/nix/store
 
             # Copy `libgcc_s.so' & co.
             cp -rv "${pkgs.gccCrossStageFinal.gccLibs}" /mnt/nix/store
