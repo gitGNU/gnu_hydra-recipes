@@ -290,6 +290,10 @@ let
 ${translatorSetup}
 EOF
 
+            # Patch /libexec/runsystem to start the console client.
+            sed -i /mnt/libexec/runsystem \
+                -e 's|^[[:blank:]]*wait$|console -d vga -d pc_kbd -d generic_speaker /dev/vcs ; wait|g'
+
             # The Hurd's `fsck' wants /etc/fstab.
             mkdir /mnt/etc
             touch /mnt/etc/fstab
