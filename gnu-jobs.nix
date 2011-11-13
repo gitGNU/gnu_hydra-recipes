@@ -53,8 +53,10 @@ let
       // ( pkgs.lib.optionalAttrs (customEnv ? tarball) (customEnv.tarball pkgs) ) );
 
   jobs = (rec {
-    tarball = 
-      if useLatestGnulib then { gnulib ? {outPath = ../gnulib;} }: tarballFun gnulib else tarballFun null;
+    tarball =
+      if useLatestGnulib
+      then { gnulib ? {outPath = <gnulib>;} }: tarballFun gnulib
+      else tarballFun null;
 
     build =
       { system ? "x86_64-linux"
