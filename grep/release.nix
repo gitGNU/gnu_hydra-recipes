@@ -56,8 +56,11 @@ in
       };
 
       build = pkgs: (with pkgs; {
-        buildInputs = lib.optional (stdenv.system != "i686-cygwin") [ pcre ]
-          ++ lib.optional stdenv.isDarwin libiconv;
+        buildInputs = (lib.optional (stdenv.system != "i686-cygwin") pcre)
+          ++ (lib.optional stdenv.isDarwin libiconv)
+          ++ [ xz ];
       } // pkgs.lib.optionalAttrs stdenv.isDarwin { LDFLAGS="-L${libiconv}/lib -liconv"; } );
+
+      xbuild_gnu = pkgs: { buildNativeInputs = [ pkgs.xz ]; };
     };
   }
