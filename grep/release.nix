@@ -1,5 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
-   Copyright (C) 2010  Ludovic Courtès <ludo@gnu.org>
+   Copyright (C) 2010, 2011  Ludovic Courtès <ludo@gnu.org>
    Copyright (C) 2010  Rob Vermaas <rob.vermaas@gmail.com>
 
    This program is free software: you can redistribute it and/or modify
@@ -15,8 +15,8 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
-{ nixpkgs ? ../../nixpkgs
-, grep ? { outPath = ../../grep; }
+{ nixpkgs ? <nixpkgs>
+, grep ? { outPath = <grep>; }
 }:
 
 let
@@ -42,18 +42,21 @@ in
   import ../gnu-jobs.nix {
     name = "grep";
     src  = grep;
-    inherit nixpkgs meta; 
+    inherit nixpkgs meta;
     enableGnuCrossBuild = true;
-    
+
     customEnv = {
-        
+
       tarball = pkgs: {
-	    buildInputs = with pkgs; [ automake111x pkgconfig texinfo gettext_0_18 git perl rsync xz cvs gperf];
-      } ;
-      
+        buildInputs = with pkgs;
+          [ automake111x pkgconfig texinfo gettext_0_18 git perl
+            rsync xz cvs gperf
+          ];
+      };
+
       build = pkgs: (with pkgs; {
-        buildInputs = lib.optional (stdenv.system != "i686-cygwin") [pcre] ++ lib.optional stdenv.isDarwin libiconv;
-      } // pkgs.lib.optionalAttrs stdenv.isDarwin { NIX_LDFLAGS="-L${libiconv}/lib -liconv"; } );
-      
-    };   
+        buildInputs = lib.optional (stdenv.system != "i686-cygwin") [ pcre ]
+          ++ lib.optional stdenv.isDarwin libiconv;
+      } // pkgs.lib.optionalAttrs stdenv.isDarwin { LDFLAGS="-L${libiconv}/lib -liconv"; } );
+    };
   }
