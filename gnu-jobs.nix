@@ -60,7 +60,7 @@ let
 
     build =
       { system ? "x86_64-linux"
-      , tarball ? jobs.tarball
+      , tarball ? jobs.tarball {}
       }:
       let pkgs = import nixpkgs {inherit system;};
       in with pkgs;
