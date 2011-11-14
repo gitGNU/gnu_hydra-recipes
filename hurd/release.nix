@@ -197,7 +197,7 @@ let
       }:
 
       let
-        size = 1024; fullName = "QEMU Disk Image of GNU/Hurd";
+        size = 2048; fullName = "QEMU Disk Image of GNU/Hurd";
         pkgs = import nixpkgs {
           system = "x86_64-linux";               # build platform
           crossSystem = crossSystems.i586_pc_gnu; # host platform
