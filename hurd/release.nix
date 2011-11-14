@@ -268,9 +268,10 @@ let
             '';
 
           # Command to build the disk image.
+          # TODO: console=com0
           buildCommand = let hd = "vda"; dollar = "\\\$"; in ''
             ${pkgs.parted}/sbin/parted /dev/${hd} \
-               mklabel msdos mkpart primary ext2 1MiB 650MiB
+               mklabel msdos mkpart primary ext2 1MiB 850MiB
             mknod /dev/${hd}1 b 254 1
 
             ${pkgs.e2fsprogs}/sbin/mke2fs -o hurd -F /dev/${hd}1
