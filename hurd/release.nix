@@ -294,6 +294,9 @@ let
             mkdir -p /mnt/run/current-system
             ( cd /mnt/run/current-system ; ln -sv ${environment} sw )
 
+            # Set the Nix store to Epoch.
+            find /mnt/nix/store -exec touch -d "1970/01/01 00:00 +0000" {} \;
+
             mkdir /mnt/bin /mnt/dev /mnt/tmp
             ln -sv "${xbuild}/hurd" /mnt/hurd
 
