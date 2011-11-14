@@ -197,7 +197,7 @@ let
       }:
 
       let
-        size = 2048; fullName = "QEMU Disk Image of GNU/Hurd";
+        size = 1024; fullName = "QEMU Disk Image of GNU/Hurd";
         pkgs = import nixpkgs {
           system = "x86_64-linux";               # build platform
           crossSystem = crossSystems.i586_pc_gnu; # host platform
@@ -271,7 +271,7 @@ let
           # TODO: console=com0
           buildCommand = let hd = "vda"; dollar = "\\\$"; in ''
             ${pkgs.parted}/sbin/parted /dev/${hd} \
-               mklabel msdos mkpart primary ext2 1MiB 850MiB
+               mklabel msdos mkpart primary ext2 1MiB 750MiB
             mknod /dev/${hd}1 b 254 1
 
             ${pkgs.e2fsprogs}/sbin/mke2fs -o hurd -F /dev/${hd}1
@@ -281,9 +281,11 @@ let
             mkdir -p /mnt/nix/store
             cp -rv "/nix/store/"*-gnu "${environment}" /mnt/nix/store
 
-            # Copy the initial Hurd/Mach headers, libpthread-hurd, etc.,
-            # whose name doesn't match *-gnu.
-            cp -rv "/nix/store/"*hurd* "/nix/store/"*gnumach* /mnt/nix/store
+            # Copy the initial packages whose store path doesn't match *-gnu.
+            cp -rv ${pkgs.gnu.hurdCross} ${pkgs.gnu.hurdHeaders}                \
+                   ${pkgs.gnu.hurdCrossIntermediate} ${pkgs.gnu.machHeaders}    \
+                   ${pkgs.gnu.libpthreadHeaders} ${pkgs.gnu.libpthreadCross}    \
+                   /mnt/nix/store
 
             # Copy `libgcc_s.so' & co.
             cp -rv "${pkgs.gccCrossStageFinal.gccLibs}" /mnt/nix/store
