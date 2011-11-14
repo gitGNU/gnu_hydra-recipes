@@ -356,7 +356,7 @@ let
 
     xbuild_gnu =
       # Cross build to GNU.
-      makeCrossBuild "i686-linux" (crossSystems.i586_pc_gnu);
+      makeCrossBuild "x86_64-linux" (crossSystems.i586_pc_gnu);
 
     xbuild_mingw =
       # Cross build to MinGW.
