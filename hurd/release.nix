@@ -282,7 +282,7 @@ let
             cp -rv "/nix/store/"*-gnu "${environment}" /mnt/nix/store
 
             # Copy the initial packages whose store path doesn't match *-gnu.
-            cp -rv ${pkgs.gnu.hurdCross} ${pkgs.gnu.hurdHeaders}                \
+            cp -rv ${pkgs.gnu.hurdHeaders}                                      \
                    ${pkgs.gnu.hurdCrossIntermediate} ${pkgs.gnu.machHeaders}    \
                    ${pkgs.gnu.libpthreadHeaders} ${pkgs.gnu.libpthreadCross}    \
                    /mnt/nix/store
