@@ -255,7 +255,8 @@ let
                     gnused findutils
                     gcc gnumake
                     less zile
-                  ]);
+                  ])
+            ++ [ (pkgs.wget.override { gnutls = null; perl = null; }).hostDrv ];
           ignoreCollisions = true;
         };
       in
