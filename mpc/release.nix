@@ -109,7 +109,7 @@ in
 
       let
         pkgs  = import nixpkgs { inherit system; };
-        build = jobs.build {};
+        build = jobs.build { inherit tarball system; };
       in
         pkgs.releaseTools.nixBuild ({
           src = tarball;
@@ -132,7 +132,7 @@ in
         pkgs  = import nixpkgs { inherit system; };
         gmp   = old_gmp pkgs;
         mpfr  = old_mpfr pkgs;
-        build = jobs.build {};
+        build = jobs.build { inherit tarball system; };
       in
         pkgs.releaseTools.nixBuild ({
           src = tarball;
