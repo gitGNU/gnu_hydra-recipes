@@ -46,7 +46,7 @@ let
   inherit (pkgs) releaseTools;
 
   buildInputsFrom = pkgs: with pkgs;
-    [ xz zlib lzo gettext_0_17 pkgconfig perl nettle]
+    [ xz zlib lzo gettext_0_18 pkgconfig perl nettle]
     ++ stdenv.lib.optional (stdenv.system == "x86_64-linux") valgrind
     ++ stdenv.lib.optional (stdenv.isDarwin || stdenv.isBSD) libiconv;
 
@@ -94,15 +94,6 @@ let
           '';
 
         doCheck = false;
-
-        autoconfPhase =
-          # Gnulib wants Gettext 0.18 but `configure.ac' wants 0.17.  Thus,
-          # clean up the mess so that what GnuTLS wants prevails.
-          '' rm -fv po/Makefile.in.in "m4/"*gettext* \
-                   "gl/m4/"*gettext* "gl/m4/"po.m4
-             autopoint --version
-             make
-          '';
 
         configureFlags =
           "--with-lzo --with-libtasn1-prefix=${libtasn1} --enable-guile"
