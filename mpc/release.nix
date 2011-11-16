@@ -103,7 +103,7 @@ in
     # Extra job to build with an MPFR that uses an old GMP.
     build_with_mpfr_with_old_gmp =
       { system ? "x86_64-linux"
-      , tarball ? jobs.tarball
+      , tarball ? jobs.tarball {}
       , mpfr_with_old_gmp
       }:
 
@@ -114,7 +114,7 @@ in
         pkgs.releaseTools.nixBuild ({
           src = tarball;
 
-          # We assume that `mpfr_with_old_gmp' has GMP has one of its
+          # We assume that `mpfr_with_old_gmp' has GMP as one of its
           # propagated build inputs.
           buildInputs = [ mpfr_with_old_gmp ];
 
@@ -125,7 +125,7 @@ in
     # Extra job to build with an MPFR that uses an old GMP & an old MPFR.
     build_with_old_mpfr_and_old_gmp =
       { system ? "x86_64-linux"
-      , tarball ? jobs.tarball
+      , tarball ? jobs.tarball {}
       }:
 
       let
