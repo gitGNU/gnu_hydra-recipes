@@ -192,7 +192,8 @@ let
 
         patches =
           (map (x: "${nixpkgs}/pkgs/development/libraries/glibc-2.12/${x}")
-               [ "nix-locale-archive.patch"    # NixOS-specific
+               [ #"nix-locale-archive.patch"    # NixOS-specific -- FIXME: no
+                                                # longer applies
                  "rpcgen-path.patch"           # submit upstream?
                ])
           ++ [ ./ignore-git-diff.patch
