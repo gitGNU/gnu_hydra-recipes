@@ -235,6 +235,9 @@ let
             { node = "/servers/password";
               command = "/hurd/password";
             }
+            { node = "/ftp:";
+              command = "/hurd/hostmux /hurd/ftpfs /";
+            }
           ];
 
         translatorSetup = with pkgs.lib;
