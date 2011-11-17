@@ -101,6 +101,7 @@ let
                sed -e 's|/bin/bash|${pkgs.bashInteractive.hostDrv}/bin/bash|g' \
                    -i utils/login.c
             '';
+          postBuild = "make hurd.msgids -C hurd"; # for `rpctrace'
           postInstall =
             '' sed -e 's|/bin/bash|${pkgs.bashInteractive.hostDrv}/bin/bash|g' \
                    -e "s|^PATH=|PATH=$out/bin:$out/sbin:${pkgs.coreutils.hostDrv}/bin:${pkgs.gnused.hostDrv}/bin:/run/current-system/sw/bin:/run/current-system/sw/sbin:|g" \
@@ -112,6 +113,9 @@ let
                sed -e "s|/bin/login|$out/bin/login|g" \
                    -e "s|/bin/fmt|${pkgs.coreutils.hostDrv}/bin/fmt|g" \
                    -i "$out/bin/sush"
+
+               mkdir -p "$out/share/msgids"
+               cp -v "hurd/"*.msgids "$out/share/msgids"
             '';
 
           enableParallelBuild = true;
