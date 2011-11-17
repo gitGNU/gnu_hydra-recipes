@@ -270,6 +270,7 @@ let
                     gnused findutils
                     gcc gnumake
                     less zile
+                    gnutar gzip bzip2 xz
                   ])
             ++ [ (pkgs.wget.override { gnutls = null; perl = null; }).hostDrv ];
           ignoreCollisions = true;
