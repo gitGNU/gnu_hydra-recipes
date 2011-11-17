@@ -220,6 +220,14 @@ let
           [ { node = "/servers/socket/1";
               command = "/hurd/pflocal";
             }
+            { # Networking with QEMU's default settings.
+              node = "/servers/socket/2";
+              command = "/hurd/pfinet --interface eth0 "
+                + "--address 10.0.2.77 "
+                + "--netmask 255.255.255.0 "
+                + "--gateway 10.0.2.2 "
+                + "--ipv6 /servers/socket/16";
+            }
             { node = "/servers/password";
               command = "/hurd/password";
             }
@@ -333,6 +341,12 @@ EOF
 
             # Host name.
             echo -n nixognu > /mnt/etc/hostname
+
+            # Networking.
+            echo "nameserver 10.0.2.3" > /mnt/etc/resolv.conf
+            cp -rv "${pkgs.iana_etc}" /mnt/nix/store
+            ( cd /mnt/etc ; for i in "${pkgs.iana_etc}/etc/"* ;
+              do ln -sv "$i" ; done )
 
             mkdir /mnt/servers
             touch /mnt/servers/{crash,exec,proc,password,default-pager}
