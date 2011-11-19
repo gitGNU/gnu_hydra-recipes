@@ -14,7 +14,7 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
-{ nixpkgs ? ../../nixpkgs
+{ nixpkgs ? <nixpkgs>
 , glibcHurd ? false }:
 
 let
@@ -98,11 +98,11 @@ let
       crossGNU = (crossSystem.config == "i586-pc-gnu");
       kernelHeaders =
         if crossGNU
-        then pkgs.hurdHeaders
+        then pkgs.gnu.hurdHeaders
         else pkgs.linuxHeadersCross;
       CPATH =
         if crossGNU
-        then "${pkgs.hurdHeaders}/include:${pkgs.machHeaders}/include"
+        then "${pkgs.gnu.hurdHeaders}/include:${pkgs.gnu.machHeaders}/include"
         else null;
       extraBuildInputs =
         if crossGNU
@@ -110,7 +110,7 @@ let
         else [];
       propagatedBuildNativeInputs =
         if crossGNU
-        then [ pkgs.hurdHeaders pkgs.machHeaders ] # XXX: Not really native
+        then with pkgs.gnu; [ hurdHeaders machHeaders ] # XXX: Not really native
         else [];
     in
       (pkgs.releaseTools.nixBuild {
