@@ -106,7 +106,7 @@ let
         else null;
       extraBuildInputs =
         if crossGNU
-        then [ pkgs.mig ]
+        then [ pkgs.gnu.mig ]
         else [];
       propagatedBuildNativeInputs =
         if crossGNU
