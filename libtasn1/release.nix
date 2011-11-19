@@ -1,5 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
-   Copyright (C) 2009, 2010  Ludovic Courtès <ludo@gnu.org>
+   Copyright (C) 2009, 2010, 2011  Ludovic Courtès <ludo@gnu.org>
    Copyright (C) 2010  Rob Vermaas <rob.vermaas@gmail.com>
 
    This program is free software: you can redistribute it and/or modify
@@ -15,7 +15,7 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
-{ nixpkgs ? ../../nixpkgs }:
+{ nixpkgs ? <nixpkgs> }:
 
 let
   pkgs = import nixpkgs {};
@@ -43,14 +43,12 @@ let
   jobs = {
 
     tarball =
-      { libtasn1Src ? { outPath = ../../libtasn1; }
+      { libtasn1Src ? { outPath = <libtasn1>; }
       }:
 
       releaseTools.sourceTarball {
 	name = "libtasn1-tarball";
 	src = libtasn1Src;
-
-        patches = [ ./interpreter-path.patch ];
 
 	preAutoconf =
 	  ''sed -i "configure.ac" \
