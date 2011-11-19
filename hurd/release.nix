@@ -238,6 +238,15 @@ let
             { node = "/ftp:";
               command = "/hurd/hostmux /hurd/ftpfs /";
             }
+            { node = "/servers/crash-dump-core";
+              command = "/hurd/crash --dump-core";
+            }
+            { node = "/servers/crash-kill";
+              command = "/hurd/crash --kill";
+            }
+            { node = "/servers/crash-suspend";
+              command = "/hurd/crash --suspend";
+            }
           ];
 
         translatorSetup = with pkgs.lib;
@@ -361,7 +370,9 @@ EOF
               do ln -sv "$i" ; done )
 
             mkdir /mnt/servers
-            touch /mnt/servers/{crash,exec,proc,password,default-pager}
+            touch /mnt/servers/{exec,proc,password,default-pager} \
+                  /mnt/servers/crash-{dump-core,kill,suspend}
+            ( cd /mnt/servers ; ln -s crash-dump-core crash )
             mkdir /mnt/servers/socket
             touch /mnt/servers/socket/{1,2,16}
             ( cd /mnt/servers/socket ;
