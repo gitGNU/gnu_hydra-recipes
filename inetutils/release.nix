@@ -1,5 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
-   Copyright (C) 2009, 2010  Ludovic Courtès <ludo@gnu.org>
+   Copyright (C) 2009, 2010, 2011  Ludovic Courtès <ludo@gnu.org>
    Copyright (C) 2010  Rob Vermaas <rob.vermaas@gmail.com>
 
    This program is free software: you can redistribute it and/or modify
@@ -15,7 +15,7 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
-{ nixpkgs ? ../../nixpkgs }:
+{ nixpkgs ? <nixpkgs> }:
 
 let
   meta = {
@@ -43,7 +43,7 @@ let
   inherit (pkgs) releaseTools;
 
   buildInputsFrom = pkgs: with pkgs;
-    [ ncurses shishi ] ++
+    [ readline ncurses shishi ] ++
 
     # Ironically, net-tools is needed to run the tests, which expect
     # `netstat'.
@@ -55,8 +55,8 @@ let
   jobs = rec {
 
     tarball =
-      { inetutilsSrc ? { outPath = ../../inetutils; }
-      , gnulibSrc ? { outPath = ../../gnulib; }
+      { inetutilsSrc ? { outPath = <inetutils>; }
+      , gnulibSrc ? { outPath = <gnulib>; }
       }:
 
       releaseTools.sourceTarball {
@@ -85,7 +85,7 @@ let
 	buildInputs = (buildInputsFrom pkgs)
           ++ (with pkgs;
               [ autoconf automake111x bison perl git
-                texinfo help2man
+                texinfo help2man gnum4
               ]);
 
         inherit preBuild meta succeedOnFailure keepBuildDirectory;
@@ -147,7 +147,7 @@ let
         (pkgs.releaseTools.nixBuild {
           name = "inetutils" ;
           src = tarball;
-          buildInputs = [ pkgs.ncurses ];
+          buildInputs = with pkgs; [ ncurses readline ];
           configureFlags =
             [ "--with-ncurses-include-dir=${pkgs.ncurses}/include" ];
           doCheck = false;
