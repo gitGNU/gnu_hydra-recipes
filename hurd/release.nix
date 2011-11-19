@@ -268,11 +268,13 @@ let
                   [ glibc
                     bashInteractive
                     gnused findutils
-                    gcc gnumake
+                    gcc gdb gnumake nixUnstable
                     less zile
                     gnutar gzip bzip2 xz
                   ])
-            ++ [ (pkgs.wget.override { gnutls = null; perl = null; }).hostDrv ];
+            ++ [ (pkgs.wget.override { gnutls = null; perl = null; }).hostDrv
+                 (pkgs.shadow.override { pam = null; }).hostDrv
+               ];
           ignoreCollisions = true;
         };
       in
