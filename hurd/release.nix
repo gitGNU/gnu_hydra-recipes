@@ -342,7 +342,7 @@ EOF
 root:x:0:0:root:/root:${pkgs.bashInteractive.hostDrv}/bin/bash
 EOF
             cat > /mnt/etc/shadow <<EOF
-root::15174::::::
+root::::::::
 EOF
             chmod 600 /mnt/etc/shadow
             mkdir /mnt/root
