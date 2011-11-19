@@ -277,7 +277,7 @@ let
                 map (p: p.hostDrv)
                   [ glibc
                     bashInteractive
-                    gnused findutils
+                    gnused findutils diffutils gawk
                     gcc gdb gnumake nixUnstable
                     less zile
                     gnutar gzip bzip2 xz
