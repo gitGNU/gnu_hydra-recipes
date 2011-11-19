@@ -58,6 +58,7 @@
     withTLS = true;
     platform = pkgs.platforms.pc;
     libc = "glibc";
+    openssl.system = "hurd-x86";                  # Nix depends on OpenSSL.
   };
 
   i686_pc_mingw32 = {
