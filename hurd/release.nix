@@ -198,6 +198,7 @@ let
       , coreutils ? xpkgs.coreutils.hostDrv
       , grep ? ((import ../grep/release.nix {}).xbuild_gnu {}) # XXX
       , guile ? xpkgs.guile.hostDrv
+      , inetutils ? ((import ../inetutils/release.nix {}).xbuild_gnu {}) # XXX
       }:
 
       let
@@ -271,7 +272,7 @@ let
         # Software cross-compiled and available in the global environment.
         environment = pkgs.buildEnv {
           name = "gnu-global-user-environment";
-          paths = [ mach xbuild coreutils grep guile ]
+          paths = [ mach xbuild coreutils grep inetutils guile ]
             ++ (with pkgs;
                 map (p: p.hostDrv)
                   [ glibc
