@@ -67,7 +67,7 @@ in
       tarball = pkgs: {
         dontBuild = false;
 
-        patches = [ ./interpreter-path.patch ./mono-without-binfmt_misc.patch ];
+        patches = [ ./mono-without-binfmt_misc.patch ];
 
         autoconfPhase = ''
              # If `git describe' doesn't work, keep the default version
