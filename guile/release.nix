@@ -114,7 +114,6 @@ let
     [ [ "--without-threads" ]
       [ "--disable-deprecated" "--disable-discouraged" ]
       [ "--disable-networking" ]
-      [ "--disable-posix" ]
       [ "--enable-guile-debug" ]
       [ "CPPFLAGS=-DSCM_DEBUG=1" ]
       [ "CPPFLAGS=-DSCM_DEBUG_TYPING_STRICTNESS=2" ]
@@ -122,7 +121,7 @@ let
 
   makeCrossBuild = from: to:
     { tarball ? jobs.tarball {},
-      native_guile  # a native Guile build
+      native_guile ? jobs.build {}  # a native Guile build
     }:
 
     let
