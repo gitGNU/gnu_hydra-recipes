@@ -15,7 +15,7 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
-{nixpkgs ? ../../nixpkgs}:
+{ nixpkgs ? <nixpkgs> }:
 let
   meta = {
     description = "GNU Guile 2.0, an embeddable Scheme implementation";
@@ -159,7 +159,7 @@ let
   jobs = rec {
 
     tarball =
-      { guileSrc ? {outPath = ../../guile;}
+      { guileSrc ? { outPath = <guile>; }
       }:
 
       with pkgs;
