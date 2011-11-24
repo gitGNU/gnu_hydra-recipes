@@ -15,8 +15,8 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
-{ nixpkgs ? ../../nixpkgs 
-, idutils ? { outPath = ../../idutils; }
+{ nixpkgs ? <nixpkgs>
+, idutils ? { outPath = <idutils>; }
 }:
 
 let
@@ -53,31 +53,42 @@ let
     ];
   };
 
-in 
+in
   import ../gnu-jobs.nix {
     name = "idutils";
     src  = idutils;
-    inherit nixpkgs meta; 
+    inherit nixpkgs meta;
     enableGnuCrossBuild = true;
 
     customEnv = {
-        
-      tarball = pkgs: {
-        buildInputs = with pkgs; [
-          automake111x
-          texinfo
-          gettext
-          git 
-          gperf
-          bison
-          perl
-          rsync
-          xz
-          help2man
-        ];
-        dontBuild = false;
-      } ;
-      
-    };   
-  }
 
+      tarball = pkgs: {
+        buildNativeInputs = [ pkgs.xz ];
+	buildInputs = with pkgs; [
+	  automake111x
+	  texinfo
+	  gettext
+	  git
+	  gperf
+	  bison
+	  perl
+	  rsync
+	  help2man
+	];
+	dontBuild = false;
+      };
+
+      build = pkgs: {
+        buildNativeInputs = [ pkgs.xz ];
+      };
+
+      coverage = pkgs: {
+        buildNativeInputs = [ pkgs.xz ];
+      };
+
+      xbuild_gnu = pkgs: {
+        buildNativeInputs = [ pkgs.xz ];
+      };
+
+    };
+  }
