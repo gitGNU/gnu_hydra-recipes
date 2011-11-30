@@ -66,7 +66,11 @@ let
              done
           '';
         buildNativeInputs = with pkgs; [ gnu.machHeaders gnu.mig texinfo ];
-        buildInputs = [ pkgs.parted /* not the cross-GNU one */ pkgs.libuuid ];
+        buildInputs = with pkgs;
+          [ parted /* not the cross-GNU one */
+            libuuid
+            xorg.libpciaccess               # only needed for the DDE branch.
+          ];
         inherit meta succeedOnFailure keepBuildDirectory;
       };
 
@@ -87,7 +91,8 @@ let
           src = tarball;
           propagatedBuildNativeInputs = [ pkgs.gnu.machHeaders ];
           buildNativeInputs = [ pkgs.gnu.mig ];
-          buildInputs = [ pkgs.libuuid pkgs.ncurses ]
+          buildInputs =
+            (with pkgs; [ libuuid ncurses xorg.libpciaccess ])
             ++ (pkgs.stdenv.lib.optional (parted != null) parted);
           dontPatchShebangs = true;
 
