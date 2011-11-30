@@ -171,14 +171,19 @@ let
               # TODO: Handle `libpthreadCross', etc. similarly.
               glibcCross =
                  override "glibc" pkgs.glibcCross glibcTarball false;
-              hurdCross =
-                 override "hurd" pkgs.gnu.hurdCross tarball true;
-              hurdHeaders =
-                 override "hurd-headers" pkgs.gnu.hurdHeaders tarball true;
-              hurdCrossIntermediate =
-                 override "hurd-minimal" pkgs.gnu.hurdCrossIntermediate tarball true;
-              machHeaders =
-                 override "gnumach-headers" pkgs.gnu.machHeaders machTarball true;
+
+              gnu = {
+                hurdCross =
+                   override "hurd" pkgs.gnu.hurdCross tarball true;
+                hurdHeaders =
+                   override "hurd-headers" pkgs.gnu.hurdHeaders tarball true;
+                hurdCrossIntermediate =
+                   override "hurd-minimal"
+                     pkgs.gnu.hurdCrossIntermediate tarball true;
+                machHeaders =
+                   override "gnumach-headers"
+                     pkgs.gnu.machHeaders machTarball true;
+              };
             };
 
         pkgs = import nixpkgs {
@@ -201,8 +206,8 @@ let
       , mach ? ((import ../gnumach/release.nix {}).build {})
       , coreutils ? xpkgs.coreutils.hostDrv
       , grep ? ((import ../grep/release.nix {}).xbuild_gnu {}) # XXX
-      , guile ? xpkgs.guile.hostDrv
       , inetutils ? ((import ../inetutils/release.nix {}).xbuild_gnu {}) # XXX
+      , guile ? null #xpkgs.guile.hostDrv
       }:
 
       let
