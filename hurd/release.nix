@@ -138,7 +138,9 @@ let
     # Complete cross bootstrap of GNU from GNU/Linux.
     xbootstrap =
       { tarball ? jobs.tarball
-      , glibcTarball }:
+      , glibcTarball
+      , machTarball ? (import ../gnumach/release.nix {}).tarball
+      }:
 
       let
         overrideHurdPackages = pkgs:
@@ -166,7 +168,7 @@ let
                else {})));
           in
             {
-              # TODO: Handle `libpthreadCross', `machHeaders', etc. similarly.
+              # TODO: Handle `libpthreadCross', etc. similarly.
               glibcCross =
                  override "glibc" pkgs.glibcCross glibcTarball false;
               hurdCross =
@@ -175,6 +177,8 @@ let
                  override "hurd-headers" pkgs.gnu.hurdHeaders tarball true;
               hurdCrossIntermediate =
                  override "hurd-minimal" pkgs.gnu.hurdCrossIntermediate tarball true;
+              machHeaders =
+                 override "gnumach-headers" pkgs.gnu.machHeaders machTarball true;
             };
 
         pkgs = import nixpkgs {
