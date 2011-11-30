@@ -143,7 +143,7 @@ let
     # Complete cross bootstrap of GNU from GNU/Linux.
     xbootstrap =
       { tarball ? jobs.tarball
-      , glibcTarball
+      , glibcTarball ? (import ../glibc/release.nix {}).tarball
       , machTarball ? (import ../gnumach/release.nix {}).tarball
       }:
 
@@ -177,7 +177,7 @@ let
               glibcCross =
                  override "glibc" pkgs.glibcCross glibcTarball false;
 
-              gnu = {
+              gnu = pkgs.gnu // {
                 hurdCross =
                    override "hurd" pkgs.gnu.hurdCross tarball true;
                 hurdHeaders =
