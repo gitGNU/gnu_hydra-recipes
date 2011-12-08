@@ -138,7 +138,14 @@ let
 
           # `AI_ALL' & co. are missing on MinGW, so `net_db.c' won't build.
           (crosspkgs.stdenv.lib.optional (to == crossSystems.i686_pc_mingw32)
-                "--disable-networking");
+                "--disable-networking") ++
+
+          # On GNU, libgc depends on libpthread, but the cross linker doesn't
+          # know where to find libpthread, which leads to erroneous test failures
+          # in `configure', where `-pthread' and `-lpthread' aren't explicitly
+          # passed.  So it needs some help (XXX).
+          (crosspkgs.stdenv.lib.optional (to == crossSystems.i586_pc_gnu)
+                "LDFLAGS=-L${crosspkgs.gnu.libpthreadCross}/lib");
 
         makeFlags = [ "V=1" ];
 
@@ -154,17 +161,7 @@ let
 
         doCheck = false;
         inherit meta buildOutOfSourceTree succeedOnFailure keepBuildDirectory;
-      }
-
-      //
-
-      # On GNU, libgc depends on libpthread, but the cross linker doesn't
-      # know where to find libpthread, which leads to erroneous test failures
-      # in `configure', where `-pthread' and `-lpthread' aren't explicitly
-      # passed.  So it needs some help (XXX).
-      (if to.config == crossSystems.i586_pc_gnu.config
-       then { LDFLAGS = "-L${crosspkgs.gnu.libpthreadCross}/lib"; }
-       else { })).hostDrv;
+      }).hostDrv;
 
   jobs = rec {
 
