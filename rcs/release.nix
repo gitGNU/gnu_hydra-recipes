@@ -34,6 +34,11 @@ let
 
     license = "GPLv3+";
 
+    # The value is in seconds.
+    # These are low for now; we can relax them later if necessary.
+    timeout = 600;
+    maxSilent = 60;
+
     # Those who will receive email notifications.
     maintainers = [
       "Rob Vermaas <rob.vermaas@gmail.com>"
@@ -70,4 +75,3 @@ in
 
     };
   }
-
