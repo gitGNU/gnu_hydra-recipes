@@ -41,7 +41,7 @@ let
 
     # Those who will receive email notifications.
     maintainers = [
-      "Rob Vermaas <rob.vermaas@gmail.com>"
+      "Thien-Thi Nguyen <ttn@gnuvola.org>"
     ];
   };
 
