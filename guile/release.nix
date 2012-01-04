@@ -294,7 +294,7 @@ let
             # which attempts to rebuild `guile.info' under $srcdir, which
             # fails when that location is not writable.  Not sure why (clock
             # skew?), but let's avoid it.
-            if system.isFreeBSD
+            if stdenv.isFreeBSD
             then false
             else buildOutOfSourceTree;
 
