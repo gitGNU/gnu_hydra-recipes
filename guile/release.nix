@@ -1,5 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
-   Copyright (C) 2009, 2010, 2011  Ludovic Courtès <ludo@gnu.org>
+   Copyright (C) 2009, 2010, 2011, 2012  Ludovic Courtès <ludo@gnu.org>
    Copyright (C) 2009  Rob Vermaas <rob.vermaas@gmail.com>
 
    This program is free software: you can redistribute it and/or modify
@@ -290,10 +290,11 @@ let
           buildInputs = buildInputsFrom pkgs;
 
           buildOutOfSourceTree =
-            # Work around the clock skew of the FreeBSD box at
-            # `hydra.nixos.org'.  See
-            # <http://yellowgrass.org/issue/hydra.nixos.org/11>.
-            if system == "i686-freebsd"
+            # On FreeBSD, the `.texi.info' rule under `doc/ref' is triggered,
+            # which attempts to rebuild `guile.info' under $srcdir, which
+            # fails when that location is not writable.  Not sure why (clock
+            # skew?), but let's avoid it.
+            if system.isFreeBSD
             then false
             else buildOutOfSourceTree;
 
