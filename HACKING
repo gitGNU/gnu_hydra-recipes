@@ -1,6 +1,7 @@
 HACKING hydra-recipes                      -*- mode:org; coding:utf-8 -*-
 
 * manuals
+  [[http://hydra.nixos.org/job/hydra/trunk/tarball/latest/download-by-type/doc/manual][Hydra]]
   [[http://hydra.nixos.org/job/nixpkgs/trunk/tarball/latest/download/2/manual.html][Nixpkgs]]
   [[http://hydra.nixos.org/job/nix/trunk/tarball/latest/download/1/manual.html][Nix]]
 * timeout
