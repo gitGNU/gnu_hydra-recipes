@@ -145,7 +145,7 @@ let
           # in `configure', where `-pthread' and `-lpthread' aren't explicitly
           # passed.  So it needs some help (XXX).
           (crosspkgs.stdenv.lib.optional (to == crossSystems.i586_pc_gnu)
-                "LDFLAGS=-L${crosspkgs.gnu.libpthreadCross}/lib");
+                "LDFLAGS=-Wl,-rpath-link=${crosspkgs.gnu.libpthreadCross}/lib");
 
         makeFlags = [ "V=1" ];
 
