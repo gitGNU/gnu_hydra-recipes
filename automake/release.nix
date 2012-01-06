@@ -1,5 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
-   Copyright (C) 2009, 2010  Ludovic Courtès <ludo@gnu.org>
+   Copyright (C) 2009, 2010, 2012  Ludovic Courtès <ludo@gnu.org>
    Copyright (C) 2009  Rob Vermaas <rob.vermaas@gmail.com>
 
    This program is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@ let
 
   inherit (pkgs) releaseTools;
 
-  buildInputsFrom = pkgs: with pkgs; [ perl help2man ];
+  buildInputsFrom = pkgs: with pkgs; [ xz perl help2man ];
 
   succeedOnFailure = true;
   keepBuildDirectory = true;
