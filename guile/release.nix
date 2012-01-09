@@ -119,7 +119,7 @@ let
       [ "CPPFLAGS=-DSCM_DEBUG_TYPING_STRICTNESS=2" ]
     ];
 
-  makeCrossBuild = from: to:
+  makeCrossBuild = from: to: configureFlags:
     { tarball ? jobs.tarball {},
       native_guile ? jobs.build {}  # a native Guile build
     }:
@@ -135,17 +135,7 @@ let
         configureFlags =
           # Trick to have -I...-libunistring/include in CPPFLAGS.
           [ "--with-libunistring-prefix=${crosspkgs.libunistring.hostDrv}" ] ++
-
-          # `AI_ALL' & co. are missing on MinGW, so `net_db.c' won't build.
-          (crosspkgs.stdenv.lib.optional (to == crossSystems.i686_pc_mingw32)
-                "--disable-networking") ++
-
-          # On GNU, libgc depends on libpthread, but the cross linker doesn't
-          # know where to find libpthread, which leads to erroneous test failures
-          # in `configure', where `-pthread' and `-lpthread' aren't explicitly
-          # passed.  So it needs some help (XXX).
-          (crosspkgs.stdenv.lib.optional (to == crossSystems.i586_pc_gnu)
-                "LDFLAGS=-Wl,-rpath-link=${crosspkgs.gnu.libpthreadCross}/lib");
+          (configureFlags crosspkgs);
 
         makeFlags = [ "V=1" ];
 
@@ -363,11 +353,22 @@ let
 
     xbuild_gnu =
       # Cross build to GNU.
-      makeCrossBuild "x86_64-linux" (crossSystems.i586_pc_gnu);
+      makeCrossBuild "x86_64-linux" crossSystems.i586_pc_gnu
+        (xpkgs:
+           # On GNU, libgc depends on libpthread, but the cross linker doesn't
+           # know where to find libpthread, which leads to erroneous test failures
+           # in `configure', where `-pthread' and `-lpthread' aren't explicitly
+           # passed.  So it needs some help (XXX).
+           [ "LDFLAGS=-Wl,-rpath-link=${xpkgs.gnu.libpthreadCross}/lib" ]);
 
     xbuild_mingw =
       # Cross build to MinGW.
-      makeCrossBuild "i686-linux" (crossSystems.i686_pc_mingw32);
+      makeCrossBuild "i686-linux" crossSystems.i686_pc_mingw32
+        (xpkgs:
+           # `AI_ALL' & co. are missing on MinGW, so `net_db.c' won't build.
+           [ "--disable-networking"
+             "--with-libiconv-prefix=${xpkgs.libiconv.hostDrv}"
+           ]);
   }
 
   //
