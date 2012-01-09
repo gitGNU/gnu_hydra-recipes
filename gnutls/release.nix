@@ -1,5 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
-   Copyright (C) 2010, 2011  Ludovic Courtès <ludo@gnu.org>
+   Copyright (C) 2010, 2011, 2012  Ludovic Courtès <ludo@gnu.org>
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -95,6 +95,7 @@ let
 
         doCheck = false;
 
+        autoconfPhase = "make autoreconf";
         configureFlags =
           "--with-lzo --with-libtasn1-prefix=${libtasn1} --enable-guile"
           + " --enable-gtk-doc";
