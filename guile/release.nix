@@ -369,6 +369,12 @@ let
            [ "--disable-networking"
              "--with-libiconv-prefix=${xpkgs.libiconv.hostDrv}"
            ]);
+
+    xbuild_mipsel_linux_gnu =
+      # Cross build to `mipsel-linux-gnu' (Ben Nanonote).
+      makeCrossBuild "x86_64-linux" crossSystems.mipsel_nanonote_linux_gnu
+        (xpkgs: [ ]);
+
   }
 
   //
