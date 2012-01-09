@@ -150,7 +150,8 @@ let
                 readline);
 
         doCheck = false;
-        inherit meta buildOutOfSourceTree succeedOnFailure keepBuildDirectory;
+        meta = meta // { schedulingPriority = "50"; };
+        inherit buildOutOfSourceTree succeedOnFailure keepBuildDirectory;
       }).hostDrv;
 
   jobs = rec {
