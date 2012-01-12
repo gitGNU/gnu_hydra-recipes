@@ -421,7 +421,8 @@ EOF
 
     # The unbelievable crazy thing!
     qemu_image_guile =
-      { xbuild ? (jobs.xbuild_without_parted {})
+      { tarball ? jobs.tarball
+      , parted ? (import ../parted/release.nix {}).xbuild_gnu {}
       , mach ? ((import ../gnumach/release.nix {}).build {})
       , coreutils ? xpkgs.coreutils.hostDrv
       , grep ? ((import ../grep/release.nix {}).xbuild_gnu {}) # XXX
@@ -430,6 +431,7 @@ EOF
       }:
 
       let
+        xbuild = jobs.xbuild { inherit tarball parted; };
         hurd = pkgs.lib.overrideDerivation xbuild (attrs: {
           name = "guilish-hurd";
           postInstall = attrs.postInstall + ''
