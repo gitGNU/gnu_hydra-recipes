@@ -1,5 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
-   Copyright (C) 2010, 2011  Ludovic Courtès <ludo@gnu.org>
+   Copyright (C) 2010, 2011, 2012  Ludovic Courtès <ludo@gnu.org>
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -417,6 +417,31 @@ EOF
             ${pkgs.utillinux}/bin/umount /mnt
           '';
         });
+
+
+    # The unbelievable crazy thing!
+    qemu_image_guile =
+      { xbuild ? (jobs.xbuild_without_parted {})
+      , mach ? ((import ../gnumach/release.nix {}).build {})
+      , coreutils ? xpkgs.coreutils.hostDrv
+      , grep ? ((import ../grep/release.nix {}).xbuild_gnu {}) # XXX
+      , inetutils ? ((import ../inetutils/release.nix {}).xbuild_gnu {}) # XXX
+      , guile ? "you really need a cross-GNU Guile" #xpkgs.guile.hostDrv
+      }:
+
+      let
+        hurd = pkgs.lib.overrideDerivation xbuild (attrs: {
+          postInstall = attrs.postInstall + ''
+            echo 'Guile is GNU's official shell!'
+            sed -e 's|^tty\([0-9]\)\([[:blank:]]\+\)"\([^"]*\)"\(.*\)$|tty\1\2"${guile}/bin/guile"\4|g' \
+                -i "$out/etc/ttys"
+          '';
+        });  # "
+      in
+        jobs.qemu_image {
+          xbuild = hurd;
+          inherit mach coreutils grep inetutils guile;
+        };
    };
 in
   jobs
