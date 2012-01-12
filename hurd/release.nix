@@ -322,7 +322,8 @@ let
             ${pkgs.utillinux}/bin/mount -t ext2 /dev/${hd}1 /mnt
 
             mkdir -p /mnt/nix/store
-            cp -rv "/nix/store/"*-gnu "${environment}" /mnt/nix/store
+            cp -rv "/nix/store/"*-gnu "${xbuild}" "${environment}" \
+                   /mnt/nix/store
 
             # Copy the initial packages whose store path doesn't match *-gnu.
             # The initial `hurdCross' is also need for those packages that
