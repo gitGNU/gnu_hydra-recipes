@@ -322,11 +322,14 @@ let
             ${pkgs.utillinux}/bin/mount -t ext2 /dev/${hd}1 /mnt
 
             mkdir -p /mnt/nix/store
-            cp -rv "/nix/store/"*-gnu "${xbuild}" "${environment}" \
+            cp -rv "/nix/store/"*-gnu "${environment}" \
                    /mnt/nix/store
 
+            # Copy the Hurd, in case its name doesn't match *-gnu.
+            cp -rv "${xbuild}" /mnt/nix/store
+
             # Copy the initial packages whose store path doesn't match *-gnu.
-            # The initial `hurdCross' is also need for those packages that
+            # The initial `hurdCross' is also needed for those packages that
             # refer to it, such as gdb.
             cp -rv ${pkgs.gnu.hurdHeaders} ${pkgs.gnu.hurdCross}                \
                    ${pkgs.gnu.hurdCrossIntermediate} ${pkgs.gnu.machHeaders}    \
@@ -439,9 +442,9 @@ EOF
             echo 'Guile is GNU's official shell!'
             sed -e 's|^tty\([0-9]\)\([[:blank:]]\+\)"\([^"]*\)"\(.*\)$|tty\1\2"${guile}/bin/guile"\4|g' \
                 -i "$out/etc/ttys"
-          '';
+          '';   # "
           meta = attrs.meta // { succeedOnFailure = false; };
-        });  # "
+        });
       in
         jobs.qemu_image {
           xbuild = hurd;
