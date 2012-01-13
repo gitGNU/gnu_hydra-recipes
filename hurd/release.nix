@@ -443,7 +443,7 @@ EOF
             sed -e 's|^tty\([0-9]\)\([[:blank:]]\+\)"\([^"]*\)"\(.*\)$|tty\1\2"${guile}/bin/guile"\4|g' \
                 -i "$out/etc/ttys"
           '';   # "
-          meta = attrs.meta // { succeedOnFailure = false; };
+          succeedOnFailure = false;
         });
       in
         jobs.qemu_image {
