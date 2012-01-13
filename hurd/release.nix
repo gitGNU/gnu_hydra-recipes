@@ -439,7 +439,7 @@ EOF
         hurd = pkgs.lib.overrideDerivation xbuild (attrs: {
           name = "guilish-hurd";
           postInstall = attrs.postInstall + ''
-            echo 'Guile is GNU's official shell!'
+            echo "Guile is GNU's official shell"'!'
             sed -e 's|^tty\([0-9]\)\([[:blank:]]\+\)"\([^"]*\)"\(.*\)$|tty\1\2"${guile}/bin/guile"\4|g' \
                 -i "$out/etc/ttys"
           '';   # "
