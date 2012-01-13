@@ -1,5 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
-   Copyright (C) 2010, 2011  Ludovic Courtès <ludo@gnu.org>
+   Copyright (C) 2010, 2011, 2012  Ludovic Courtès <ludo@gnu.org>
    Copyright (C) 2010  Rob Vermaas <rob.vermaas@gmail.com>
 
    This program is free software: you can redistribute it and/or modify
@@ -15,8 +15,8 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
-{ nixpkgs ? { outPath = ../../nixpkgs; }
-, partedSrc ? { outPath = ../../parted; } }:
+{ nixpkgs ? { outPath = <nixpkgs>; }
+, partedSrc ? { outPath = <parted>; } }:
 
 let
   meta = {
@@ -49,39 +49,39 @@ in
   import ../gnu-jobs.nix {
     name = "parted";
     src  = partedSrc;
-    inherit nixpkgs meta; 
+    inherit nixpkgs meta;
     enableGnuCrossBuild = true;
-    
+
     customEnv = {
-        
+
       tarball = pkgs: {
-        buildInputs = with pkgs; [ git xz texinfo automake111x perl rsync gperf man cvs pkgconfig ] ++ buildInputsFrom pkgs;
+	buildInputs = with pkgs; [ git xz texinfo automake111x perl rsync gperf man cvs pkgconfig ] ++ buildInputsFrom pkgs;
       } ;
-      
+
       build = pkgs: {
-        buildInputs = buildInputsFrom pkgs;
-        preCheck =
-          # Some tests assume `mkswap' is in $PATH.
-          '' export PATH="${pkgs.utillinuxng}/sbin:$PATH"
-          '';
+	buildInputs = buildInputsFrom pkgs;
+	preCheck =
+	  # Some tests assume `mkswap' is in $PATH.
+	  '' export PATH="${pkgs.utillinuxng}/sbin:$PATH"
+	  '';
       };
-      
+
       coverage = pkgs: {
-        buildInputs = buildInputsFrom pkgs;
-        preCheck =
-          # Some tests assume `mkswap' is in $PATH.
-          '' export PATH="${pkgs.utillinuxng}/sbin:$PATH"
-          '';
+	buildInputs = buildInputsFrom pkgs;
+	preCheck =
+	  # Some tests assume `mkswap' is in $PATH.
+	  '' export PATH="${pkgs.utillinuxng}/sbin:$PATH"
+	  '';
       };
-      
+
       xbuild_gnu = pkgs: {
-        buildInputs = with pkgs; [ readline libuuid hurdCross ];
-        buildNativeInputs = with pkgs; [ gettext_0_18 ];
-        configureFlags =
-          [ "--disable-device-mapper"
-            "--enable-static" # The Hurd wants libparted.a
-          ];
+	buildInputs = with pkgs; [ readline libuuid gnu.hurdCross ];
+	buildNativeInputs = with pkgs; [ gettext_0_18 ];
+	configureFlags =
+	  [ "--disable-device-mapper"
+	    "--enable-static" # The Hurd wants libparted.a
+	  ];
       };
-      
-    };   
+
+    };
   }
