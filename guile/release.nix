@@ -75,7 +75,7 @@ let
 
      # Apple's GCC often ICEs when building `vm-engine.c'.  Hopefully `-O1'
      # does not stress it enough to crash.
-     ++ (stdenv.lib.optional stdenv.isDarwin "CFLAGS=-O1");
+     ++ (stdenv.lib.optional stdenv.isDarwin "CFLAGS=-O1"));
 
   /* Return a name/value attribute set where the value is a function suitable
      as a Hydra build function.  */
