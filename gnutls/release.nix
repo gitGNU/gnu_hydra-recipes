@@ -62,7 +62,7 @@ let
       }:
 
       let
-        git2cl = pkgs.stdenv.fetchurl {
+        git2cl = pkgs.fetchurl {
                    # XXX: Unversioned URL!
                    url = "http://josefsson.org/git2cl/git2cl";
                    sha256 = "1b9anjnycaw9vqwf8hx4p9xgngpbm7anx4i2w7a08pm09p72p08k";
