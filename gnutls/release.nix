@@ -61,6 +61,13 @@ let
       , libgcrypt ? pkgs.libgcrypt
       }:
 
+      let
+        git2cl = pkgs.stdenv.fetchurl {
+                   # XXX: Unversioned URL!
+                   url = "http://josefsson.org/git2cl/git2cl";
+                   sha256 = "1b9anjnycaw9vqwf8hx4p9xgngpbm7anx4i2w7a08pm09p72p08k";
+                 };
+      in
       releaseTools.sourceTarball {
 	name = "gnutls-tarball";
 	src = gnutlsSrc;
@@ -71,13 +78,20 @@ let
         dontBuild = false;
 
         patchPhase =
+          # Copy `git2cl' and add it to $PATH.
           # Remove occurrences of /usr/bin/perl and /bin/bash.
-          '' for i in                           \
+          '' mkdir "$TMPDIR/bin"
+             cp -v "${git2cl}" "$TMPDIR/bin"
+             chmod +x "$TMPDIR/bin/git2cl"
+             export PATH="$TMPDIR/bin:$PATH"
+
+             for i in                           \
                 tests/nist-pkits/build-chain    \
                 doc/scripts/sort2.pl            \
                 doc/scripts/gdoc                \
                 doc/doxygen/Doxyfile.orig       \
-                doc/doxygen/Doxyfile.in
+                doc/doxygen/Doxyfile.in         \
+                "$TMPDIR/bin/git2cl"
              do
                echo "patching \`/usr/bin/perl' in \`$i'..."
                sed -i "$i" -e's|/usr/bin/perl|${pkgs.perl}/bin/perl|g'
