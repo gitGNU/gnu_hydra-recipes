@@ -1,5 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
-   Copyright (C) 2010  Ludovic Courtès <ludo@gnu.org>
+   Copyright (C) 2010, 2012  Ludovic Courtès <ludo@gnu.org>
    Copyright (C) 2009, 2010  Rob Vermaas <rob.vermaas@gmail.com>
 
    This program is free software: you can redistribute it and/or modify
@@ -42,6 +42,7 @@ in
 
     customEnv = {
       tarball = pkgs: {
+        dontBuild = false;                        # to build `src/version.c'
         buildInputs = with pkgs; [
           git
           gettext_0_17
