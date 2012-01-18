@@ -81,7 +81,7 @@ let
           # Copy `git2cl' and add it to $PATH.
           # Remove occurrences of /usr/bin/perl and /bin/bash.
           '' mkdir "$TMPDIR/bin"
-             cp -v "${git2cl}" "$TMPDIR/bin"
+             cp -v "${git2cl}" "$TMPDIR/bin/git2cl"
              chmod +x "$TMPDIR/bin/git2cl"
              export PATH="$TMPDIR/bin:$PATH"
 
