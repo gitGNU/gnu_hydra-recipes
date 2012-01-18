@@ -37,31 +37,34 @@ in
   import ../gnu-jobs.nix {
     name = "diffutils";
     src  = diffutils;
-    inherit nixpkgs meta; 
+    inherit nixpkgs meta;
     enableGnuCrossBuild = true;
 
     customEnv = {
       tarball = pkgs: {
-        dontBuild = false;                        # to build `src/version.c'
-        buildInputs = with pkgs; [
-          git
-          gettext_0_17
-          cvs
-          texinfo
-          perl
-          automake111x
-          autoconf
-          rsync
-          gperf
-          help2man
-          xz
-        ] ;
-      } ;
-      
-      coverage = pkgs: {
-        schedulingPriority = 50;  
+	dontBuild = false;                        # to build `src/version.c'
+	buildInputs = with pkgs; [
+	  git
+	  gettext_0_17
+	  cvs
+	  texinfo
+	  perl
+	  automake111x
+	  autoconf
+	  rsync
+	  gperf
+	  help2man
+	  xz
+	];
+	patchPhase =
+          # FIXME: Use the nice trick to avoid the absolute path.
+	  '' sed -i "man/help2man" -e's|/usr/bin/perl|${pkgs.perl}/bin/perl|g'
+	  '';
       };
-      
-    };   
+
+      coverage = pkgs: {
+	schedulingPriority = 50;
+      };
+
+    };
   }
-  
