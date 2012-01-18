@@ -1,4 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
+   Copyright (C) 2012  Ludovic Courtès <ludo@gnu.org>
    Copyright (C) 2010  Rob Vermaas <rob.vermaas@gmail.com>
 
    This program is free software: you can redistribute it and/or modify
@@ -25,7 +26,7 @@ let
   buildInputsFrom = pkgs: with pkgs;
     [ gfortran readline ncurses perl qhull blas liblapack pcre imagemagick
       gnuplot fftw zlib ghostscript transfig xfig pstoedit hdf5 texinfo
-      qrupdate suitesparse curl fltk11 texLive qhull
+      qrupdate suitesparse curl fltk13 texLive qhull
     ];
 
   succeedOnFailure = true;
