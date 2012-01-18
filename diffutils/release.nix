@@ -71,5 +71,9 @@ in
 	meta = meta // { schedulingPriority = 50; };
       };
 
+      xbuild_gnu = pkgs: {
+        buildNativeInputs = [ pkgs.xz ];
+	meta = meta // { schedulingPriority = 10; };
+      };
     };
   }
