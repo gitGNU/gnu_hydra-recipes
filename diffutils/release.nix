@@ -62,8 +62,13 @@ in
 	  '';
       };
 
+      build = pkgs: {
+        buildNativeInputs = [ xz ];
+      };
+
       coverage = pkgs: {
-	schedulingPriority = 50;
+        buildNativeInputs = [ xz ];
+	meta = meta // { schedulingPriority = 50; };
       };
 
     };
