@@ -1,5 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
-   Copyright (C) 2010  Ludovic Courtès <ludo@gnu.org>
+   Copyright (C) 2010, 2012  Ludovic Courtès <ludo@gnu.org>
    Copyright (C) 2010  Rob Vermaas <rob.vermaas@gmail.com>
 
    This program is free software: you can redistribute it and/or modify
@@ -76,7 +76,11 @@ let
 	pkgs.releaseTools.nixBuild {
 	  name = "findutils";
 	  src = tarball;
-          buildInputs = [ pkgs.dejagnu ];
+
+          # XXX: Work around build failures of Expect, Tk, Freetype, etc. on
+          # non-GNU platforms.
+          buildInputs = with pkgs;
+            (stdenv.lib.optional stdenv.isLinux dejagnu);
         inherit meta succeedOnFailure keepBuildDirectory;
 	};
 
