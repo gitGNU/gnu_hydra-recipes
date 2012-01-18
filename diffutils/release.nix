@@ -63,11 +63,11 @@ in
       };
 
       build = pkgs: {
-        buildNativeInputs = [ xz ];
+        buildNativeInputs = [ pkgs.xz ];
       };
 
       coverage = pkgs: {
-        buildNativeInputs = [ xz ];
+        buildNativeInputs = [ pkgs.xz ];
 	meta = meta // { schedulingPriority = 50; };
       };
 
