@@ -122,7 +122,7 @@ let
                 gnome.gtkdoc docbook_xsl
                 libxml2 # for its setup-hook
                 texinfo texLive
-                guile
+                guile autogen
               ]);
 
         inherit meta succeedOnFailure keepBuildDirectory;
