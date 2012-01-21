@@ -4,6 +4,12 @@ HACKING hydra-recipes                      -*- mode:org; coding:utf-8 -*-
   [[http://hydra.nixos.org/job/hydra/trunk/tarball/latest/download-by-type/doc/manual][Hydra]]
   [[http://hydra.nixos.org/job/nixpkgs/trunk/tarball/latest/download/2/manual.html][Nixpkgs]]
   [[http://hydra.nixos.org/job/nix/trunk/tarball/latest/download/1/manual.html][Nix]]
+
+* editing Nix code
+
+  - [[https://nixos.org/repos/nix/nix/trunk/misc/emacs/nix-mode.el][Emacs mode]]
+  - [[https://nixos.org/repos/nix/nix/trunk/misc/vim/syntax/nix.vim][Vim syntax highlighting]]
+
 * timeout
   If you want to shorten the time it takes for your job to hang
   (and fail), assign smallish numbers to ‘timeout’ and/or ‘maxSilent’
