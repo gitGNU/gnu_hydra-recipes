@@ -115,8 +115,7 @@ let
 
   /* The exotic configurations under test.  */
   configurationSpace =
-    [ [ "--without-threads" ]
-      [ "--disable-deprecated" "--disable-discouraged" ]
+    [ [ "--disable-deprecated" "--disable-discouraged" ]
       [ "--disable-networking" ]
       [ "--enable-guile-debug" ]
       [ "CPPFLAGS=-DSCM_DEBUG=1" ]
@@ -296,6 +295,22 @@ let
           inherit succeedOnFailure keepBuildDirectory;
           meta = meta // { schedulingPriority = "150"; };
         };
+
+    # Building without pthread support.  Do this for all values of SYSTEM,
+    # because pthread support tends to be buggy, so `--without-thread' builds
+    # allows us to see what's wrong aside from pthread support.
+    build_without_threads =
+      { tarball ? jobs.tarball { }
+      , system ? builtins.currentSystem
+      }:
+
+      let
+        build = jobs.build { inherit tarball system; };
+      in
+        pkgs.lib.overrideDerivation build (attrs: {
+          name = "guile-without-threads";
+          configureFlags = attrs.configureFlags ++ [ "--without-threads" ];
+        });
 
     # Check what it's like to build with an old compiler.
     build_gcc3 =
