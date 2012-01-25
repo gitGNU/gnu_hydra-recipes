@@ -1,5 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
-   Copyright (C) 2009, 2010, 2011  Ludovic Courtès <ludo@gnu.org>
+   Copyright (C) 2009, 2010, 2011, 2012  Ludovic Courtès <ludo@gnu.org>
    Copyright (C) 2010  Rob Vermaas <rob.vermaas@gmail.com>
 
    This program is free software: you can redistribute it and/or modify
@@ -102,16 +102,20 @@ let
           name = "inetutils";
           src = tarball;
           VERBOSE = 1;
-          buildInputs = [ pkgs.ncurses pkgs.procps ]
-            ++ (pkgs.lib.optional pkgs.stdenv.isLinux pkgs.nettools);
+          buildInputs = (with pkgs; [ ncurses ]
+            ++ (lib.optionals stdenv.isLinux [ nettools procps ]));
           configureFlags =
             [ "--with-ncurses-include-dir=${pkgs.ncurses}/include" ];
           inherit preBuild meta succeedOnFailure keepBuildDirectory;
 
-          preConfigure = '' 
-            export PATH=$PATH:${pkgs.nettools}/sbin
-            export USER=`${pkgs.coreutils}/bin/whoami`
-          '';
+          preConfigure =
+            if pkgs.stdenv.isLinux
+            then
+              ''
+                export PATH=$PATH:${pkgs.nettools}/sbin
+                export USER=`${pkgs.coreutils}/bin/whoami`
+              ''
+            else "";
 
           # needed because make check need /etc/protocols
           __noChroot=true; 
