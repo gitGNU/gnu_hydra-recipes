@@ -284,11 +284,11 @@ let
           buildInputs = buildInputsFrom pkgs;
 
           buildOutOfSourceTree =
-            # On FreeBSD, the `.texi.info' rule under `doc/ref' is triggered,
-            # which attempts to rebuild `guile.info' under $srcdir, which
-            # fails when that location is not writable.  Not sure why (clock
-            # skew?), but let's avoid it.
-            if stdenv.isFreeBSD
+            # On FreeBSD and OpenIndiana, the `.texi.info' rule under
+            # `doc/ref' is triggered, which attempts to rebuild `guile.info'
+            # under $srcdir, which fails when that location is not writable.
+            # Not sure why (clock skew?), but let's avoid it.
+            if stdenv.isFreeBSD || stdenv.isSunOS
             then false
             else buildOutOfSourceTree;
 
