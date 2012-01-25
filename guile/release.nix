@@ -254,7 +254,14 @@ let
       releaseTools.nixBuild {
         name = "guile-manual";
         src = tarball;
-        buildInputs = buildInputsFrom pkgs ++ [ pkgs.texinfo pkgs.texLive ];
+        buildInputs = buildInputsFrom pkgs
+           ++ (with pkgs;
+                 [ texinfo
+                   (texLiveAggregationFun {
+                     paths = [ texLive texLiveCMSuper ];
+                   })
+                 ]);
+
         doCheck = false;
 
         buildPhase = "make -C doc/ref html pdf";
