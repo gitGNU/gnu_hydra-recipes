@@ -45,7 +45,7 @@ let
   ];
 
   buildOutOfSourceTree = true;
-  succeedOnFailure = true;
+  succeedOnFailure = false;
   keepBuildDirectory = true;
 
   /* Return the default configuration flags.  */
@@ -177,6 +177,9 @@ let
           gnum4  # this should be a propagated build input of Autotools
           texinfo
           xz
+          (texLiveAggregationFun {
+            paths = [ texLive texLiveCMSuper ];
+          })
         ] ++ buildInputsFrom pkgs;
 
         # "make dist" needs to generate Texinfo files in `doc/ref' using the
@@ -202,6 +205,8 @@ let
              ulimit -c unlimited
           '';
 
+        configureFlags = [ "--disable-silent-rules" ];
+
         buildPhase =
           '' make
 
@@ -209,6 +214,15 @@ let
              # file named `<stdout>.gcov' since that confuses lcov.
              sed -i "libguile/c-tokenize.c" \
                  -e's/"<stdout>"/"c-tokenize.c"/g'
+          '';
+
+        postDist =
+          # Tell Hydra about our manual.
+          '' make -C doc/ref guile.pdf guile.html
+             cp -rv doc/ref/guile.{pdf,html} "$out"
+             ( echo "doc-pdf manual $out/guile.pdf" ;         \
+               echo "doc manual $out/guile.html index.html" ) \
+               >> $out/nix-support/hydra-build-products
           '';
 
         inherit succeedOnFailure keepBuildDirectory;
@@ -243,36 +257,6 @@ let
         inherit succeedOnFailure keepBuildDirectory;
 
         meta = meta // { maxsilent = 10000; schedulingPriority = "20"; };
-      };
-
-    manual =
-      { tarball ? jobs.tarball {}
-      }:
-
-      with pkgs;
-
-      releaseTools.nixBuild {
-        name = "guile-manual";
-        src = tarball;
-        buildInputs = buildInputsFrom pkgs
-           ++ (with pkgs;
-                 [ texinfo
-                   (texLiveAggregationFun {
-                     paths = [ texLive texLiveCMSuper ];
-                   })
-                 ]);
-
-        doCheck = false;
-
-        buildPhase = "make -C doc/ref html pdf";
-        installPhase =
-          '' make -C doc/ref install-html install-pdf
-
-             ensureDir "$out/nix-support"
-             echo "doc manual $out/share/doc/guile/guile.html index.html" >> "$out/nix-support/hydra-build-products"
-             echo "doc-pdf manual $out/share/doc/guile/guile.pdf" >> "$out/nix-support/hydra-build-products"
-          '';
-        inherit meta buildOutOfSourceTree succeedOnFailure keepBuildDirectory;
       };
 
     # The default build, executed on all platforms.
