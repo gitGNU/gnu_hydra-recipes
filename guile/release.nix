@@ -256,7 +256,7 @@ let
 
         inherit succeedOnFailure keepBuildDirectory;
 
-        meta = meta // { maxsilent = 10000; schedulingPriority = "20"; };
+        meta = meta // { maxSilent = 10000; schedulingPriority = "20"; };
       };
 
     # The default build, executed on all platforms.
