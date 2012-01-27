@@ -121,7 +121,10 @@ let
                 cvs # for `autopoint'
                 gnome.gtkdoc docbook_xsl
                 libxml2 # for its setup-hook
-                texinfo texLive
+                texinfo
+                (texLiveAggregationFun {
+                  paths = [ texLive texLiveCMSuper ];
+                })
                 guile autogen
               ]);
 
@@ -200,7 +203,12 @@ let
           "--with-lzo --with-libtasn1-prefix=${libtasn1} --enable-guile";
         buildInputs = (buildInputsFrom pkgs)
           ++ [ libtasn1 libgcrypt ]
-          ++ (with pkgs; [ guile texinfo texLive ]);
+          ++ (with pkgs;
+               [ guile texinfo
+                 (texLiveAggregationFun {
+                    paths = [ texLive texLiveCMSuper ];
+                 })
+               ]);
 
         buildPhase = "make && make -C doc html pdf";
         doCheck = false;
