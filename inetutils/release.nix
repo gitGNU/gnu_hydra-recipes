@@ -102,7 +102,7 @@ let
           name = "inetutils";
           src = tarball;
           VERBOSE = 1;
-          buildInputs = (with pkgs; [ ncurses ]
+          buildInputs = (with pkgs; [ readline ncurses ]
             ++ (lib.optionals stdenv.isLinux [ nettools procps ]));
           configureFlags =
             [ "--with-ncurses-include-dir=${pkgs.ncurses}/include" ];
