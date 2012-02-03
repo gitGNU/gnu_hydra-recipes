@@ -126,7 +126,20 @@ let
       , system ? "x86_64-linux"
       }:
 
-      let pkgs = import nixpkgs { inherit system; };
+      let
+        pkgs = import nixpkgs {
+          inherit system;
+          config = {
+            overridePackages = pkgs: {
+              # Disable the Guile bindings of GnuTLS since Guile currently
+              # fails to build on non-GNU systems.
+              gnutls2 = pkgs.gnutls2.override {
+                guileBindings = false;
+                guile = null;
+              };
+            };
+          };
+        };
       in
         pkgs.releaseTools.nixBuild {
           name = "inetutils";
