@@ -131,12 +131,25 @@ let
         pkgs.releaseTools.nixBuild {
           name = "inetutils";
           src = tarball;
-          buildInputs = buildInputsFrom pkgs;
+          buildInputs = (with pkgs; [ readline ncurses ]
+            ++ (lib.optionals stdenv.isLinux [ nettools procps ]));
           configureFlags =
             [ "--with-ncurses-include-dir=${pkgs.ncurses}/include"
               "--with-shishi=${pkgs.shishi}"
             ];
           inherit preBuild meta;
+
+          preConfigure =
+            if pkgs.stdenv.isLinux
+            then
+              ''
+                export PATH=$PATH:${pkgs.nettools}/sbin
+                export USER=`${pkgs.coreutils}/bin/whoami`
+              ''
+            else "";
+
+          # needed because make check need /etc/protocols
+          __noChroot=true;
         };
 
     xbuild_gnu =
