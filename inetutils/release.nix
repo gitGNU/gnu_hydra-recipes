@@ -130,7 +130,7 @@ let
         pkgs = import nixpkgs {
           inherit system;
           config = {
-            overridePackages = pkgs: {
+            packageOverrides = pkgs: {
               # Disable the Guile bindings of GnuTLS since Guile currently
               # fails to build on non-GNU systems.
               gnutls2 = pkgs.gnutls2.override {
