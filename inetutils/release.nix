@@ -49,6 +49,16 @@ let
     # `netstat'.
     (lib.optional stdenv.isLinux nettools);
 
+  # Return a pre-configure phase for PKGS.
+  preConfigureFor = pkgs:
+    if pkgs.stdenv.isLinux
+    then
+      ''
+        export PATH=$PATH:${pkgs.nettools}/sbin
+        export USER=`${pkgs.coreutils}/bin/whoami`
+      ''
+    else "";
+
   succeedOnFailure = true;
   keepBuildDirectory = true;
 
@@ -106,16 +116,9 @@ let
             ++ (lib.optionals stdenv.isLinux [ nettools procps ]));
           configureFlags =
             [ "--with-ncurses-include-dir=${pkgs.ncurses}/include" ];
-          inherit preBuild meta succeedOnFailure keepBuildDirectory;
 
-          preConfigure =
-            if pkgs.stdenv.isLinux
-            then
-              ''
-                export PATH=$PATH:${pkgs.nettools}/sbin
-                export USER=`${pkgs.coreutils}/bin/whoami`
-              ''
-            else "";
+          preConfigure = preConfigureFor pkgs;
+          inherit preBuild meta succeedOnFailure keepBuildDirectory;
 
           # needed because make check need /etc/protocols
           __noChroot=true; 
@@ -150,16 +153,9 @@ let
             [ "--with-ncurses-include-dir=${pkgs.ncurses}/include"
               "--with-shishi=${pkgs.shishi}"
             ];
-          inherit preBuild meta;
 
-          preConfigure =
-            if pkgs.stdenv.isLinux
-            then
-              ''
-                export PATH=$PATH:${pkgs.nettools}/sbin
-                export USER=`${pkgs.coreutils}/bin/whoami`
-              ''
-            else "";
+          preConfigure = preConfigureFor pkgs;
+          inherit preBuild meta;
 
           # needed because make check need /etc/protocols
           __noChroot=true;
@@ -195,6 +191,7 @@ let
           [ "--with-ncurses-include-dir=${pkgs.ncurses}/include"
             "--with-shishi=${pkgs.shishi}"
           ];
+        preConfigure = preConfigureFor pkgs;
         inherit preBuild meta;
       };
 
