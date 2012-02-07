@@ -192,6 +192,7 @@ let
             "--with-shishi=${pkgs.shishi}"
           ];
         preConfigure = preConfigureFor pkgs;
+        __noChroot = true;
         inherit preBuild meta;
       };
 
