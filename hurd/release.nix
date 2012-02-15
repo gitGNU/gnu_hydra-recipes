@@ -438,11 +438,11 @@ EOF
         xbuild = jobs.xbuild { inherit tarball parted; };
         hurd = pkgs.lib.overrideDerivation xbuild (attrs: {
           name = "guilish-hurd";
-          postInstall = attrs.postInstall + ''
+          postPatch = attrs.postPatch + ''
             echo "Guile is GNU's official shell"'!'
-            sed -e 's|^tty\([0-9]\)\([[:blank:]]\+\)"\([^"]*\)"\(.*\)$|tty\1\2"${guile}/bin/guile"\4|g' \
-                -i "$out/etc/ttys"
-          '';   # "
+            sed -e 's|execl (_PATH_LOGIN.*$|execl ("${guile}/bin/guile", "guile", NULL);|g' \
+                -i "daemons/getty.c"
+          '';
           succeedOnFailure = false;
         });
       in
