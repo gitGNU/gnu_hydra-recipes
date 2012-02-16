@@ -129,6 +129,9 @@ let
 
     let
       crosspkgs = import nixpkgs { system = from; crossSystem = to; };
+
+      # XXX: Temporarily use an old libgc know to work on GNU/Hurd.
+      libgc = import ./old-libgc.nix { inherit (crosspkgs) fetchurl stdenv; };
     in
       (crosspkgs.releaseTools.nixBuild {
         name = "guile";
@@ -145,12 +148,12 @@ let
         buildNativeInputs =
           [ native_guile crosspkgs.gawk crosspkgs.makeWrapper ];
 
-        buildInputs = with crosspkgs;
-          [ libtool gmp libunistring pkgconfig boehmgc libffi ]
+        buildInputs = [ libgc ] ++
+          (with crosspkgs; [ libtool gmp libunistring pkgconfig libffi ])
 
           # XXX: ncurses fails to build on MinGW.
           ++ (crosspkgs.stdenv.lib.optional (to != crossSystems.i686_pc_mingw32)
-                readline);
+                crosspkgs.readline);
 
         doCheck = false;
         meta = meta // { schedulingPriority = "50"; };
