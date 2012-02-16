@@ -438,10 +438,14 @@ EOF
         xbuild = jobs.xbuild { inherit tarball parted; };
         hurd = pkgs.lib.overrideDerivation xbuild (attrs: {
           name = "guilish-hurd";
+
+          # Set $SHELL, which is honored by `login' (executing directly
+          # `guile' instead of `login' doesn't work, as `login' does
+          # important terminal setup.)
           postPatch = attrs.postPatch + ''
             echo "Guile is GNU's official shell"'!'
-            sed -e 's|execl (_PATH_LOGIN.*$|execl ("${guile}/bin/guile", "guile", NULL);|g' \
-                -i "daemons/getty.c"
+            sed -e 's|^SHELL=.*|SHELL="${guile}/bin/guile"|g' \
+                -i "daemons/runsystem.sh"
           '';
           succeedOnFailure = false;
         });
