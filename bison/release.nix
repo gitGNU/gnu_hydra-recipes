@@ -1,5 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
-   Copyright (C) 2010-2011  Ludovic Courtès <ludo@gnu.org>
+   Copyright (C) 2010-2012  Ludovic Courtès <ludo@gnu.org>
    Copyright (C) 2010-2011  Rob Vermaas <rob.vermaas@gmail.com>
 
    This program is free software: you can redistribute it and/or modify
@@ -43,6 +43,7 @@ let
 
     # Those who will receive email notifications.
     maintainers = [
+      "Akim Demaille <akim@lrde.epita.fr>"
       "Rob Vermaas <rob.vermaas@gmail.com>"
     ];
   };
