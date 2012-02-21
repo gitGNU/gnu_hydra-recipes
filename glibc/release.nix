@@ -1,5 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
-   Copyright (C) 2010, 2011  Ludovic Courtès <ludo@gnu.org>
+   Copyright (C) 2010, 2011, 2012  Ludovic Courtès <ludo@gnu.org>
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -180,15 +180,34 @@ let
       meta = meta // { description = "Hurd patches for the GNU C Library"; };
      };
 
+  tarball_hurd_patched =
+    # A tarball based on sourceware.org glibc and patched for the Hurd.  The
+    # point is mainly to test whether the Hurd patch applies.
+    { glibcSrc ? { outPath = /data/src/glibc; } }:
+
+    let
+      tarball = jobs.tarball { inherit glibcSrc; };
+    in
+      pkgs.lib.overrideDerivation tarball ({
+        name = "glibc-hurd-patched-tarball";
+        src = glibcSrc;                           # sourceware.org glibc
+        postPatch =
+          '' for p in ${hurd_patches}/[0-9]*.patch
+             do
+               echo "applying patch \`$p'..."
+               patch --batch -p1 < $p || exit 1
+             done
+          '';
+      });
+
   jobs = rec {
 
     tarball =
-      { glibcSrc ? { outPath = /data/src/glibc; }
-      , hurdPatches ? false }:
+      { glibcSrc ? { outPath = /data/src/glibc; } }:
 
       releaseTools.sourceTarball ({
-	name = "glibc-tarball";
-	src = glibcSrc;
+	name = "glibc${if glibcHurd != false then "-hurd" else ""}-tarball";
+	src = if glibcHurd != false then glibcHurd else glibcSrc;
 
         patches =
           (map (x: "${nixpkgs}/pkgs/development/libraries/glibc-2.12/${x}")
@@ -228,21 +247,7 @@ let
           '';
 
         inherit meta succeedOnFailure keepBuildDirectory;
-      }
-
-      //
-
-      (if hurdPatches != false
-       then {
-         postPatch =
-           '' for p in ${hurdPatches}/[0-9]*.patch
-              do
-                echo "applying patch \`$p'..."
-                patch --batch -p1 < $p || exit 1
-              done
-           '';
-       }
-       else { }));
+      });
 
     build =
       # Native builds.
@@ -300,7 +305,7 @@ let
   //
 
   (if glibcHurd != false
-   then { inherit hurd_patches; }
+   then { inherit hurd_patches tarball_hurd_patched; }
    else { });
 
 in jobs
