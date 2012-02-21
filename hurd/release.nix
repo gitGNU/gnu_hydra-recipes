@@ -123,7 +123,7 @@ let
                cp -v "hurd/"*.msgids "$out/share/msgids"
 
                # Last but not least...
-               cp -v "console/motd.UTF8" "$out/etc/"
+               cp -v "console/motd.UTF8" "$out/etc/motd"
             '';
 
           enableParallelBuild = true;
