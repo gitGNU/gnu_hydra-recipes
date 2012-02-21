@@ -56,8 +56,6 @@ let
   # Build out-of-tree; don't produce self rpaths.
   preConfigure =
     ''
-       set -x
-
        mkdir ../build
        cd ../build
 
@@ -227,7 +225,6 @@ let
         # Remove absolute paths from `configure' & co.; build out-of-tree.
         preConfigure =
           ''
-             set -x
              for i in configure io/ftwtest-sh; do
                  sed -i "$i" -e "s^/bin/pwd^pwd^g"
              done
