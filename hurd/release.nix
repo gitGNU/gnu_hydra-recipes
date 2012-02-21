@@ -96,7 +96,7 @@ let
             ++ (pkgs.stdenv.lib.optional (parted != null) parted);
           dontPatchShebangs = true;
 
-          patches = [ ./console-run.patch ];
+          patches = [ ./console-run.patch ./console-server-utf8.patch ];
 
           # Patch absolute paths.
           postPatch =
