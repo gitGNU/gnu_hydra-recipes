@@ -188,7 +188,7 @@ let
     let
       tarball = jobs.tarball { inherit glibcSrc; };
     in
-      pkgs.lib.overrideDerivation tarball ({
+      pkgs.lib.overrideDerivation tarball (attrs: {
         name = "glibc-hurd-patched-tarball";
         src = glibcSrc;                           # sourceware.org glibc
         postPatch =
