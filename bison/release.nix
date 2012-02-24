@@ -66,8 +66,6 @@ in
       tarball = pkgs: {
         postUnpack = ''
           sed -i "s|/usr/bin/perl|${pkgs.perl}/bin/perl|" */etc/prefix-gnulib-mk 
-          # temp remove until fixed upstream
-          sed -i "s|lib/pipe.c||" */po/POTFILES.in
         '';
         buildInputs = with pkgs; [
           automake111x
