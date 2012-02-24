@@ -83,7 +83,7 @@ in
       } ;
  
       build = pkgs: {
-        buildInputs = [(m4 pkgs) flex pkgs.perl];
+        buildInputs = [(m4 pkgs) pkgs.perl pkgs.flex];
       };      
 
       coverage = pkgs: {
