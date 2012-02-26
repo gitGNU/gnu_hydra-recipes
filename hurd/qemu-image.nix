@@ -208,7 +208,7 @@ module  /hurd/ext2fs.static ext2fs \
   --device-master-port='${dollar}{device-port}' \
   --exec-server-task='${dollar}{exec-task}' -T typed '${dollar}{root}' \
   '\$(task-create)' '\$(task-resume)'
-module ${pkgs.glibc}/lib/ld.so.1 exec /hurd/exec '\$(exec-task=task-create)'
+module ${pkgs.glibc.hostDrv}/lib/ld.so.1 exec /hurd/exec '\$(exec-task=task-create)'
 }
 EOF
 
