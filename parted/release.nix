@@ -55,7 +55,11 @@ in
     customEnv = {
 
       tarball = pkgs: {
-	buildInputs = with pkgs; [ git xz texinfo automake111x perl rsync gperf man cvs pkgconfig ] ++ buildInputsFrom pkgs;
+	buildInputs =
+          (with pkgs;
+            [ git xz texinfo automake111x perl rsync gperf man cvs
+              pkgconfig bc ])
+          ++ buildInputsFrom pkgs;
       } ;
 
       build = pkgs: {
