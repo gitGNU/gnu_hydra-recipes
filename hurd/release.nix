@@ -146,8 +146,9 @@ let
     # Complete cross bootstrap of GNU from GNU/Linux.
     xbootstrap =
       { tarball ? jobs.tarball
-      , glibcTarball ? (import ../glibc/release.nix {}).tarball
+      , glibcTarball ? (import ../glibc/release.nix { glibcHurd = <glibc>; }).tarball {}
       , machTarball ? (import ../gnumach/release.nix {}).tarball
+      , partedTarball ? ((import ../parted/release.nix {}).tarball {})
       }:
 
       let
@@ -180,6 +181,9 @@ let
               glibcCross =
                  override "glibc" pkgs.glibcCross glibcTarball false;
 
+              hurdPartedCross =
+                 override "parted" pkgs.glibcCross glibcTarball false;
+
               gnu = pkgs.gnu // {
                 hurdCross =
                    override "hurd" pkgs.gnu.hurdCross tarball true;
@@ -203,7 +207,8 @@ let
         (pkgs.releaseTools.nixBuild {
           name = "hurd";
           src = tarball;
-          propagatedBuildNativeInputs = [ pkgs.gnu.machHeaders ];
+          propagatedBuildNativeInputs = with pkgs;
+            [ gnu.machHeaders hurdPartedCross ];
           buildNativeInputs = [ pkgs.gnu.mig ];
           inherit meta succeedOnFailure keepBuildDirectory;
         }).hostDrv;
