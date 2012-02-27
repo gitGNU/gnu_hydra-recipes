@@ -182,7 +182,7 @@ let
                  override "glibc" pkgs.glibcCross glibcTarball false;
 
               hurdPartedCross =
-                 override "parted" pkgs.glibcCross glibcTarball false;
+                 override "parted" pkgs.partedCross partedTarball false;
 
               gnu = pkgs.gnu // {
                 hurdCross =
