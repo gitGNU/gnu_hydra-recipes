@@ -43,7 +43,7 @@ let
   };
 
   buildInputsFrom = pkgs: with pkgs;
-    [ devicemapper libuuid gettext_0_18 readline check ];
+    [ xz devicemapper libuuid gettext_0_18 readline check ];
 
 in
   import ../gnu-jobs.nix {
