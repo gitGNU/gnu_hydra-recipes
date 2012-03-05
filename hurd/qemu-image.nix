@@ -17,6 +17,8 @@
 { pkgs ? (import <nixpkgs> {})
 , fullName ? "QEMU Disk Image of GNU/Hurd"
 , hurd, mach
+, machExtraArgs ? ""                              # example: "console=com0"
+, rcExtraCode ? ""                                # appended to /libexec/rc
 , environment ? (pkgs: [ mach hurd ]
                   ++ (map (p: p.hostDrv)
                           (with pkgs;
@@ -115,7 +117,6 @@ in
       '';
 
     # Command to build the disk image.
-    # TODO: console=com0
     buildCommand = let hd = "vda"; dollar = "\\\$"; in ''
       ${pkgs.parted}/sbin/parted /dev/${hd} \
          mklabel msdos mkpart primary ext2 1MiB 750MiB
@@ -159,6 +160,7 @@ in
       cp -rv "${hurd}/libexec" /mnt
       cat >> /mnt/libexec/rc <<EOF
 ${translatorSetup}
+${rcExtraCode}
 EOF
 
       # Patch /libexec/runsystem to start the console client.
@@ -208,7 +210,8 @@ set timeout=5
 search.file /boot/gnumach
 
 menuentry "GNU (wannabe NixOS GNU/Hurd)" {
-multiboot /boot/gnumach root=device:hd0s1
+multiboot /boot/gnumach root=device:hd0s1 \
+  ${machExtraArgs}
 module  /hurd/ext2fs.static ext2fs \
   --multiboot-command-line='${dollar}{kernel-command-line}' \
   --host-priv-port='${dollar}{host-port}' \
