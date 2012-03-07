@@ -35,7 +35,10 @@ let
     license = "GPLv2+";
 
     # Those who will receive email notifications.
-    maintainers = [ "Ludovic Courtès <ludo@gnu.org>" ];
+    maintainers =
+      [ "Thomas Schwinge <thomas@schwinge.name>"
+        "Ludovic Courtès <ludo@gnu.org>"
+      ];
   };
 
   pkgs = import nixpkgs {};

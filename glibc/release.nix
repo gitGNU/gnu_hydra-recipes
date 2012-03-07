@@ -34,7 +34,10 @@ let
     license = "LGPLv2+";
 
     # Those who will receive email notifications.
-    maintainers = [ "ludo@gnu.org" ];
+    maintainers = [ "ludo@gnu.org" ]
+      ++ (if glibcHurd != false
+          then [ "Thomas Schwinge <thomas@schwinge.name>" ]
+          else []);
   };
 
   pkgs = import nixpkgs {};

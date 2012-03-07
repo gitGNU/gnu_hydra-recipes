@@ -39,7 +39,10 @@ let
 
     homepage = http://www.gnu.org/software/hurd/;
 
-    maintainers = [ pkgs.stdenv.lib.maintainers.ludo ];
+    maintainers =
+      [ "Thomas Schwinge <thomas@schwinge.name>"
+        pkgs.stdenv.lib.maintainers.ludo
+      ];
   };
 
   dontStrip = true;
