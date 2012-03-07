@@ -57,8 +57,6 @@ let
 	name = "gsasl-tarball";
 	src = gsaslSrc;
 
-        patches = [ ../libtasn1/interpreter-path.patch ];
-
         # `help2man' wants to run `src/gsasl'.
         dontBuild = false;
 
