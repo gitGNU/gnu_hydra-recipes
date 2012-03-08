@@ -219,20 +219,20 @@ let
     # A QEMU disk image with GNU/Hurd on partition 1.
     qemu_image =
       { xbuild ? (jobs.xbuild_without_parted {})
-      , mach ? ((import ../gnumach/release.nix {}).build {})
+      , mach ? xpkgs.gnu.mach.hostDrv
+      , glibc ? xpkgs.glibc.hostDrv
       , coreutils ? xpkgs.coreutils.hostDrv
-      , grep ? ((import ../grep/release.nix {}).xbuild_gnu {}) # XXX
       , inetutils ? ((import ../inetutils/release.nix {}).xbuild_gnu {}) # XXX
       , guile ? xpkgs.guile.hostDrv
       }:
 
       let
         environment = pkgs:
-          [ mach xbuild coreutils grep inetutils guile ]
+          [ mach xbuild coreutils inetutils guile ]
           ++ (with pkgs;
               map (p: p.hostDrv)
                 [ glibc
-                  bashInteractive
+                  bashInteractive gnugrep
                   gnused findutils diffutils gawk
                   gcc gdb gnumake nixUnstable
                   less zile
