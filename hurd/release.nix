@@ -294,7 +294,6 @@ let
       , parted ? (import ../parted/release.nix {}).xbuild_gnu {}
       , mach ? ((import ../gnumach/release.nix {}).build {})
       , coreutils ? xpkgs.coreutils.hostDrv
-      , grep ? ((import ../grep/release.nix {}).xbuild_gnu {}) # XXX
       , inetutils ? ((import ../inetutils/release.nix {}).xbuild_gnu {}) # XXX
       , guile ? "you really need a cross-GNU Guile" #xpkgs.guile.hostDrv
       }:
@@ -317,7 +316,7 @@ let
       in
         jobs.qemu_image {
           xbuild = hurd;
-          inherit mach coreutils grep inetutils guile;
+          inherit mach coreutils inetutils guile;
         };
    };
 in
