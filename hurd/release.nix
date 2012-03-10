@@ -222,7 +222,6 @@ let
     qemu_image =
       { xbuild ? (jobs.xbuild_without_parted {})
       , mach ? xpkgs.gnu.mach.hostDrv
-      , glibc ? xpkgs.glibc.hostDrv
       , coreutils ? xpkgs.coreutils.hostDrv
       , inetutils ? ((import ../inetutils/release.nix {}).xbuild_gnu {}) # XXX
       , guile ? xpkgs.guile.hostDrv
@@ -254,7 +253,6 @@ let
     qemu_test =
       { xbuild ? (jobs.xbuild_without_parted {})
       , mach ? xpkgs.gnu.mach.hostDrv
-      , glibc ? xpkgs.glibc.hostDrv
       }:
 
       let
