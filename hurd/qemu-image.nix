@@ -82,7 +82,7 @@ let
   translatorSetup = with pkgs.lib;
     # Install translators, which cannot be done from GNU/Linux.
     (concatMapStrings (server:
-                        '' if ! showtrans -s "${server.node}"
+                        '' if ! showtrans -s "${server.node}" &> /dev/null
                            then
                              settrans -c "${server.node}" ${server.command}
                            fi
@@ -91,7 +91,7 @@ let
     +
     (concatMapStrings (node:
                         '' if [ ! -f "${node}" ] || \
-                              ! showtrans -s "${node}"
+                              ! showtrans -s "${node}" &> /dev/null
                            then
                              ( cd /dev ; MAKEDEV "${node}" )
                            fi
