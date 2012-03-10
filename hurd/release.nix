@@ -24,6 +24,8 @@ let
   pkgs = import nixpkgs {};
   xpkgs = import nixpkgs { crossSystem = crossSystems.i586_pc_gnu; };
 
+  qemuImage = import ./qemu-image.nix;
+
   meta = {
     description = "The GNU Hurd, GNU project's replacement for the Unix kernel";
 
@@ -242,14 +244,51 @@ let
           ++ [ (pkgs.wget.override { gnutls = null; perl = null; }).hostDrv
                (pkgs.shadow.override { pam = null; }).hostDrv
              ];
-
-        makeImage = import ./qemu-image.nix;
       in
-        makeImage {
+        qemuImage {
           pkgs = xpkgs;
           hurd = xbuild;
           inherit mach environment;
         };
+
+    qemu_test =
+      { xbuild ? (jobs.xbuild_without_parted {})
+      , mach ? xpkgs.gnu.mach.hostDrv
+      , glibc ? xpkgs.glibc.hostDrv
+      }:
+
+      let
+        environment = pkgs:
+          [ mach xbuild ]
+          ++ (with pkgs;
+              map (p: p.hostDrv)
+               [ gnused gnugrep findutils diffutils
+                 bash gcc gnumake gawk
+                 gnutar gzip bzip2 xz
+                 gnu.smbfs
+               ]);
+        diskImage = qemuImage {
+            pkgs = xpkgs;
+            hurd = xbuild;
+            machExtraArgs = "console=com0";
+            rcExtraCode =
+              '' set -x
+                 uname -a
+                 ls -la /host
+                 if [ -f /host/cmd ]
+                 then
+                     source /host/cmd
+                 fi
+                 reboot
+              '';
+            inherit mach environment;
+          };
+      in
+        xpkgs.vmTools.runInGenericVM (xpkgs.stdenv.mkDerivation {
+          name = "hurd-qemu-test";
+          buildCommand = "echo hey hey";
+          inherit diskImage;
+        });
 
     # The unbelievable crazy thing!
     qemu_image_guile =
