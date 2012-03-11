@@ -206,7 +206,7 @@ EOF
       mkdir -p /mnt/boot/grub
       ln -sv "${mach}/boot/gnumach" /mnt/boot
       cat > /mnt/boot/grub/grub.cfg <<EOF
-set timeout=5
+set timeout=2
 search.file /boot/gnumach
 
 menuentry "GNU (wannabe NixOS GNU/Hurd)" {
