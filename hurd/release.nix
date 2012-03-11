@@ -286,6 +286,7 @@ let
           name = "hurd-qemu-test";
           buildCommand =
             '' echo 'Hey, this operating system works like a charm!'
+               mkdir /host/xchg/out
                echo 0 > /host/xchg/in-vm-exit
             '';
           inherit diskImage;
