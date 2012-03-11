@@ -284,7 +284,10 @@ let
       in
         xpkgs.vmTools.runInGenericVM (xpkgs.stdenv.mkDerivation {
           name = "hurd-qemu-test";
-          buildCommand = "echo hey hey";
+          buildCommand =
+            '' echo 'Hey, this operating system works like a charm!'
+               echo 0 > /host/xchg/in-vm-exit
+            '';
           inherit diskImage;
         });
 
