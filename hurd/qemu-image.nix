@@ -19,6 +19,7 @@
 , hurd, mach
 , machExtraArgs ? ""                              # example: "console=com0"
 , rcExtraCode ? ""                                # appended to /libexec/rc
+, translators ? []                                # node/command attr sets
 , environment ? (pkgs: [ mach hurd ]
                   ++ (map (p: p.hostDrv)
                           (with pkgs;
@@ -43,7 +44,7 @@ let
        "shm"
     ];
 
-  servers =
+  servers = translators ++
     [ { node = "/servers/socket/1";
         command = "/hurd/pflocal";
       }
@@ -55,18 +56,8 @@ let
           + "--gateway 10.0.2.2 "
           + "--ipv6 /servers/socket/16";
       }
-      { /* SMB share installed by QEMU when run with:
-           "qemu image.qcow2 -net nic -net user,smb=/path/to/shared/dir"  */
-        node = "/host";
-        command = "${pkgs.gnu.smbfs.hostDrv}/hurd/smbfs "
-          + "-s 10.0.2.4 -r smb://10.0.2.4/qemu -u root -p '' "
-          + "-w WORKGROUP";
-      }
       { node = "/servers/password";
         command = "/hurd/password";
-      }
-      { node = "/ftp:";
-        command = "/hurd/hostmux /hurd/ftpfs /";
       }
       { node = "/servers/crash-dump-core";
         command = "/hurd/crash --dump-core";

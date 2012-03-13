@@ -228,6 +228,18 @@ let
       }:
 
       let
+        translators =
+          [ { /* SMB share installed by QEMU when run with:
+                 "qemu img.qcow2 -net nic -net user,smb=/path/to/shared/dir"  */
+              node = "/host";
+              command = "${xpkgs.gnu.smbfs.hostDrv}/hurd/smbfs "
+                + "-s 10.0.2.4 -r smb://10.0.2.4/qemu -u root -p '' ";
+            }
+            { node = "/ftp:";
+              command = "/hurd/hostmux /hurd/ftpfs /";
+            }
+          ];
+
         environment = pkgs:
           [ mach xbuild coreutils inetutils guile ]
           ++ (with pkgs;
@@ -247,7 +259,7 @@ let
         qemuImage {
           pkgs = xpkgs;
           hurd = xbuild;
-          inherit mach environment;
+          inherit mach translators environment;
         };
 
     qemu_test =
