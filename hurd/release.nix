@@ -22,7 +22,17 @@ let
   crossSystems = (import ../cross-systems.nix) { inherit pkgs; };
 
   pkgs = import nixpkgs {};
-  xpkgs = import nixpkgs { crossSystem = crossSystems.i586_pc_gnu; };
+  xpkgs = import nixpkgs {
+    crossSystem = crossSystems.i586_pc_gnu;
+    config.packageOverrides = pkgs: {
+      # Use a patched QEMU-KVM to export multiple SMB shares to the guest.
+      qemu_kvm = pkgs.lib.overrideDerivation pkgs.qemu_kvm (attrs: {
+        patches =
+          (pkgs.lib.optional (attrs ? patches) attrs.patches)
+          ++ [ ./qemu-multiple-smb-shares.patch ];
+      });
+    };
+  };
 
   qemuImage = import ./qemu-image.nix;
 
@@ -268,12 +278,23 @@ let
       }:
 
       let
+        translators =
+          [ # SMB shares installed by `runInGenericVM'.
+            { node = "/host/xchg";
+              command = "${xpkgs.gnu.smbfs.hostDrv}/hurd/smbfs "
+                + "-s 10.0.2.4 -r smb://10.0.2.4/xchg -u root -p ''";
+            }
+            { node = "/host/store";
+              command = "${xpkgs.gnu.smbfs.hostDrv}/hurd/smbfs "
+                + "-s 10.0.2.4 -r smb://10.0.2.4/store -u root -p ''";
+            }
+          ];
         environment = pkgs:
           [ mach xbuild ]
           ++ (with pkgs;
               map (p: p.hostDrv)
                [ gnused gnugrep findutils diffutils
-                 bash gcc gnumake gawk
+                 bash gcc gnumake
                  gnutar gzip bzip2 xz
                  gnu.smbfs
                ]);
@@ -284,21 +305,22 @@ let
             rcExtraCode =
               '' set -x
                  uname -a
-                 ls -la /host
-                 if [ -f /host/cmd ]
+                 ls -la /host/xchg
+                 if [ -f /host/xchg/cmd ]
                  then
-                     source /host/cmd
+                     source /host/xchg/cmd
                  fi
                  reboot
               '';
-            inherit mach environment;
+            inherit mach translators environment;
           };
+        runOnGNU = (import ./vm.nix { pkgs = xpkgs; }).runOnGNU;
       in
-        xpkgs.vmTools.runInGenericVM (xpkgs.stdenv.mkDerivation {
+        runOnGNU (xpkgs.stdenv.mkDerivation {
           name = "hurd-qemu-test";
           buildCommand =
             '' echo 'Hey, this operating system works like a charm!'
-               mkdir /host/out
+               mkdir /host/xchg/out
                echo 0 > /host/xchg/in-vm-exit
             '';
           inherit diskImage;
