@@ -84,6 +84,7 @@ let
     (concatMapStrings (server:
                         '' if ! showtrans -s "${server.node}" &> /dev/null
                            then
+                             mkdir -p "`dirname "${server.node}"`"
                              settrans -c "${server.node}" ${server.command}
                            fi
                         '')
