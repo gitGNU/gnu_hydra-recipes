@@ -252,7 +252,7 @@ let
                   gcc gdb gnumake nixUnstable
                   less zile
                   gnutar gzip bzip2 xz
-                  gnu.smbfs
+                  gnu.smbfs gnu.unionfs
                ])
           ++ [ (pkgs.wget.override { gnutls = null; perl = null; }).hostDrv
                (pkgs.shadow.override { pam = null; }).hostDrv
