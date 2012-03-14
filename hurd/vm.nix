@@ -26,9 +26,9 @@ let userPkgs = pkgs; in
   /* The default GNU image, used for testing.  */
 
   diskImage =
-    { mach ? pkgs.gnu.mach
+    { pkgs ? userPkgs
+    , mach ? pkgs.gnu.mach
     , hurd ? pkgs.gnu.hurdCross
-    , pkgs ? userPkgs
     }:
 
     let
