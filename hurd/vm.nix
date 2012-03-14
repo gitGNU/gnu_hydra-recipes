@@ -18,32 +18,101 @@
 
 { pkgs }:
 
-with pkgs;
+assert pkgs.stdenv.cross != null
+ && pkgs.stdenv.cross.config == "i586-pc-gnu";
 
+let userPkgs = pkgs; in
 {
+  /* The default GNU image, used for testing.  */
+
+  diskImage =
+    { mach ? pkgs.gnu.mach
+    , hurd ? pkgs.gnu.hurdCross
+    , pkgs ? userPkgs
+    }:
+
+    let
+      translators =
+        [ # SMB shares installed by `runOnGNU'.
+          { node = "/host/xchg";
+            command = "${pkgs.gnu.smbfs.hostDrv}/hurd/smbfs "
+              + "-s 10.0.2.4 -r smb://10.0.2.4/xchg -u root -p ''";
+          }
+          { node = "/host/store";
+            command = "${pkgs.gnu.smbfs.hostDrv}/hurd/smbfs "
+              + "-s 10.0.2.4 -r smb://10.0.2.4/store -u root -p ''";
+          }
+        ];
+      environment = pkgs:
+        [ mach hurd ]
+        ++ (with pkgs;
+            map (p: p.hostDrv)
+             [ gnused gnugrep findutils diffutils
+               bash gcc gnumake
+               gnutar gzip bzip2 xz
+               gnu.smbfs
+             ]);
+    in
+      import ./qemu-image.nix {
+        machExtraArgs = "console=com0";
+        rcExtraCode =
+          '' set -x
+             uname -a
+             ls -la /host/xchg
+             if [ -f /host/xchg/cmd ]
+             then
+                 source /host/xchg/cmd
+             fi
+             reboot
+          '';
+        inherit pkgs mach hurd translators environment;
+      };
+
   /* Run `drv' on GNU, specifically in `diskImage'.  This is a slightly
      modified version of `runInGenericVM', which expects files to be
      exchanged to be under `xchg'.  */
 
-  runOnGNU = drv: lib.overrideDerivation drv (attrs: with vmTools; {
-    requiredSystemFeatures = [ "kvm" ];
-    builder = "${bash}/bin/sh";
-    args = ["-e" (vmRunCommand qemuCommandGeneric)];
-    QEMU_OPTS = "-m ${toString (if attrs ? memSize then attrs.memSize else 256)}";
+  runOnGNU = drv:
+    let
+      # Use a patched QEMU-KVM to export multiple SMB shares to the guest.
+      kvm = pkgs.lib.overrideDerivation pkgs.qemu_kvm (attrs: {
+        patches =
+          (pkgs.lib.optional (attrs ? patches) attrs.patches)
+          ++ [ ./qemu-multiple-smb-shares.patch ];
+      });
 
-    preVM = ''
-      diskImage=$(pwd)/disk-image.qcow2
-      origImage=${attrs.diskImage}
-      if test -d "$origImage"; then origImage="$origImage/disk-image.qcow2"; fi
-      ${kvm}/bin/qemu-img create -b "$origImage" -f qcow2 $diskImage
+      # The command to run our modified QEMU-KVM with SMB shares set up.
+      qemuCommand =
+        ''
+           PATH="${pkgs.samba}/sbin:$PATH"                      \
+           ${kvm}/bin/qemu-system-x86_64 -nographic -no-reboot  \
+             -smb $(pwd) -hda $diskImage $QEMU_OPTS
+        '';
+    in
+      pkgs.lib.overrideDerivation drv (attrs:
+        let diskImage =
+              if (attrs ? diskImage) then attrs.diskImage else diskImage {};
+        in {
+          requiredSystemFeatures = [ "kvm" ];
+          builder = "${pkgs.bash}/bin/sh";
+          args = ["-e" (pkgs.vmTools.vmRunCommand qemuCommand)];
+          QEMU_OPTS = "-m ${toString (if attrs ? memSize then attrs.memSize else 256)}";
 
-      echo "$buildCommand" > xchg/cmd
+          inherit diskImage;
 
-      eval "$postPreVM"
-    '';
+          preVM = ''
+            diskImage=$(pwd)/disk-image.qcow2
+            origImage="${diskImage}"
+            if test -d "$origImage"; then origImage="$origImage/disk-image.qcow2"; fi
+            ${kvm}/bin/qemu-img create -b "$origImage" -f qcow2 $diskImage
 
-    postVM = ''
-      cp -prvd xchg/out "$out"
-    '';
-  });
+            echo "$buildCommand" > xchg/cmd
+
+            eval "$postPreVM"
+          '';
+
+          postVM = ''
+            cp -prvd xchg/out "$out"
+          '';
+        });
 }
