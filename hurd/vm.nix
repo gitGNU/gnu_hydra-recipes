@@ -100,6 +100,11 @@ let userPkgs = pkgs; in
 
           inherit diskImage;
 
+          # Pull in the build inputs of the disk image, so that they are
+          # visible in the store, which then allows the host's store to be
+          # used directly as the guest's store.
+          diskImageBuildInputs = diskImage.prerequisites;
+
           preVM = ''
             diskImage=$(pwd)/disk-image.qcow2
             origImage="${diskImage}"

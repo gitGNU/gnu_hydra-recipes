@@ -102,6 +102,12 @@ in
 
   pkgs.vmTools.runInLinuxVM (pkgs.stdenv.mkDerivation {
     name = "hurd-qemu-image";
+
+    # List of store paths used top make this image.
+    passthru.prerequisites =
+      (environment pkgs) ++ [ userEnvironment ]
+      ++ [ mach hurd ] ++ (map (t: t.command) translators);
+
     preVM = pkgs.vmTools.createEmptyImage { inherit size fullName; } +
       ''
          echo "file qemu-image $diskImage" >> \
