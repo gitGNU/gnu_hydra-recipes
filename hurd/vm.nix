@@ -111,7 +111,14 @@ let userPkgs = pkgs; in
             if test -d "$origImage"; then origImage="$origImage/disk-image.qcow2"; fi
             ${kvm}/bin/qemu-img create -b "$origImage" -f qcow2 $diskImage
 
-            echo "$buildCommand" > xchg/cmd
+            # XXX: Until the guest's /nix/store is a unionfs of its actual
+            # store and the host's one (i.e., when both unionfs and smbfs
+            # implement `io_map', so that ld.so can load binaries off them),
+            # rewrite store paths.
+            echo "$buildCommand" | \
+              ${pkgs.gnused}/bin/sed -r \
+                -e's|/nix/store/([0-9a-z]{32})-([^ ]+)|/host/store/\1-\2|g' \
+              > xchg/cmd
 
             eval "$postPreVM"
           '';
