@@ -50,7 +50,7 @@ let userPkgs = pkgs; in
              [ gnused gnugrep findutils diffutils
                bash gcc gnumake
                gnutar gzip bzip2 xz
-               gnu.smbfs gnu.unionfs
+               gnu.mig_raw gnu.smbfs gnu.unionfs
              ]);
     in
       import ./qemu-image.nix {
