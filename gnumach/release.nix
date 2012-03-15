@@ -1,5 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
-   Copyright (C) 2011  Ludovic Courtès <ludo@gnu.org>
+   Copyright (C) 2011, 2012  Ludovic Courtès <ludo@gnu.org>
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -69,6 +69,8 @@ let
         (pkgs.releaseTools.nixBuild {
           name = "gnumach";
           src = tarball;
+
+          patches = [ ./port-deallocate-debug.patch ];
 
           configureFlags =
             [ # Always enable dependency tracking.  See

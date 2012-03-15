@@ -1,0 +1,14 @@
+For testing purposes, turn on port allocation debugging, which drops
+us in KDB when an invalid port is destroyed or deallocated.
+
+--- a/ipc/mach_port.c
++++ b/ipc/mach_port.c
+@@ -555,7 +555,7 @@ mach_port_allocate(space, right, namep)
+  *		KERN_INVALID_NAME	The name doesn't denote a right.
+  */
+ 
+-static volatile int mach_port_deallocate_debug = 0;
++static volatile int mach_port_deallocate_debug = 1;
+ 
+ kern_return_t
+ mach_port_destroy(
