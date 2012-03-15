@@ -276,8 +276,20 @@ let
           name = "hurd-qemu-test";
           buildCommand =
             '' echo 'Hey, this operating system works like a charm!'
+               echo "Let's see if it can rebuild itself..."
+
+               ( tar xvf "${jobs.tarball}/tarballs/"*.tar.gz ;
+                 cd hurd-* ;
+                 export PATH="${xpkgs.gawk.hostDrv}/bin:$PATH" ;
+                 set -e ;
+                 ./configure --without-parted --prefix="/host/xchg/out" ;
+                 make -j4                         # stress it!
+               )
+
+               # FIXME: "make install" not run because `rm' fails on SMBFS.
                mkdir /host/xchg/out
-               echo 0 > /host/xchg/in-vm-exit
+
+               echo $? > /host/xchg/in-vm-exit
             '';
           diskImage = vmTools.diskImage {
             hurd = xbuild;
