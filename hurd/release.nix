@@ -300,7 +300,7 @@ let
             # When the kernel debugger is invoked, nothing else happens.  So
             # reduce the timeout-on-silence duration to 5 mn.
             maxSilent = 300;
-          }
+          };
         });
 
     # The unbelievable crazy thing!
