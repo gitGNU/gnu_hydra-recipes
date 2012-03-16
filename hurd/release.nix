@@ -295,6 +295,7 @@ let
             hurd = xbuild;
             inherit mach;
           };
+          memSize = 512;                          # GCC is memory-hungry
 
           meta = meta // {
             # When the kernel debugger is invoked, nothing else happens.  So
