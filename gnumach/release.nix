@@ -36,7 +36,7 @@ let
 
     # Those who will receive email notifications.
     maintainers =
-      [ "Thomas Schwinge <thomas@schwinge.name>"
+      [ "Hurd <commit-hurd@gnu.org>"
         "Ludovic Courtès <ludo@gnu.org>"
       ];
   };

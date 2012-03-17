@@ -44,7 +44,7 @@ let
     homepage = http://www.gnu.org/software/hurd/;
 
     maintainers =
-      [ "Thomas Schwinge <thomas@schwinge.name>"
+      [ "Hurd <commit-hurd@gnu.org>"
         pkgs.stdenv.lib.maintainers.ludo
       ];
   };

@@ -36,7 +36,7 @@ let
     # Those who will receive email notifications.
     maintainers = [ "ludo@gnu.org" ]
       ++ (if glibcHurd != false
-          then [ "Thomas Schwinge <thomas@schwinge.name>" ]
+          then [ "Hurd <commit-hurd@gnu.org>" ]
           else []);
   };
 
