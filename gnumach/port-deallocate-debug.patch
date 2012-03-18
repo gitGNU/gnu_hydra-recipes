@@ -12,3 +12,40 @@ us in KDB when an invalid port is destroyed or deallocated.
  
  kern_return_t
  mach_port_destroy(
+
+
+The remainder of this patch makes it so that "trace/tu" is automatically
+emitted when DDB is entered.
+
+--- a/ddb/db_trap.c
++++ b/ddb/db_trap.c
+@@ -53,6 +53,15 @@ extern int		db_inst_count;
+ extern int		db_load_count;
+ extern int		db_store_count;
+ 
++extern char	db_line[];
++extern char	db_last_line[];
++extern char	*db_lp, *db_endlp;
++extern char	*db_last_lp;
++extern int	db_look_char;
++extern db_expr_t db_look_token;
++extern struct db_command	*db_last_command;
++extern struct db_command db_command_table[];
++
+ void
+ db_task_trap(type, code, user_space)
+ 	int	  type, code;
+@@ -92,6 +101,13 @@ db_task_trap(type, code, user_space)
+ 		db_printf("Trouble printing location %#X.\n", db_dot);
+ 	    db_recover = prev;
+ 
++	    db_lp = "trace/tu\n";
++	    db_endlp = db_lp + __builtin_strlen(db_lp) + 1;
++	    db_last_lp = db_lp;
++	    db_look_char = 0;
++	    db_look_token = 0;
++	    db_command_list(&db_last_command, db_command_table);
++
+ 	    db_command_loop();
+ 	}
+ 
