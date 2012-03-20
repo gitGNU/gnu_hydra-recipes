@@ -306,6 +306,22 @@ let
           configureFlags = attrs.configureFlags ++ [ "--without-threads" ];
         });
 
+    # Building with GCC 4.7.
+    build_gcc47 =
+      { tarball ? jobs.tarball { }
+      , system ? builtins.currentSystem
+      }:
+
+      let
+        pkgs = import nixpkgs { inherit system; };
+        build = jobs.build { inherit tarball system; };
+      in
+        pkgs.lib.overrideDerivation build (attrs: {
+          name = "guile-gcc47";
+          preUnpack = "gcc --version";
+          buildInputs = attrs.buildInputs ++ [ pkgs.gcc47 ];
+        });
+
     # Check what it's like to build with an old compiler.
     build_gcc3 =
       { tarball ? jobs.tarball {}
