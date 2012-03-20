@@ -309,11 +309,10 @@ let
     # Building with GCC 4.7.
     build_gcc47 =
       { tarball ? jobs.tarball { }
-      , system ? builtins.currentSystem
       }:
 
       let
-        pkgs = import nixpkgs { inherit system; };
+        pkgs = import nixpkgs {};                 # x86_64-linux
         build = jobs.build { inherit tarball system; };
       in
         pkgs.lib.overrideDerivation build (attrs: {
