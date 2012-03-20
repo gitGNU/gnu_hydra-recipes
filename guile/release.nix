@@ -313,7 +313,7 @@ let
 
       let
         pkgs = import nixpkgs {};                 # x86_64-linux
-        build = jobs.build { inherit tarball system; };
+        build = jobs.build { inherit tarball; };
       in
         pkgs.lib.overrideDerivation build (attrs: {
           name = "guile-gcc47";
