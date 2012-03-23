@@ -81,7 +81,7 @@ let
                       servers)
     +
     (concatMapStrings (node:
-                        '' if [ ! -f "${node}" ] || \
+                        '' if [ ! -e "${node}" ] || \
                               ! showtrans -s "${node}" &> /dev/null
                            then
                              ( cd /dev ; MAKEDEV "${node}" )
