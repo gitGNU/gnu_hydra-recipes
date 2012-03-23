@@ -29,6 +29,7 @@ let userPkgs = pkgs; in
     { pkgs ? userPkgs
     , mach ? pkgs.gnu.mach
     , hurd ? pkgs.gnu.hurdCross
+    , size ? 1024                                 # image size in MiB
     }:
 
     let
@@ -65,7 +66,7 @@ let userPkgs = pkgs; in
              fi
              reboot
           '';
-        inherit pkgs mach hurd translators environment;
+        inherit pkgs mach hurd translators environment size;
       };
 
   /* Run `drv' on GNU, specifically in `diskImage'.  This is a slightly

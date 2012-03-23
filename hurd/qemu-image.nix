@@ -16,6 +16,7 @@
 
 { pkgs ? (import <nixpkgs> {})
 , fullName ? "QEMU Disk Image of GNU/Hurd"
+, size ? 1024                                     # image size in MiB
 , hurd, mach
 , machExtraArgs ? ""                              # example: "console=com0"
 , rcExtraCode ? ""                                # appended to /libexec/rc
@@ -29,8 +30,6 @@
 }:
 
 let
-  size = 1024;
-
   devices =
     # List of /dev nodes where a translator is to be installed.
     [  "time"
@@ -116,8 +115,9 @@ in
 
     # Command to build the disk image.
     buildCommand = let hd = "vda"; dollar = "\\\$"; in ''
+      size="$((${toString size} - 30))"      # leave room for the part. table
       ${pkgs.parted}/sbin/parted /dev/${hd} \
-         mklabel msdos mkpart primary ext2 1MiB 750MiB
+         mklabel msdos mkpart primary ext2 1MiB $size""MiB
       mknod /dev/${hd}1 b 254 1
 
       ${pkgs.e2fsprogs}/sbin/mke2fs -o hurd -F /dev/${hd}1
