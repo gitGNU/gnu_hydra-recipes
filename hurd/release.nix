@@ -292,7 +292,6 @@ let
                echo $? > /host/xchg/in-vm-exit
             '';
           diskImage = vmTools.diskImage {
-            size = 450;
             hurd = xbuild;
             inherit mach;
           };
