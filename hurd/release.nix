@@ -174,7 +174,7 @@ let
                 preUnpack =
                   ''
                     if test -d "$src/tarballs"; then
-                        src=$(ls -1 "$src/tarballs/"*.tar.bz2 "$src/tarballs/"*.tar.gz | sort | head -1)
+                        src=$(ls -1 "$src/tarballs/"*.tar.bz2 "$src/tarballs/"*.tar.[xg]z | sort | head -1)
                     fi
                   '';
               }
