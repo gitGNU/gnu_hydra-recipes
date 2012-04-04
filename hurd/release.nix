@@ -165,6 +165,7 @@ let
           let
             override = pkgName: origPkg: latestPkg: clearPreConfigure:
               builtins.trace "overridding `${pkgName}'..."
+              pkgs.makeOverridable (x: x)
               (pkgs.lib.overrideDerivation origPkg (origAttrs: {
                 name = "${pkgName}-${latestPkg.version}";
                 src = latestPkg;
@@ -183,42 +184,44 @@ let
                then { preConfigure = ":"; }
                else {})));
           in
-            {
+            rec {
               # TODO: Handle `libpthreadCross', etc. similarly.
+
               glibcCross =
-                 override "glibc" pkgs.glibcCross glibcTarball false;
+                 override "glibc" (pkgs.glibcCross.deepOverride {
+                     kernelHeaders = gnu.hurdHeaders;
+                     inherit (gnu) machHeaders hurdHeaders;
+                   })
+                   glibcTarball false;
 
-              hurdPartedCross =
-                 override "parted" pkgs.hurdPartedCross partedTarball false;
+              parted =
+                 override "parted" pkgs.parted partedTarball false;
 
-              gnu = pkgs.gnu // {
-                hurdCross =
-                   override "hurd" pkgs.gnu.hurdCross tarball true;
-                hurdHeaders =
-                   override "hurd-headers" pkgs.gnu.hurdHeaders tarball true;
-                hurdCrossIntermediate =
-                   override "hurd-minimal"
-                     pkgs.gnu.hurdCrossIntermediate tarball true;
-                machHeaders =
-                   override "gnumach-headers"
-                     pkgs.gnu.machHeaders machTarball true;
+              gnu = pkgs.gnu.override {
+                # We want to override recursively in the `gnu' attribute set,
+                # hence the use of the magic `overrides' argument.
+                overrides = {
+                  hurdCross =
+                     override "hurd" pkgs.gnu.hurdCross tarball true;
+                  hurdHeaders =
+                     override "hurd-headers" pkgs.gnu.hurdHeaders tarball true;
+                  hurdCrossIntermediate =
+                     override "hurd-minimal"
+                       pkgs.gnu.hurdCrossIntermediate tarball true;
+                  machHeaders =
+                     override "gnumach-headers"
+                       pkgs.gnu.machHeaders machTarball true;
+                };
               };
             };
 
         pkgs = import nixpkgs {
           system = "x86_64-linux";               # build platform
           crossSystem = crossSystems.i586_pc_gnu; # host platform
-          config = { packageOverrides = overrideHurdPackages; };
+          config.packageOverrides = overrideHurdPackages;
         };
       in
-        (pkgs.releaseTools.nixBuild {
-          name = "hurd";
-          src = tarball;
-          propagatedBuildNativeInputs = with pkgs;
-            [ gnu.machHeaders hurdPartedCross ];
-          buildNativeInputs = [ pkgs.gnu.mig ];
-          inherit meta succeedOnFailure keepBuildDirectory;
-        }).hostDrv;
+       pkgs.gnu.hurdCross.hostDrv;
 
     # A QEMU disk image with GNU/Hurd on partition 1.
     qemu_image =
