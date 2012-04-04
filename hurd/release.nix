@@ -159,66 +159,15 @@ let
       }:
 
       let
-        overrideHurdPackages = pkgs:
-
-          # Override the `src' attribute of the Hurd packages.
-          let
-            override = pkgName: origPkg: latestPkg: clearPreConfigure:
-              builtins.trace "overridding `${pkgName}'..."
-              pkgs.makeOverridable (x: x)
-              (pkgs.lib.overrideDerivation origPkg (origAttrs: {
-                name = "${pkgName}-${latestPkg.version}";
-                src = latestPkg;
-                patches = [];
-
-                # `sourceTarball' puts tarballs in $out/tarballs, so look there.
-                preUnpack =
-                  ''
-                    if test -d "$src/tarballs"; then
-                        src=$(ls -1 "$src/tarballs/"*.tar.bz2 "$src/tarballs/"*.tar.[xg]z | sort | head -1)
-                    fi
-                  '';
-              }
-              //
-              (if clearPreConfigure
-               then { preConfigure = ":"; }
-               else {})));
-          in
-            rec {
-              # TODO: Handle `libpthreadCross', etc. similarly.
-
-              glibcCross =
-                 override "glibc" (pkgs.glibcCross.deepOverride {
-                     kernelHeaders = gnu.hurdHeaders;
-                     inherit (gnu) machHeaders hurdHeaders;
-                   })
-                   glibcTarball false;
-
-              parted =
-                 override "parted" pkgs.parted partedTarball false;
-
-              gnu = pkgs.gnu.override {
-                # We want to override recursively in the `gnu' attribute set,
-                # hence the use of the magic `overrides' argument.
-                overrides = {
-                  hurdCross =
-                     override "hurd" pkgs.gnu.hurdCross tarball true;
-                  hurdHeaders =
-                     override "hurd-headers" pkgs.gnu.hurdHeaders tarball true;
-                  hurdCrossIntermediate =
-                     override "hurd-minimal"
-                       pkgs.gnu.hurdCrossIntermediate tarball true;
-                  machHeaders =
-                     override "gnumach-headers"
-                       pkgs.gnu.machHeaders machTarball true;
-                };
-              };
-            };
+        overrides = import ./overrides.nix {
+          inherit machTarball glibcTarball partedTarball;
+          hurdTarball = tarball;
+        };
 
         pkgs = import nixpkgs {
           system = "x86_64-linux";               # build platform
           crossSystem = crossSystems.i586_pc_gnu; # host platform
-          config.packageOverrides = overrideHurdPackages;
+          config.packageOverrides = overrides;
         };
       in
        pkgs.gnu.hurdCross.hostDrv;
