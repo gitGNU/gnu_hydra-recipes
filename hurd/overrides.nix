@@ -57,7 +57,10 @@
       # `parted' attribute doesn't work, so override `hurdPartedCross'
       # directly.
       hurdPartedCross =
-         override "parted-hurd" pkgs.hurdPartedCross partedTarball false;
+         override "parted-hurd" (pkgs.hurdPartedCross.override {
+             hurd = gnu.hurdCrossIntermediate;
+           })
+           partedTarball false;
 
       gnu = pkgs.gnu.override {
         # We want to override recursively in the `gnu' attribute set,
