@@ -53,8 +53,11 @@
            })
            glibcTarball false;
 
-      parted =
-         override "parted" pkgs.parted partedTarball false;
+      # XXX: `hurdPartedCross' does `parted.override', but overriding the
+      # `parted' attribute doesn't work, so override `hurdPartedCross'
+      # directly.
+      hurdPartedCross =
+         override "parted-hurd" pkgs.hurdPartedCross partedTarball false;
 
       gnu = pkgs.gnu.override {
         # We want to override recursively in the `gnu' attribute set,
