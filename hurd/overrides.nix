@@ -44,12 +44,11 @@
       (if clearPreConfigure
        then { preConfigure = ":"; }
        else {})));
-  in
-    rec {
+    new = {
       glibcCross =
          override "glibc" (pkgs.glibcCross.deepOverride {
-             kernelHeaders = gnu.hurdHeaders;
-             inherit (gnu) machHeaders hurdHeaders;
+             kernelHeaders = new.gnu.hurdHeaders;
+             inherit (new.gnu) machHeaders hurdHeaders;
            })
            glibcTarball false;
 
@@ -57,25 +56,33 @@
       # `parted' attribute doesn't work, so override `hurdPartedCross'
       # directly.
       hurdPartedCross =
-         override "parted-hurd" (pkgs.hurdPartedCross.override {
-             hurd = gnu.hurdCrossIntermediate;
+         override "parted-hurd" (pkgs.hurdPartedCross.deepOverride {
+             hurd = new.gnu.hurdCrossIntermediate;
            })
            partedTarball false;
 
       gnu = pkgs.gnu.override {
+        # Use the new libc and Parted.
+        inherit (new) glibcCross hurdPartedCross;
+
         # We want to override recursively in the `gnu' attribute set,
         # hence the use of the magic `overrides' argument.
         overrides = {
-          hurdCross =
-             override "hurd" pkgs.gnu.hurdCross hurdTarball true;
-          hurdHeaders =
-             override "hurd-headers" pkgs.gnu.hurdHeaders hurdTarball true;
-          hurdCrossIntermediate =
-             override "hurd-minimal"
-               pkgs.gnu.hurdCrossIntermediate hurdTarball true;
           machHeaders =
-             override "gnumach-headers"
-               pkgs.gnu.machHeaders machTarball true;
+             override "gnumach-xheaders" pkgs.gnu.machHeaders machTarball true;
+
+          hurdHeaders =
+             override "hurd-xheaders" pkgs.gnu.hurdHeaders hurdTarball true;
+
+          hurdCrossIntermediate =
+             override "hurd-xminimal"
+               pkgs.gnu.hurdCrossIntermediate hurdTarball true;
+
+          hurdCross =
+             override "hurdx" pkgs.gnu.hurdCross hurdTarball true;
         };
       };
-    }
+    };
+  in
+    # Return the new, overridden packages.
+    new
