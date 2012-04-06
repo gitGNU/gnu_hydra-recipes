@@ -219,12 +219,26 @@ let
     qemu_test =
       { xbuild ? (jobs.xbuild_without_parted {})
       , mach ? xpkgs.gnu.mach.hostDrv
+      , tarball ? jobs.tarball
+      , glibcTarball ? (import ../glibc/release.nix { glibcHurd = <glibc>; }).tarball {}
+      , machTarball ? (import ../gnumach/release.nix {}).tarball
+      , partedTarball ? ((import ../parted/release.nix {}).tarball {})
       }:
 
       let
-        vmTools = import ./vm.nix { pkgs = xpkgs; };
+        overrides = import ./overrides.nix {
+          inherit machTarball glibcTarball partedTarball;
+          hurdTarball = tarball;
+        };
+
+        pkgs = import nixpkgs {
+          crossSystem = crossSystems.i586_pc_gnu;
+          config.packageOverrides = overrides;
+        };
+
+        vmTools = import ./vm.nix { inherit pkgs; };
       in
-        vmTools.runOnGNU (xpkgs.stdenv.mkDerivation {
+        vmTools.runOnGNU (pkgs.stdenv.mkDerivation {
           name = "hurd-qemu-test";
           buildCommand =
             '' echo 'Hey, this operating system works like a charm!'
@@ -232,7 +246,7 @@ let
 
                ( tar xvf "${jobs.tarball}/tarballs/"*.tar.gz ;
                  cd hurd-* ;
-                 export PATH="${xpkgs.gawk.hostDrv}/bin:$PATH" ;
+                 export PATH="${pkgs.gawk.hostDrv}/bin:$PATH" ;
                  set -e ;
                  ./configure --without-parted --prefix="/host/xchg/out" ;
                  make -j4                         # stress it!
@@ -243,10 +257,7 @@ let
 
                echo $? > /host/xchg/in-vm-exit
             '';
-          diskImage = vmTools.diskImage {
-            hurd = xbuild;
-            inherit mach;
-          };
+          diskImage = vmTools.diskImage { };
           memSize = 512;                          # GCC is memory-hungry
 
           meta = meta // {
