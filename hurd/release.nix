@@ -257,7 +257,7 @@ let
 
                echo $? > /host/xchg/in-vm-exit
             '';
-          diskImage = vmTools.diskImage { };
+          diskImage = vmTools.diskImage { inherit mach; };
           memSize = 512;                          # GCC is memory-hungry
 
           meta = meta // {
