@@ -69,17 +69,17 @@
         # hence the use of the magic `overrides' argument.
         overrides = {
           machHeaders =
-             override "gnumach-xheaders" pkgs.gnu.machHeaders machTarball true;
+             override "gnumach-headers" pkgs.gnu.machHeaders machTarball true;
 
           hurdHeaders =
-             override "hurd-xheaders" pkgs.gnu.hurdHeaders hurdTarball true;
+             override "hurd-headers" pkgs.gnu.hurdHeaders hurdTarball true;
 
           hurdCrossIntermediate =
-             override "hurd-xminimal"
+             override "hurd-minimal"
                pkgs.gnu.hurdCrossIntermediate hurdTarball true;
 
           hurdCross =
-             override "hurdx" pkgs.gnu.hurdCross hurdTarball true;
+             override "hurd" pkgs.gnu.hurdCross hurdTarball true;
         };
       };
     };
