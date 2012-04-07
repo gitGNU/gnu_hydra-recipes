@@ -211,7 +211,7 @@ let
 	src = if glibcHurd != false then glibcHurd else glibcSrc;
 
         patches =
-          (map (x: "${nixpkgs}/pkgs/development/libraries/glibc-2.12/${x}")
+          (map (x: "${nixpkgs}/pkgs/development/libraries/glibc/2.13/${x}")
                [ #"nix-locale-archive.patch"    # NixOS-specific -- FIXME: no
                                                 # longer applies
                  "rpcgen-path.patch"           # submit upstream?
