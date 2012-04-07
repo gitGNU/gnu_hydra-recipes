@@ -103,8 +103,6 @@ let
             ++ (pkgs.stdenv.lib.optional (parted != null) parted);
           dontPatchShebangs = true;
 
-          patches = [ ./console-server-utf8.patch ];
-
           # Patch absolute paths.
           postPatch =
             '' sed -i daemons/{runttys,getty}.c \
