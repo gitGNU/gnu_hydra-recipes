@@ -65,13 +65,6 @@ let
         name = "hurd-tarball";
         src = hurdSrc;
         configureFlags = "--build=i586-pc-gnu";  # cheat
-        postConfigure =
-          '' echo "removing \`-o root' from makefiles..."
-             for mf in {utils,daemons}/Makefile
-             do
-               sed -i "$mf" -e's/-o root//g'
-             done
-          '';
 
         buildNativeInputs = with pkgs;
           [ git gnu.machHeaders gnu.mig texinfo ];
@@ -98,6 +91,15 @@ let
         (pkgs.releaseTools.nixBuild {
           name = "hurd";
           src = tarball;
+
+          postConfigure =
+            '' echo "removing \`-o root' from makefiles..."
+               for mf in {utils,daemons}/Makefile
+               do
+                 sed -i "$mf" -e's/-o root//g'
+               done
+            '';
+
           propagatedBuildNativeInputs = [ pkgs.gnu.machHeaders ];
           buildNativeInputs = [ pkgs.gnu.mig ];
           buildInputs =
