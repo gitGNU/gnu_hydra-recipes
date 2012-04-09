@@ -72,7 +72,9 @@ let
                sed -i "$mf" -e's/-o root//g'
              done
           '';
-        buildNativeInputs = with pkgs; [ gnu.machHeaders gnu.mig texinfo ];
+
+        buildNativeInputs = with pkgs;
+          [ git gnu.machHeaders gnu.mig texinfo ];
         buildInputs = with pkgs;
           [ parted /* not the cross-GNU one */
             libuuid
