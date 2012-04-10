@@ -65,8 +65,8 @@ in
         
       tarball = pkgs: {
         postUnpack = ''
-          if [[ -f */etc/prefix-gnulib-mk ]]; then
-            sed -i "s|/usr/bin/perl|${pkgs.perl}/bin/perl|" */etc/prefix-gnulib-mk 
+          if [[ -f $sourceRoot/etc/prefix-gnulib-mk ]]; then
+            sed -i "s|/usr/bin/perl|${pkgs.perl}/bin/perl|" $sourceRoot/etc/prefix-gnulib-mk 
           fi
         '';
         buildInputs = with pkgs; [
