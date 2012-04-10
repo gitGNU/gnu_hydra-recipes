@@ -46,7 +46,7 @@
        else {})));
     new = {
       glibcCross =
-         override "glibc" (pkgs.glibcCross.deepOverride {
+         override "glibc-hurd" (pkgs.glibcCross.deepOverride {
              kernelHeaders = new.gnu.hurdHeaders;
              inherit (new.gnu) machHeaders hurdHeaders;
            })
