@@ -128,8 +128,8 @@ in
       cp -rv "/nix/store/"*-gnu "${userEnvironment}" \
              /mnt/nix/store
 
-      # Copy the Hurd, in case its name doesn't match *-gnu.
-      cp -rv "${hurd}" /mnt/nix/store
+      # Copy the Hurd and libc, in case their name doesn't match *-gnu.
+      cp -rv "${hurd}" "${pkgs.glibc.hostDrv}" /mnt/nix/store
 
       # Copy the initial packages whose store path doesn't match *-gnu.
       # The initial `hurdCross' is also needed for those packages that
