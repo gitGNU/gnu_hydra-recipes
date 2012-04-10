@@ -65,7 +65,9 @@ in
         
       tarball = pkgs: {
         postUnpack = ''
-          sed -i "s|/usr/bin/perl|${pkgs.perl}/bin/perl|" */etc/prefix-gnulib-mk 
+          if [[ -f */etc/prefix-gnulib-mk ]]; then
+            sed -i "s|/usr/bin/perl|${pkgs.perl}/bin/perl|" */etc/prefix-gnulib-mk 
+          fi
         '';
         buildInputs = with pkgs; [
           automake111x
