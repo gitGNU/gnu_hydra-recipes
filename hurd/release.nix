@@ -64,6 +64,7 @@ let
       pkgs.releaseTools.sourceTarball {
         name = "hurd-tarball";
         src = hurdSrc;
+        postAutoconf = "rm -f svn-revision";  # useless, from `autoconfPhase'
         configureFlags = "--build=i586-pc-gnu";  # cheat
 
         buildNativeInputs = with pkgs;
