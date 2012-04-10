@@ -73,6 +73,7 @@ let
           [ parted /* not the cross-GNU one */
             libuuid
             xorg.libpciaccess               # only needed for the DDE branch.
+            texinfo
           ];
         inherit meta succeedOnFailure keepBuildDirectory;
       };
