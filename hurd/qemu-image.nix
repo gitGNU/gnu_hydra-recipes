@@ -154,6 +154,14 @@ in
 
       ln -sv "${pkgs.bashInteractive.hostDrv}/bin/bash" /mnt/bin/sh
 
+      # Do we really have all we need?
+      loader="`"${pkgs.patchelf}/bin/patchelf" --print-interpreter /mnt/hurd/init`"
+      if [ ! -f "/mnt/$loader" ]
+      then
+          echo "\`/mnt/$loader' not found, which means the image is incomplete" >&2
+          exit 1
+      fi
+
       # Patch /libexec/rc to install essential translators (XXX).
       cp -rv "${hurd}/libexec" /mnt
       cat >> /mnt/libexec/rc <<EOF
