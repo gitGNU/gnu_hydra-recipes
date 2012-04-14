@@ -129,7 +129,7 @@ in
              /mnt/nix/store
 
       # Copy the Hurd and libc, in case their name doesn't match *-gnu.
-      cp -rv "${hurd}" "${pkgs.glibc.hostDrv}" /mnt/nix/store
+      cp -rv "${hurd}" "${pkgs.glibcCross}" /mnt/nix/store
 
       # Copy the initial packages whose store path doesn't match *-gnu.
       # The initial `hurdCross' is also needed for those packages that
@@ -216,7 +216,7 @@ module  /hurd/ext2fs.static ext2fs \
   --device-master-port='${dollar}{device-port}' \
   --exec-server-task='${dollar}{exec-task}' -T typed '${dollar}{root}' \
   '\$(task-create)' '\$(task-resume)'
-module ${pkgs.glibc.hostDrv}/lib/ld.so.1 exec /hurd/exec '\$(exec-task=task-create)'
+module ${pkgs.glibcCross}/lib/ld.so.1 exec /hurd/exec '\$(exec-task=task-create)'
 }
 EOF
 
