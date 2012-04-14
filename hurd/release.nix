@@ -293,6 +293,20 @@ let
 
                echo $? > /host/xchg/in-vm-exit
             '';
+
+          coreutils =
+            { coreutilsTarball
+              ? ((import ../coreutils/release.nix {}).tarball {}) }:
+
+            makeTest "coreutils-build"
+              '' ( tar xvf "${coreutilsTarball}/tarballs/"*tar.xz ;
+                   cd coreutils-* ;
+                   set -e ;
+                   ./configure --prefix="/host/xchg/out" ;
+                   make ;
+                   make check )
+                 echo $? > /host/xchg/in-vm-exit
+              '';
         };
 
 
