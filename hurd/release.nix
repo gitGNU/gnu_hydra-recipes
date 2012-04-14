@@ -220,7 +220,8 @@ let
           inherit mach translators environment;
         };
 
-    qemu_test =
+    # Tests run on GNU in a fresh QEMU image.
+    qemu_tests =
       { xbuild ? (jobs.xbuild_without_parted {})
       , mach ? xpkgs.gnu.mach.hostDrv
       , tarball ? jobs.tarball
@@ -241,12 +242,43 @@ let
         };
 
         vmTools = import ./vm.nix { inherit pkgs; };
+
+        makeTest = name: command:
+          vmTools.runOnGNU (pkgs.stdenv.mkDerivation {
+            name = "hurd-qemu-test-${name}";
+            buildCommand = command;
+            diskImage = vmTools.diskImage { inherit mach; };
+            memSize = 512;                          # GCC is memory-hungry
+
+            meta = meta // {
+              # When the kernel debugger is invoked, nothing else happens.  So
+              # reduce the timeout-on-silence duration to 5 mn.
+              maxSilent = 300;
+            };
+          });
       in
-        vmTools.runOnGNU (pkgs.stdenv.mkDerivation {
-          name = "hurd-qemu-test";
-          buildCommand =
+        {
+          build = makeTest "build"
             '' echo 'Hey, this operating system works like a charm!'
                echo "Let's see if it can rebuild itself..."
+
+               ( tar xvf "${jobs.tarball}/tarballs/"*.tar.gz ;
+                 cd hurd-* ;
+                 export PATH="${pkgs.gawk.hostDrv}/bin:$PATH" ;
+                 set -e ;
+                 ./configure --without-parted --prefix="/host/xchg/out" ;
+                 make                             # sequential build
+               )
+
+               # FIXME: "make install" not run because `rm' fails on SMBFS.
+               mkdir /host/xchg/out
+
+               echo $? > /host/xchg/in-vm-exit
+            '';
+
+          parallel_build = makeTest "parallel-build"
+            '' echo 'Hey, this operating system works like a charm!'
+               echo 'Let's see if it can rebuild itself, in parallel!'
 
                ( tar xvf "${jobs.tarball}/tarballs/"*.tar.gz ;
                  cd hurd-* ;
@@ -261,15 +293,8 @@ let
 
                echo $? > /host/xchg/in-vm-exit
             '';
-          diskImage = vmTools.diskImage { inherit mach; };
-          memSize = 512;                          # GCC is memory-hungry
+        };
 
-          meta = meta // {
-            # When the kernel debugger is invoked, nothing else happens.  So
-            # reduce the timeout-on-silence duration to 5 mn.
-            maxSilent = 300;
-          };
-        });
 
     # The unbelievable crazy thing!
     qemu_image_guile =
