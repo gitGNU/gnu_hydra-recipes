@@ -1,5 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
-   Copyright (C) 2011  Ludovic Courtès <ludo@gnu.org>
+   Copyright (C) 2011, 2012  Ludovic Courtès <ludo@gnu.org>
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,9 +33,8 @@ let
 
     license = "LGPLv3+";
 
-    maintainers =
-     [ (import nixpkgs {}).stdenv.lib.maintainers.ludo
-     ];
+    # Those who will receive email notifications.
+    maintainers = [];
   };
 
   buildInputsFrom = pkgs: [ pkgs.gnum4 ];
