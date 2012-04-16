@@ -1,5 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
-   Copyright (C) 2011  Ludovic Courtès <ludo@gnu.org>
+   Copyright (C) 2011, 2012  Ludovic Courtès <ludo@gnu.org>
    Copyright (C) 2011  Rob Vermaas <rob.vermaas@gmail.com>
 
    This program is free software: you can redistribute it and/or modify
@@ -14,10 +14,6 @@
 
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
-
-{ nixpkgs ? ../../nixpkgs
-, emacs ? { outPath = ../../emacs; }
-}:
 
 let
   meta = {
@@ -45,6 +41,9 @@ let
 
     maintainers = [ "emacs-buildstatus@gnu.org" ];
   };
+
+  nixpkgs = <nixpkgs>;
+  emacs = <emacs>;
 
   # Return the list of dependencies.
   buildInputsFrom = pkgs: with pkgs;
