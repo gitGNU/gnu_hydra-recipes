@@ -247,7 +247,17 @@ let
           vmTools.runOnGNU (pkgs.stdenv.mkDerivation {
             name = "hurd-qemu-test-${name}";
             buildCommand = command;
-            diskImage = vmTools.diskImage { inherit mach; };
+
+            diskImage = vmTools.diskImage {
+              # XXX: Inherit all the patchwork that fixes absolute paths.
+              hurd = pkgs.lib.overrideDerivation pkgs.gnu.hurdCross (attrs: {
+                inherit (jobs.xbuild {}) postPatch postBuild postInstall
+                  dontPatchShebangs;
+              });
+
+              inherit mach;
+            };
+
             memSize = 512;                          # GCC is memory-hungry
 
             meta = meta // {
