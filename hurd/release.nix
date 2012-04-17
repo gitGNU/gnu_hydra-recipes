@@ -56,6 +56,38 @@ let
   succeedOnFailure = true;
   keepBuildDirectory = true;
 
+  # Return extra attributes to path absolute paths and add extra features of
+  # the Hurd.
+  hurdExtraAttrs = pkgs: {
+    dontPatchShebangs = true;
+    postPatch =
+      '' sed -i daemons/{runttys,getty}.c \
+             -e "s|/bin/login|$out/bin/login|g"
+
+         sed -e 's|/bin/bash|${pkgs.bashInteractive.hostDrv}/bin/bash|g' \
+             -i utils/login.c
+      '';
+    postBuild = "make hurd.msgids -C hurd"; # for `rpctrace'
+    postInstall =
+      '' sed -e 's|/bin/bash|${pkgs.bashInteractive.hostDrv}/bin/bash|g' \
+             -e "s|^PATH=|PATH=$out/bin:$out/sbin:${pkgs.coreutils.hostDrv}/bin:${pkgs.gnused.hostDrv}/bin:/run/current-system/sw/bin:/run/current-system/sw/sbin:|g" \
+             -i "$out/libexec/"{rc,runsystem} "$out/sbin/MAKEDEV"
+
+         sed -e "s|/sbin/fsck|$out/sbin/fsck|g" \
+             -i "$out/libexec/rc"
+
+         sed -e "s|/bin/login|$out/bin/login|g" \
+             -e "s|/bin/fmt|${pkgs.coreutils.hostDrv}/bin/fmt|g" \
+             -i "$out/bin/sush"
+
+         mkdir -p "$out/share/msgids"
+         cp -v "hurd/"*.msgids "$out/share/msgids"
+
+         # Last but not least...
+         cp -v "console/motd.UTF8" "$out/etc/motd"
+      '';
+   };
+
   jobs = {
     tarball =
       # "make dist" should work even non-natively and even without a
@@ -90,7 +122,7 @@ let
           crossSystem = crossSystems.i586_pc_gnu; # host platform
         };
       in
-        (pkgs.releaseTools.nixBuild {
+        (pkgs.releaseTools.nixBuild ({
           name = "hurd";
           src = tarball;
 
@@ -107,40 +139,13 @@ let
           buildInputs =
             (with pkgs; [ libuuid ncurses xorg.libpciaccess ])
             ++ (pkgs.stdenv.lib.optional (parted != null) parted);
-          dontPatchShebangs = true;
-
-          # Patch absolute paths.
-          postPatch =
-            '' sed -i daemons/{runttys,getty}.c \
-                   -e "s|/bin/login|$out/bin/login|g"
-
-               sed -e 's|/bin/bash|${pkgs.bashInteractive.hostDrv}/bin/bash|g' \
-                   -i utils/login.c
-            '';
-          postBuild = "make hurd.msgids -C hurd"; # for `rpctrace'
-          postInstall =
-            '' sed -e 's|/bin/bash|${pkgs.bashInteractive.hostDrv}/bin/bash|g' \
-                   -e "s|^PATH=|PATH=$out/bin:$out/sbin:${pkgs.coreutils.hostDrv}/bin:${pkgs.gnused.hostDrv}/bin:/run/current-system/sw/bin:/run/current-system/sw/sbin:|g" \
-                   -i "$out/libexec/"{rc,runsystem} "$out/sbin/MAKEDEV"
-
-               sed -e "s|/sbin/fsck|$out/sbin/fsck|g" \
-                   -i "$out/libexec/rc"
-
-               sed -e "s|/bin/login|$out/bin/login|g" \
-                   -e "s|/bin/fmt|${pkgs.coreutils.hostDrv}/bin/fmt|g" \
-                   -i "$out/bin/sush"
-
-               mkdir -p "$out/share/msgids"
-               cp -v "hurd/"*.msgids "$out/share/msgids"
-
-               # Last but not least...
-               cp -v "console/motd.UTF8" "$out/etc/motd"
-            '';
 
           enableParallelBuild = true;
           inherit meta succeedOnFailure keepBuildDirectory
             dontStrip dontCrossStrip NIX_STRIP_DEBUG;
-        }).hostDrv;
+        }
+        //
+        (hurdExtraAttrs pkgs))).hostDrv;
 
     # Same without dependency on Parted.
     xbuild_without_parted =
@@ -250,10 +255,8 @@ let
 
             diskImage = vmTools.diskImage {
               # XXX: Inherit all the patchwork that fixes absolute paths.
-              hurd = pkgs.lib.overrideDerivation pkgs.gnu.hurdCross (attrs: {
-                inherit (jobs.xbuild {}) postPatch postBuild postInstall
-                  dontPatchShebangs;
-              });
+              hurd = pkgs.lib.overrideDerivation pkgs.gnu.hurdCross
+                       (attrs: hurdExtraAttrs pkgs);
 
               inherit mach;
             };
