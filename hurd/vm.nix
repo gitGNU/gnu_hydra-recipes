@@ -49,7 +49,7 @@ let userPkgs = pkgs; in
         ++ (with pkgs;
             map (p: p.hostDrv)
              [ gnused gnugrep findutils diffutils
-               bash gcc gnumake
+               bash gcc gnumake gawk
                gnutar gzip bzip2 xz
                gnu.mig_raw gnu.smbfs gnu.unionfs
              ]);
