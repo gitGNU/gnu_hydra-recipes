@@ -291,7 +291,7 @@ let
 
           parallel_build = makeTest "parallel-build"
             '' echo 'Hey, this operating system works like a charm!'
-               echo 'Let's see if it can rebuild itself, in parallel!'
+               echo "Let's see if it can rebuild itself, in parallel!"
 
                ( tar xvf "${jobs.tarball}/tarballs/"*.tar.gz ;
                  cd hurd-* ;
