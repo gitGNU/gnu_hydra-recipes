@@ -126,18 +126,20 @@ in
 
       mkdir -p /mnt/nix/store
       cp -rv "/nix/store/"*-gnu "${userEnvironment}" \
-             /mnt/nix/store
+              /mnt/nix/store
 
-      # Copy the Hurd and libc, in case their name doesn't match *-gnu.
-      cp -rv "${hurd}" "${pkgs.glibcCross}" /mnt/nix/store
+      # Explicitly copy these, in case their name doesn't match *-gnu,
+      # which typically happens when overriding.
+      cp -rvu "${hurd}" "${pkgs.glibcCross}" "${pkgs.hurdPartedCross}" \
+         /mnt/nix/store
 
       # Copy the initial packages whose store path doesn't match *-gnu.
       # The initial `hurdCross' is also needed for those packages that
       # refer to it, such as gdb.
-      cp -rv ${pkgs.gnu.hurdHeaders} ${pkgs.gnu.hurdCross}                \
-             ${pkgs.gnu.hurdCrossIntermediate} ${pkgs.gnu.machHeaders}    \
-             ${pkgs.gnu.libpthreadHeaders} ${pkgs.gnu.libpthreadCross}    \
-             /mnt/nix/store
+      cp -rvu ${pkgs.gnu.hurdHeaders} ${pkgs.gnu.hurdCross}                \
+              ${pkgs.gnu.hurdCrossIntermediate} ${pkgs.gnu.machHeaders}    \
+              ${pkgs.gnu.libpthreadHeaders} ${pkgs.gnu.libpthreadCross}    \
+              /mnt/nix/store
 
       # Copy `libgcc_s.so' & co.
       cp -rv "${pkgs.gccCrossStageFinal.gccLibs}" /mnt/nix/store
