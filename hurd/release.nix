@@ -315,6 +315,7 @@ let
               '' ( tar xvf "${coreutilsTarball}/tarballs/"*tar.xz ;
                    cd coreutils-* ;
                    set -e ;
+                   export FORCE_UNSAFE_CONFIGURE=1 ; # yes, building as root!
                    ./configure --prefix="/host/xchg/out" ;
                    make ;
                    make check )
