@@ -318,7 +318,7 @@ let
                    export FORCE_UNSAFE_CONFIGURE=1 ; # yes, building as root!
                    ./configure --prefix="/host/xchg/out" ;
                    make ;
-                   make check )
+                   make check VERBOSE=yes )
                  echo $? > /host/xchg/in-vm-exit
               '';
         };
