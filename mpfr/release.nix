@@ -1,5 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
-   Copyright (C) 2011  Ludovic Courtès <ludo@gnu.org>
+   Copyright (C) 2011, 2012  Ludovic Courtès <ludo@gnu.org>
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -51,7 +51,8 @@ let
 
   # Return true if we should use Valgrind on the given platform.
   useValgrind = stdenv:
-    stdenv.system == "x86_64-linux"
+    false         # XXX: disabled due to false positives with GMP's newer asm
+    || stdenv.system == "x86_64-linux"
     || stdenv.system == "x86_64-darwin";
 
   jobs =
