@@ -37,8 +37,7 @@ let
 
     license = "LGPLv3+";
 
-    maintainers =
-     [ "Paul Zimmermann <Paul.Zimmermann@loria.fr>" ];
+    maintainers = [ ];
   };
 
   preCheck = "export GMP_CHECK_RANDOMIZE=true";
