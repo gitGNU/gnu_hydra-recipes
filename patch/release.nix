@@ -32,10 +32,7 @@ let
 
     license = "GPLv3+";
 
-    maintainers =
-     [ "Andreas Gruenbacher <agruen@gnu.org>"
-       (import nixpkgs {}).stdenv.lib.maintainers.ludo
-     ];
+    maintainers = [ "Andreas Gruenbacher <agruen@gnu.org>" ];
   };
 in
   import ../gnu-jobs.nix {

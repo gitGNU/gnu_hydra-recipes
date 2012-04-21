@@ -32,7 +32,7 @@ let
 
     license = "LGPLv2+";
 
-    maintainers = [ "libtasn1-commit@gnu.org" pkgs.stdenv.lib.maintainers.ludo ];
+    maintainers = [ "libtasn1-commit@gnu.org" ];
   };
 
   inherit (pkgs) releaseTools;

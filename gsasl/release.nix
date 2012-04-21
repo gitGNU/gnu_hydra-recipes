@@ -35,10 +35,7 @@ let
     license = "LGPLv2.1+";
 
     # Where notification emails go.
-    maintainers =
-      [ "gsasl-commit@gnu.org"
-         pkgs.stdenv.lib.maintainers.ludo
-      ];
+    maintainers = [ "gsasl-commit@gnu.org" ];
   };
 
   inherit (pkgs) releaseTools;

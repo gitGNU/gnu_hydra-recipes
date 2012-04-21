@@ -36,12 +36,9 @@ let
 
     license = "GPLv3+";
 
-    maintainers =
-     [ "James Youngman <jay@gnu.org>"
-       pkgs.stdenv.lib.maintainers.ludo
-     ];
+    maintainers = [ "James Youngman <jay@gnu.org>" ];
   };
-  
+
   succeedOnFailure = true;
   keepBuildDirectory = true;
 

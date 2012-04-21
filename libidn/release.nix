@@ -43,7 +43,7 @@ let
     '';
 
     license = "LGPLv2+";
-    maintainers = [ "libidn-commit@gnu.org" (import nixpkgs {}).stdenv.lib.maintainers.ludo ];
+    maintainers = [ "libidn-commit@gnu.org" ];
   };
 
   buildInputsFrom = pkgs: with pkgs;
