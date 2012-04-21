@@ -264,9 +264,10 @@ let
             memSize = 512;                          # GCC is memory-hungry
 
             meta = meta // {
-              # When the kernel debugger is invoked, nothing else happens.  So
-              # reduce the timeout-on-silence duration to 5 mn.
-              maxSilent = 300;
+              # When the kernel debugger is invoked, nothing else happens.
+              # So reduce the timeout-on-silence duration to 15 mn (5 mn
+              # seems to be insufficient for Coreutils' test suite.)
+              maxSilent = 900;
             };
           });
       in
