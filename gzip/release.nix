@@ -28,7 +28,7 @@ let
 
     # more(1), for zmore's unit tests.  Assume it's available on non-Linux
     # platforms.
-    (stdenv.lib.optional stdenv.isLinux utillinuxngCurses);
+    (stdenv.lib.optional stdenv.isLinux utillinuxCurses);
 
   meta = {
    homepage = http://www.gnu.org/software/gzip/;
