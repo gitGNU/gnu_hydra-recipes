@@ -56,7 +56,7 @@ in
 
     customEnv = {
       tarball = pkgs: {
-        buildInputs = with pkgs; [ git texinfo bison cvs man rsync perl cpio automake111x xz gperf help2man gettext_0_17 flex];
+        buildInputs = with pkgs; [ git texinfo bison cvs man rsync perl cpio automake111x xz gperf help2man gettext_0_18 flex];
         dontBuild = false;
       } ;
       build = buildFun;
