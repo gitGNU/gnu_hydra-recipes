@@ -66,7 +66,7 @@ in
 	buildInputs = buildInputsFrom pkgs;
 	preCheck =
 	  # Some tests assume `mkswap' is in $PATH.
-	  '' export PATH="${pkgs.utillinuxng}/sbin:$PATH"
+	  '' export PATH="${pkgs.utillinux}/sbin:$PATH"
 	  '';
       };
 
@@ -74,7 +74,7 @@ in
 	buildInputs = buildInputsFrom pkgs;
 	preCheck =
 	  # Some tests assume `mkswap' is in $PATH.
-	  '' export PATH="${pkgs.utillinuxng}/sbin:$PATH"
+	  '' export PATH="${pkgs.utillinux}/sbin:$PATH"
 	  '';
       };
 
