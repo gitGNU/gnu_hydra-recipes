@@ -90,7 +90,7 @@ in
       };      
 
       coverage = pkgs: {
-        buildInputs = [(m4 pkgs) pkgs.perl];
+        buildInputs = [(m4 pkgs) pkgs.perl pkgs.flex];
         succeedOnFailure = true;
         keepBuildDirectory = true;
       };      
