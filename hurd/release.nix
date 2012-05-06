@@ -60,7 +60,7 @@ let
   # the Hurd.
   hurdExtraAttrs = pkgs: {
     dontPatchShebangs = true;
-    postPatch =
+    preBuild =
       '' sed -i daemons/{runttys,getty}.c \
              -e "s|/bin/login|$out/bin/login|g"
 
