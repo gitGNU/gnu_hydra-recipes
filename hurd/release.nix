@@ -343,8 +343,8 @@ let
           # Set $SHELL, which is honored by `login' (executing directly
           # `guile' instead of `login' doesn't work, as `login' does
           # important terminal setup.)
-          postPatch =
-            '' echo "Guile is GNU's official shell"'!'
+          postBuild = attrs.postBuild + ''
+               echo "Guile is GNU's official shell"'!'
                sed -e 's|^SHELL=.*|SHELL="${guile}/bin/guile"|g' \
                    -i "daemons/runsystem.sh"
             '';
