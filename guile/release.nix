@@ -321,6 +321,22 @@ let
           buildInputs = attrs.buildInputs ++ [ pkgs.gcc47 ];
         });
 
+    # Building with Clang.
+    build_clang =
+      { tarball ? jobs.tarball { }
+      }:
+
+      let
+        pkgs = import nixpkgs {};                 # x86_64-linux
+        build = jobs.build { inherit tarball; };
+      in
+        pkgs.lib.overrideDerivation build (attrs: {
+          name = "guile-clang";
+          preUnpack = "clang --version";
+          buildInputs = attrs.buildInputs ++ [ pkgs.clang ];
+          CC = "${pkgs.clang}/bin/clang";
+        });
+
     # Check what it's like to build with an old compiler.
     build_gcc3 =
       { tarball ? jobs.tarball {}
