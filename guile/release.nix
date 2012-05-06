@@ -330,12 +330,14 @@ let
         pkgs = import nixpkgs {};                 # x86_64-linux
         build = jobs.build { inherit tarball; };
       in
-        pkgs.lib.overrideDerivation build (attrs: {
+        (pkgs.lib.overrideDerivation build (attrs: {
           name = "guile-clang";
           preUnpack = "clang --version";
           buildInputs = attrs.buildInputs ++ [ pkgs.clang ];
           CC = "${pkgs.clang}/bin/clang";
-        });
+        })
+        //
+        { meta = meta // { schedulingPriority = 20; }; });
 
     # Check what it's like to build with an old compiler.
     build_gcc42 =
