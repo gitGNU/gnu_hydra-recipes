@@ -338,35 +338,21 @@ let
         });
 
     # Check what it's like to build with an old compiler.
-    build_gcc3 =
+    build_gcc42 =
       { tarball ? jobs.tarball {}
       }:
 
       let
-        system = "x86_64-linux";
-        pkgs = import nixpkgs { inherit system; };
-        use_gcc3 = pkg:
-          if pkg ? override
-          then pkg.override (with pkgs;
-                 { stdenv = overrideGCC stdenv gcc34; })
-          else pkg;
+        pkgs = import nixpkgs {};                 # x86_64-linux
+        build = jobs.build { inherit tarball; };
       in
-        with pkgs;
-        releaseTools.nixBuild {
-          name = "guile";
-          src = tarball;
-          configureFlags = defaultConfigureFlags pkgs;
-
-          /* Use GCC 3.x for Guile itself and for all its dependencies.
-             The reason is that current BDW-GC CVS built with GCC 4.5 doesn't
-             work with Guile built with 3.x (namely `fluids.test' segfaults
-             in `uw_frame_state_for', called from `__pthread_unwind'.).  */
-          buildInputs = [ pkgs.gcc34 ] ++
-            (map use_gcc3 (buildInputsFrom pkgs));
-
+        (pkgs.lib.overrideDerivation build (attrs: {
+          name = "guile-gcc42";
           preUnpack = "gcc --version";
-          inherit meta buildOutOfSourceTree succeedOnFailure keepBuildDirectory;
-        };
+          buildInputs = attrs.buildInputs ++ [ pkgs.gcc42 ];
+        })
+        //
+        { meta = meta // { schedulingPriority = 20; }; });
 
     # Check what it's like to build with another C compiler
     /* build_tinycc =
