@@ -66,7 +66,13 @@ let
       in with pkgs;
       releaseTools.nixBuild ({
         src = tarball;
-        inherit name meta succeedOnFailure keepBuildDirectory;
+
+        # Use a low priority on Cygwin.  See
+        # <https://github.com/NixOS/hydra/issues/15> for details.
+        meta = meta //
+          (lib.optionalAttrs stdenv.isCygwin { schedulingPriority = 1; });
+
+        inherit name succeedOnFailure keepBuildDirectory;
       } // ( pkgs.lib.optionalAttrs (customEnv ? build) (customEnv.build pkgs)) );
 
     coverage =
