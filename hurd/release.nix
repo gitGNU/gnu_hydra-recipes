@@ -328,15 +328,13 @@ let
     # The unbelievable crazy thing!
     qemu_image_guile =
       { tarball ? jobs.tarball
-      , parted ? (import ../parted/release.nix {}).xbuild_gnu {}
       , mach ? ((import ../gnumach/release.nix {}).build {})
-      , coreutils ? xpkgs.coreutils.hostDrv
       , inetutils ? ((import ../inetutils/release.nix {}).xbuild_gnu {}) # XXX
-      , guile ? "you really need a cross-GNU Guile" #xpkgs.guile.hostDrv
+      , guile ? xpkgs.guile.hostDrv
       }:
 
       let
-        xbuild = jobs.xbuild { inherit tarball parted; };
+        xbuild = jobs.xbuild_without_parted { inherit tarball; };
         hurd = pkgs.lib.overrideDerivation xbuild (attrs: {
           name = "guilish-hurd";
 
@@ -350,10 +348,34 @@ let
             '';
           succeedOnFailure = false;
         });
+
+        translators =
+          [ { /* SMB share installed by QEMU when run with:
+                 "qemu img.qcow2 -net nic -net user,smb=/path/to/shared/dir"  */
+              node = "/host";
+              command = "${xpkgs.gnu.smbfs.hostDrv}/hurd/smbfs "
+                + "-s 10.0.2.4 -r smb://10.0.2.4/qemu -u root -p '' ";
+            }
+            { node = "/ftp:";
+              command = "/hurd/hostmux /hurd/ftpfs /";
+            }
+          ];
+
+        environment = pkgs:                     # a stripped-down environment
+          [ mach hurd inetutils guile ]
+          ++ (with pkgs;
+              map (p: p.hostDrv)
+                [ glibc coreutils
+                  bashInteractive gnugrep
+                  gnused findutils diffutils
+                  less zile gnutar gzip bzip2
+                  gnu.smbfs
+                ]);
       in
-        jobs.qemu_image {
-          xbuild = hurd;
-          inherit mach coreutils inetutils guile;
+        qemuImage {
+          pkgs = xpkgs;
+          size = 400;                             # MiB
+          inherit mach hurd translators environment;
         };
    };
 in
