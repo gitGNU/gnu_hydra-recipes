@@ -15,7 +15,6 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
-{ nixpkgs ? <nixpkgs> }:
 let
   meta = {
     description = "GNU Guile 2.0, an embeddable Scheme implementation";
@@ -36,6 +35,7 @@ let
     maintainers = [ "guile-commits@gnu.org" ];
   };
 
+  nixpkgs = <nixpkgs>;
   pkgs = import nixpkgs {};
   crossSystems = (import ../cross-systems.nix) { inherit pkgs; };
 
@@ -96,15 +96,13 @@ let
                          + "', derivation `" + name + "'")
                         attrName)
 
-        ({ tarball ? jobs.tarball {} }:
-
-         # Build the exotic configurations only on GNU/Linux.
+        (# Build the exotic configurations only on GNU/Linux.
          let pkgs = import nixpkgs { system = "x86_64-linux"; };
          in
            with pkgs;
            releaseTools.nixBuild {
              inherit name;
-             src = tarball;
+             src = jobs.tarball;
              configureFlags =
                (defaultConfigureFlags pkgs) ++ configureFlags;
              buildInputs = buildInputsFrom pkgs;
@@ -123,8 +121,7 @@ let
     ];
 
   makeCrossBuild = from: to: configureFlags:
-    { tarball ? jobs.tarball {},
-      native_guile ? jobs.build {}  # a native Guile build
+    { native_guile ? jobs.build {}  # a native Guile build
     }:
 
     let
@@ -135,7 +132,7 @@ let
     in
       (crosspkgs.releaseTools.nixBuild {
         name = "guile";
-        src = tarball;
+        src = jobs.tarball;
         preConfigure = "export GUILE_FOR_BUILD=${native_guile}/bin/guile";
 
         configureFlags =
@@ -163,14 +160,11 @@ let
   jobs = rec {
 
     tarball =
-      { guileSrc ? { outPath = <guile>; }
-      }:
-
       with pkgs;
 
       pkgs.releaseTools.sourceTarball {
         name = "guile-tarball";
-        src = guileSrc;
+        src = <guile>;
         buildInputs = [
           automake111x
           autoconf
@@ -233,14 +227,11 @@ let
       };
 
     coverage =
-      { tarball ? jobs.tarball {}
-      }:
-
       with pkgs;
 
       releaseTools.coverageAnalysis {
         name = "guile-coverage";
-        src = tarball;
+        src = jobs.tarball;
         buildInputs = buildInputsFrom pkgs;
         patches = [
           "${nixpkgs}/pkgs/development/interpreters/guile/disable-gc-sensitive-tests.patch" 
@@ -267,16 +258,14 @@ let
 
     # The default build, executed on all platforms.
     build =
-      { tarball ? jobs.tarball {}
-      , system ? "x86_64-linux"
-      }:
+      { system ? "x86_64-linux" }:
 
       let pkgs = import nixpkgs { inherit system; };
       in
         with pkgs;
         releaseTools.nixBuild {
           name = "guile";
-          src = tarball;
+          src = jobs.tarball;
           configureFlags = defaultConfigureFlags pkgs;
           buildInputs = buildInputsFrom pkgs;
 
@@ -297,12 +286,10 @@ let
     # because pthread support tends to be buggy, so `--without-thread' builds
     # allows us to see what's wrong aside from pthread support.
     build_without_threads =
-      { tarball ? jobs.tarball { }
-      , system ? builtins.currentSystem
-      }:
+      { system ? builtins.currentSystem }:
 
       let
-        build = jobs.build { inherit tarball system; };
+        build = jobs.build { inherit system; };
       in
         pkgs.lib.overrideDerivation build (attrs: {
           name = "guile-without-threads";
@@ -311,12 +298,9 @@ let
 
     # Building with GCC 4.7.
     build_gcc47 =
-      { tarball ? jobs.tarball { }
-      }:
-
       let
         pkgs = import nixpkgs {};                 # x86_64-linux
-        build = jobs.build { inherit tarball; };
+        build = jobs.build {};
       in
         pkgs.lib.overrideDerivation build (attrs: {
           name = "guile-gcc47";
@@ -326,12 +310,9 @@ let
 
     # Building with Clang.
     build_clang =
-      { tarball ? jobs.tarball { }
-      }:
-
       let
         pkgs = import nixpkgs {};                 # x86_64-linux
-        build = jobs.build { inherit tarball; };
+        build = jobs.build {};
       in
         (pkgs.lib.overrideDerivation build (attrs: {
           name = "guile-clang";
@@ -344,12 +325,9 @@ let
 
     # Check what it's like to build with an old compiler.
     build_gcc42 =
-      { tarball ? jobs.tarball {}
-      }:
-
       let
         pkgs = import nixpkgs {};                 # x86_64-linux
-        build = jobs.build { inherit tarball; };
+        build = jobs.build {};
       in
         (pkgs.lib.overrideDerivation build (attrs: {
           name = "guile-gcc42";
