@@ -15,10 +15,12 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
-{ nixpkgs ? { outPath = <nixpkgs>; }
-, partedSrc ? { outPath = <parted>; } }:
-
 let
+  nixpkgs = <nixpkgs>;
+  partedSrc = <parted>;
+
+  pkgs = import nixpkgs {};
+
   meta = {
     description = "GNU Parted, a tool to create, destroy, resize, check, and copy partitions";
 
@@ -35,11 +37,10 @@ let
     homepage = http://www.gnu.org/software/parted/;
     license = "GPLv3+";
 
-    maintainers = [
-    ];
+    maintainers = [ pkgs.lib.maintainers.ludo ];
 
     # GNU Parted requires libuuid, which is part of util-linux-ng.
-    platforms = (import nixpkgs {}).stdenv.lib.platforms.linux;
+    platforms = pkgs.lib.platforms.linux;
   };
 
   buildInputsFrom = pkgs: with pkgs;
