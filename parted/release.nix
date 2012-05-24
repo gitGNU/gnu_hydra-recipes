@@ -80,7 +80,14 @@ in
       };
 
       xbuild_gnu = pkgs: {
-	buildInputs = with pkgs; [ readline libuuid gnu.hurdCross ];
+	buildInputs = with pkgs;
+          [ readline libuuid
+
+            # Build against the intermediate form, which contains a
+            # `libstore' *not* already linked against `libparted'.
+            gnu.hurdCrossIntermediate
+          ];
+
 	buildNativeInputs = with pkgs; [ gettext_0_18 ];
 	configureFlags =
 	  [ "--disable-device-mapper"
