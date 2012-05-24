@@ -86,10 +86,12 @@ let
           };
       in
       (crosspkgs.releaseTools.nixBuild ({
-        inherit name ;
         src = jobs.tarball;
         doCheck = false;
-      } // ( pkgs.lib.optionalAttrs (customEnv ? xbuild_gnu) (customEnv.xbuild_gnu crosspkgs)) ) ).hostDrv;      
+        inherit name succeedOnFailure keepBuildDirectory;
+      }
+      //
+      (pkgs.lib.optionalAttrs (customEnv ? xbuild_gnu) (customEnv.xbuild_gnu crosspkgs)))).hostDrv;
   }));
 
 in jobs
