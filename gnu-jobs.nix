@@ -1,5 +1,6 @@
 /* Continuous integration of GNU with Hydra/Nix.
    Copyright (C) 2011  Rob Vermaas <rob.vermaas@gmail.com>
+   Copyright (C) 2012  Ludovic Courtès <ludo@gnu.org>
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,7 +24,7 @@
 , enableGnuCrossBuild ? false
 , useLatestGnulib ? true
 }:
-    
+
 let
   pkgs = import nixpkgs {};
   crossSystems = (import ./cross-systems.nix) { inherit pkgs; };
@@ -31,7 +32,8 @@ let
   succeedOnFailure = true;
   keepBuildDirectory = true;
 
-  tarballFun = gnulib :
+  jobs = (rec {
+    tarball =
       pkgs.releaseTools.makeSourceTarball ({
         name = "${name}-tarball";
         inherit src meta succeedOnFailure keepBuildDirectory;
@@ -46,26 +48,19 @@ let
                export GNULIB_SRCDIR=../gnulib
 
                mkdir -p gnulib
-               cp -Rv "${gnulib}/"* gnulib
+               cp -Rv "${<gnulib>}/"* gnulib
                chmod -R 755 gnulib
              '';
            })
       // ( pkgs.lib.optionalAttrs (customEnv ? tarball) (customEnv.tarball pkgs) ) );
 
-  jobs = (rec {
-    tarball =
-      if useLatestGnulib
-      then { gnulib ? {outPath = <gnulib>;} }: tarballFun gnulib
-      else tarballFun null;
-
     build =
-      { system ? "x86_64-linux"
-      , tarball ? jobs.tarball {}
-      }:
+      { system ? builtins.currentSystem }:
+
       let pkgs = import nixpkgs {inherit system;};
       in with pkgs;
       releaseTools.nixBuild ({
-        src = tarball;
+        src = jobs.tarball;
 
         # Use a low priority on Cygwin.  See
         # <https://github.com/NixOS/hydra/issues/15> for details.
@@ -76,13 +71,9 @@ let
       } // ( pkgs.lib.optionalAttrs (customEnv ? build) (customEnv.build pkgs)) );
 
     coverage =
-      { tarball ? jobs.tarball {}
-      }:
-      with pkgs;
-
-      releaseTools.coverageAnalysis ({
+      pkgs.releaseTools.coverageAnalysis ({
         name = "${name}-coverage";
-        src = tarball;
+        src = jobs.tarball;
         inherit meta;
         buildInputs = [];
       } // ( pkgs.lib.optionalAttrs (customEnv ? coverage) (customEnv.coverage pkgs)) );
@@ -90,16 +81,13 @@ let
   } // (pkgs.lib.optionalAttrs enableGnuCrossBuild {
     xbuild_gnu =
       # Cross build to GNU.
-      { tarball ? jobs.tarball {}
-      }:
-
       let crosspkgs = import nixpkgs {
             crossSystem = crossSystems.i586_pc_gnu;
           };
       in
       (crosspkgs.releaseTools.nixBuild ({
         inherit name ;
-        src = tarball;
+        src = jobs.tarball;
         doCheck = false;
       } // ( pkgs.lib.optionalAttrs (customEnv ? xbuild_gnu) (customEnv.xbuild_gnu crosspkgs)) ) ).hostDrv;      
   }));
