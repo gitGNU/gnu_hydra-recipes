@@ -1,6 +1,6 @@
 /* Continuous integration of GNU with Hydra/Nix.
    Copyright (C) 2010  Eelco Dolstra <e.dolstra@tudelft.nl>
-   Copyright (C) 2010  Ludovic Courtès <ludo@gnu.org>
+   Copyright (C) 2010, 2012  Ludovic Courtès <ludo@gnu.org>
    Copyright (C) 2010  Rob Vermaas <rob.vermaas@gmail.com>
 
    This program is free software: you can redistribute it and/or modify
@@ -27,12 +27,12 @@
   /* Source tarballs of the latest GNU packages.  */
 #, glibc     ? (import glibc/release.nix {}).tarball {}
 , coreutils ? (import coreutils/release.nix {}).tarball {}
-, guile     ? (import guile/release.nix {}).tarball {}
-, grep      ? (import grep/release.nix {}).tarball {}
+, guile     ? (import guile/release.nix).tarball
+, grep      ? (import grep/release.nix {}).tarball
 , inetutils ? (import inetutils/release.nix {}).tarball {}
-, tar       ? (import tar/release.nix {}).tarball {}
-, patch     ? (import patch/release.nix {}).tarball {}
-, emacs     ? (import emacs/release.nix {}).tarball {}
+, tar       ? (import tar/release.nix {}).tarball
+, patch     ? (import patch/release.nix {}).tarball
+, emacs     ? (import emacs/release.nix).tarball
 }:
 
 let
