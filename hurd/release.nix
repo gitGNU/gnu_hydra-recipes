@@ -268,6 +268,10 @@ let
               # So reduce the timeout-on-silence duration to 15 mn (5 mn
               # seems to be insufficient for Coreutils' test suite.)
               maxSilent = 900;
+
+              # When something goes wrong, such as an infinite loop filling
+              # out the log with messages, it's better to quit.
+              timeout = 2700;
             };
           });
       in
