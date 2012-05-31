@@ -55,7 +55,7 @@ let
 		-e "s/^AC_INIT(\([^,]\+\), \[\([^,]\+\)\]/AC_INIT(\1, [\2-$(git describe || echo git)]/g"
 	  '';
 
-	autoconfPhase = "autoreconf -vfi";
+	autoconfPhase = "make autoreconf";
 
         # "make dist" wants `src/asn1Parser' built.
         dontBuild = false;
