@@ -46,12 +46,7 @@ let
   inherit (pkgs) releaseTools;
 
   buildInputsFrom = pkgs: with pkgs;
-    [ gettext_0_17 texinfo perl
-
-      # Build with a newer GCC in the hope that `.data.rel.ro' actually ends
-      # up in a `GNU_RELRO' section, allowing the `configure' check to pass.
-      gcc46
-    ];
+    [ gettext_0_17 texinfo perl ];
 
   succeedOnFailure = true;
   keepBuildDirectory = true;
