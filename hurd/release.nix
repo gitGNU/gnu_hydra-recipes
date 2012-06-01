@@ -113,7 +113,7 @@ let
     # Cross build from GNU/Linux.
     xbuild =
       { tarball ? jobs.tarball
-      , parted ? (import ../parted/release.nix {}).xbuild_gnu {}
+      , parted ? (import ../parted/release.nix).xbuild_gnu
       }:
 
       let
@@ -164,7 +164,7 @@ let
       { tarball ? jobs.tarball
       , glibcTarball ? (import ../glibc/release.nix { glibcHurd = <glibc>; }).tarball {}
       , machTarball ? (import ../gnumach/release.nix {}).tarball
-      , partedTarball ? ((import ../parted/release.nix {}).tarball {})
+      , partedTarball ? ((import ../parted/release.nix).tarball {})
       }:
 
       let
@@ -232,7 +232,7 @@ let
       , tarball ? jobs.tarball
       , glibcTarball ? (import ../glibc/release.nix { glibcHurd = <glibc>; }).tarball {}
       , machTarball ? (import ../gnumach/release.nix {}).tarball
-      , partedTarball ? ((import ../parted/release.nix {}).tarball {})
+      , partedTarball ? ((import ../parted/release.nix).tarball)
       }:
 
       let
