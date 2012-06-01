@@ -253,7 +253,11 @@ let
 
         inherit succeedOnFailure keepBuildDirectory;
 
-        meta = meta // { maxSilent = 10000; schedulingPriority = "20"; };
+        meta = meta // {
+          # On my 2.6 GHz laptop, it takes 136mn to run.
+          maxSilent = 18000;
+          schedulingPriority = 20;
+        };
       };
 
     # The default build, executed on all platforms.
