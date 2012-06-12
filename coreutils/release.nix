@@ -1,5 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
-   Copyright (C) 2009, 2010, 2011  Ludovic Courtès <ludo@gnu.org>
+   Copyright (C) 2009, 2010, 2011, 2012  Ludovic Courtès <ludo@gnu.org>
    Copyright (C) 2009, 2010  Rob Vermaas <rob.vermaas@gmail.com>
 
    This program is free software: you can redistribute it and/or modify
@@ -15,9 +15,9 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
-{ nixpkgs ? <nixpkgs> }:
-
 let
+  nixpkgs = <nixpkgs>;
+
   meta = {
     homepage = http://www.gnu.org/software/coreutils/;
     description = "The basic file, shell and text manipulation utilities of the GNU operating system";
@@ -48,58 +48,43 @@ let
   succeedOnFailure = true;
   keepBuildDirectory = true;
 
-  jobs = rec {
+  jobs = {
 
     tarball =
-      { coreutilsSrc ? { outPath = <coreutils>; }
-      , gnulibSrc ? <gnulib>
-      }:
-
-      with pkgs;
-
-      pkgs.releaseTools.makeSourceTarball {
+      pkgs.releaseTools.sourceTarball {
         name = "coreutils-tarball";
-        src = coreutilsSrc;
+        src = <coreutils>;
 
-        buildInputs = [
-          automake111x
-          bison
-          gettext_0_18
-          git
-          gperf
-          texinfo   
-          rsync
-          cvs
-        ] ++ buildInputsFrom pkgs;
+        buildInputs = (with pkgs;
+          [ automake111x bison gettext_0_18
+            git gperf texinfo rsync cvs
+          ]) ++ buildInputsFrom pkgs;
 
         dontBuild = false;
 
         autoconfPhase = ''
-          sed 's|/usr/bin/perl|${perl}/bin/perl|' -i src/wheel-gen.pl
+          sed 's|/usr/bin/perl|${pkgs.perl}/bin/perl|' -i src/wheel-gen.pl
 
-          git config submodule.gnulib.url "${gnulibSrc}"
+          git config submodule.gnulib.url "${<gnulib>}"
 
           # By default `bootstrap' tries to download `.po' files from the
           # net, which doesn't work in chroots.  Skip that for now and
           # provide an empty `LINGUAS' file.
           touch po/LINGUAS
-          ./bootstrap --gnulib-srcdir="${gnulibSrc}" --skip-po
+          ./bootstrap --gnulib-srcdir="${<gnulib>}" --skip-po
         '';
 
         inherit meta succeedOnFailure keepBuildDirectory;
-        
       };
 
     build =
-      { tarball ? jobs.tarball {}
-      , system ? "x86_64-linux"
-      }:
+      { system ? "x86_64-linux" }:
 
       let pkgs = import nixpkgs {inherit system;};
       in
       pkgs.releaseTools.nixBuild {
         name = "coreutils" ;
-        src = tarball;
+        src = jobs.tarball;
         buildInputs = buildInputsFrom pkgs ;
         configureFlags = let stdenv = pkgs.stdenv; in
           [ "--enable-install-program=arch,hostname,su" ]
@@ -109,16 +94,13 @@ let
 
     xbuild_gnu =
       # Cross build to GNU.
-      { tarball ? jobs.tarball {}
-      }:
-
       let pkgs = import nixpkgs {
             crossSystem = crossSystems.i586_pc_gnu;
           };
       in
       (pkgs.releaseTools.nixBuild {
         name = "coreutils" ;
-        src = tarball;
+        src = jobs.tarball;
         buildInputs = [ pkgs.gmp ];
         buildNativeInputs = with pkgs; [ perl xz ];
         configureFlags = [ "--enable-install-program=arch,hostname,su" ];
@@ -127,14 +109,9 @@ let
       }).hostDrv;
 
     coverage =
-      { tarball ? jobs.tarball {}
-      }:
-
-      with pkgs;
-
-      releaseTools.coverageAnalysis {
+      pkgs.releaseTools.coverageAnalysis {
         name = "coreutils-coverage";
-        src = tarball;
+        src = jobs.tarball;
         configureFlags = [ "--enable-install-program=arch,hostname,su" ];
         buildInputs = buildInputsFrom pkgs;
         postCheck =
@@ -146,14 +123,9 @@ let
       };
 
     manual =
-      { tarball ? jobs.tarball {}
-      }:
-
-      with pkgs;
-
-      releaseTools.nixBuild {
+      pkgs.releaseTools.nixBuild {
         name = "coreutils-manual";
-        src = tarball;
+        src = jobs.tarball;
         buildInputs = buildInputsFrom pkgs ++ [ pkgs.texinfo pkgs.texLive ];
         doCheck = false;
 
