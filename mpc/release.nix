@@ -86,7 +86,13 @@ let
 
           inherit preCheck;
         };
-        coverage = pkgs: { buildInputs = [ gmp mpfr ]; inherit preCheck; };
+
+        coverage = pkgs: {
+          CPPFLAGS = "-DNDEBUG=1";                # disable assertions
+          buildInputs = [ gmp mpfr ];
+          inherit preCheck;
+        };
+
         xbuild_gnu = pkgs: { buildInputs = [ gmp_xgnu mpfr_xgnu ]; };
       };
     };
