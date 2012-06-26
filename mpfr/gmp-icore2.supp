@@ -4,5 +4,4 @@
   __gmpn_copyi_core2
   Memcheck:Addr8
   fun:__gmpn_copyi_core2
-  fun:__gmpn_divrem
 }
