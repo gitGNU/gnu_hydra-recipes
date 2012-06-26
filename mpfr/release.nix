@@ -39,6 +39,9 @@ let
     maintainers = [ ];
   };
 
+  succeedOnFailure = true;
+  keepBuildDirectory = true;
+
   preCheck = "export GMP_CHECK_RANDOMIZE=true;";
 
   # The minimum required GMP version.
@@ -53,61 +56,84 @@ let
     || stdenv.system == "x86_64-linux"
     || stdenv.system == "x86_64-darwin";
 
-  jobs =
-    import ../gnu-jobs.nix {
-      name = "mpfr";
-      src  = <mpfr>;
-      inherit nixpkgs meta;
-      useLatestGnulib = false;
-      enableGnuCrossBuild = true;
+  jobs = {
 
-      customEnv = {
+    # Note: We can't use `gnu-jobs.nix', because we need a `tarball' from a
+    # different evaluation, such that its `gmp' parameter is for the right
+    # system.
 
-        tarball = pkgs: {
-          buildInputs =
-            # XXX: The `gmp' parameter above is a "build output (same
-            # system)"; but when performing the `build' job on a system other
-            # than `builtins.currentSystem', we want to make sure the
-            # `tarball' job still uses a GMP for `builtins.currentSystem'.
-            # Thus, explicitly ask for this.
-            let gmp = (import ../gmp/release.nix).build {}; in [ gmp ]
-            ++ (with pkgs; [ xz zip texinfo automake111x perl ]);
-          autoconfPhase = "autoreconf -vfi";
-          patches = [ ./ck-version-info.patch ];
-        };
-
-        build = pkgs: {
-          buildInputs = [ gmp ]
-            ++ (pkgs.lib.optional (useValgrind pkgs.stdenv) pkgs.valgrind);
-
-          preCheck = preCheck +
-            (if useValgrind pkgs.stdenv
-             then ''
-               export VALGRIND="valgrind -q --error-exitcode=1 --suppressions=${./gmp-icore2.supp}"
-             ''
-             else "");
-        };
-
-        coverage = pkgs: { buildInputs = [ gmp ]; inherit preCheck; };
-        xbuild_gnu = pkgs: { buildInputs = [ gmp_xgnu ]; };
+    tarball =
+      let pkgs = import <nixpkgs> {}; in
+      pkgs.releaseTools.sourceTarball {
+        name = "mpfr-tarball";
+        src = <mpfr>;
+        buildInputs = [ gmp ]
+          ++ (with pkgs; [ xz zip texinfo automake111x perl ]);
+        autoconfPhase = "autoreconf -vfi";
+        patches = [ ./ck-version-info.patch ];
+        inherit meta succeedOnFailure keepBuildDirectory;
       };
-    };
-in
-  jobs
 
-  //
+    build =
+      { system ? builtins.currentSystem
+      , tarball ? jobs.tarball
+      }:
 
-  {
+      let pkgs = import <nixpkgs> {}; in
+      pkgs.releaseTools.nixBuild {
+        name = "mpfr";
+        src = tarball;
+        buildInputs = [ gmp ]
+          ++ (pkgs.lib.optional (useValgrind pkgs.stdenv) pkgs.valgrind);
+
+        preCheck = preCheck +
+          (if useValgrind pkgs.stdenv
+           then ''
+             export VALGRIND="valgrind -q --error-exitcode=1 --suppressions=${./gmp-icore2.supp}"
+           ''
+           else "");
+
+        inherit meta succeedOnFailure keepBuildDirectory;
+      };
+
+    coverage =
+      { system ? builtins.currentSystem
+      , tarball ? jobs.tarball
+      }:
+
+      let pkgs = import <nixpkgs> {}; in
+      pkgs.releaseTools.coverageAnalysis {
+        name = "mpfr-coverage";
+        src = tarball;
+        buildInputs = [ gmp ];
+        inherit meta succeedOnFailure keepBuildDirectory;
+      };
+
+    xbuild_gnu =
+      { system ? builtins.currentSystem
+      , tarball ? jobs.tarball
+      }:
+
+      let pkgs = import <nixpkgs> {}; in
+      (pkgs.releaseTools.coverageAnalysis {
+        name = "mpfr-gnu";
+        src = tarball;
+        buildInputs = [ gmp ];
+        inherit meta succeedOnFailure keepBuildDirectory;
+      }).hostDrv;
+
     # Extra job with `g++' as the C compiler.
     build_with_gxx =
-      { system ? "x86_64-linux" }:
+      { system ? "x86_64-linux"
+      , tarball ? jobs.tarball
+      }:
 
       let
         pkgs  = import nixpkgs { inherit system; };
         build = jobs.build { inherit system; };
       in
         pkgs.releaseTools.nixBuild ({
-          src = jobs.tarball;
+          src = tarball;
           propagatedBuildInputs = [ gmp ];
           inherit (build) name meta succeedOnFailure keepBuildDirectory;
           inherit preCheck;
@@ -119,7 +145,9 @@ in
 
     # Extra job to build with an old GMP.
     build_with_old_gmp =
-      { system ? "x86_64-linux" }:
+      { system ? "x86_64-linux"
+      , tarball ? jobs.tarball
+      }:
 
       let
         pkgs  = import nixpkgs { inherit system; };
@@ -127,9 +155,11 @@ in
         build = jobs.build { inherit system; };
       in
         pkgs.releaseTools.nixBuild ({
-          src = jobs.tarball;
+          src = tarball;
           propagatedBuildInputs = [ gmp ];
           inherit (build) name meta succeedOnFailure keepBuildDirectory;
           inherit preCheck;
         });
-   }
+   };
+in
+  jobs
