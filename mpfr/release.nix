@@ -15,7 +15,6 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 { nixpkgs ? <nixpkgs>
-, mpfrSrc ? <mpfr>
 , gmp ? (import nixpkgs {}).gmp      # native GMP build
 , gmp_xgnu ? null                     # cross-GNU GMP build
 }:
@@ -57,7 +56,7 @@ let
   jobs =
     import ../gnu-jobs.nix {
       name = "mpfr";
-      src  = mpfrSrc;
+      src  = <mpfr>;
       inherit nixpkgs meta;
       useLatestGnulib = false;
       enableGnuCrossBuild = true;
@@ -95,16 +94,17 @@ in
   {
     # Extra job with `g++' as the C compiler.
     build_with_gxx =
-      { system ? "x86_64-linux"
-      , tarball ? jobs.tarball
-      }:
+      { system ? "x86_64-linux" }:
 
       let
         pkgs  = import nixpkgs { inherit system; };
-        build = jobs.build { inherit system tarball; };
+        build = jobs.build {
+          inherit system;
+          inherit (jobs) tarball;
+        };
       in
         pkgs.releaseTools.nixBuild ({
-          src = tarball;
+          src = jobs.tarball;
           propagatedBuildInputs = [ gmp ];
           inherit (build) name meta succeedOnFailure keepBuildDirectory;
           inherit preCheck;
@@ -116,17 +116,18 @@ in
 
     # Extra job to build with an old GMP.
     build_with_old_gmp =
-      { system ? "x86_64-linux"
-      , tarball ? jobs.tarball
-      }:
+      { system ? "x86_64-linux" }:
 
       let
         pkgs  = import nixpkgs { inherit system; };
         gmp   = old_gmp pkgs;
-        build = jobs.build { inherit system tarball; };
+        build = jobs.build {
+          inherit system;
+          inherit (jobs) tarball;
+        };
       in
         pkgs.releaseTools.nixBuild ({
-          src = tarball;
+          src = jobs.tarball;
           propagatedBuildInputs = [ gmp ];
           inherit (build) name meta succeedOnFailure keepBuildDirectory;
           inherit preCheck;
