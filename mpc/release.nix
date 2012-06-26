@@ -38,6 +38,9 @@ let
     maintainers = [  "Andreas Enge <andreas.enge@inria.fr>" ];
   };
 
+  succeedOnFailure = true;
+  keepBuildDirectory = true;
+
   preCheck = "export GMP_CHECK_RANDOMIZE=true";
 
   # Return true if we should use Valgrind on the given platform.
@@ -56,55 +59,76 @@ let
       gmp = old_gmp pkgs;
     };
 
-  jobs =
-    import ../gnu-jobs.nix {
-      name = "mpc";
-      src  = <mpc>;
-      inherit nixpkgs meta;
-      useLatestGnulib = false;
-      enableGnuCrossBuild = true;
-
-      customEnv = {
-
-        tarball = pkgs: {
-          buildInputs = [ gmp mpfr ]
-            ++ (with pkgs; [ subversion texinfo automake111x ]);
-          autoconfPhase = "autoreconf -vfi";
-        };
-
-        build = pkgs: {
-          configureFlags =
-            # On Cygwin GMP is compiled statically, so build MPC statically.
-            (pkgs.stdenv.lib.optionals pkgs.stdenv.isCygwin
-              [ "--enable-static" "--disable-shared" ])
-
-            ++ (pkgs.lib.optional (useValgrind pkgs.stdenv)
-                  "--enable-valgrind-tests");
-
-          buildInputs = [ gmp mpfr ]
-            ++ (pkgs.lib.optional (useValgrind pkgs.stdenv) pkgs.valgrind);
-
-          inherit preCheck;
-        };
-
-        coverage = pkgs: {
-          CPPFLAGS = "-DNDEBUG=1";                # disable assertions
-          buildInputs = [ gmp mpfr ];
-          inherit preCheck;
-        };
-
-        xbuild_gnu = pkgs: { buildInputs = [ gmp_xgnu mpfr_xgnu ]; };
+  jobs = {
+    tarball =
+      let pkgs = import <nixpkgs> {}; in
+      pkgs.releaseTools.sourceTarball {
+        name = "mpc-tarball";
+        src  = <mpc>;
+        buildInputs = [ gmp mpfr ]
+          ++ (with pkgs; [ subversion texinfo automake111x ]);
+        autoconfPhase = "autoreconf -vfi";
+        inherit meta succeedOnFailure keepBuildDirectory;
       };
-    };
-in
-  jobs
 
-  //
+    build =
+      { system ? builtins.currentSystem
+      , tarball ? jobs.tarball
+      }:
 
-  {
+      let pkgs = import <nixpkgs> { inherit system; }; in
+      pkgs.releaseTools.nixBuild {
+        name = "mpc";
+        src = tarball;
+        configureFlags =
+          # On Cygwin GMP is compiled statically, so build MPC statically.
+          (pkgs.stdenv.lib.optionals pkgs.stdenv.isCygwin
+            [ "--enable-static" "--disable-shared" ])
+
+          ++ (pkgs.lib.optional (useValgrind pkgs.stdenv)
+                "--enable-valgrind-tests");
+
+        buildInputs = [ gmp mpfr ]
+          ++ (pkgs.lib.optional (useValgrind pkgs.stdenv) pkgs.valgrind);
+
+        inherit preCheck meta succeedOnFailure keepBuildDirectory;
+      };
+
+    coverage =
+      { system ? builtins.currentSystem
+      , tarball ? jobs.tarball
+      }:
+
+      let pkgs = import <nixpkgs> { inherit system; }; in
+      pkgs.releaseTools.coverageAnalysis {
+        name = "mpc-coverage";
+        src = tarball;
+        CPPFLAGS = "-DNDEBUG=1";                # disable assertions
+        buildInputs = [ gmp mpfr ];
+        inherit preCheck meta succeedOnFailure keepBuildDirectory;
+      };
+
+    xbuild_gnu =
+      { tarball ? jobs.tarball }:
+
+      let
+        pkgs = import <nixpkgs> {};
+        crossSystems = (import ../cross-systems.nix) { inherit pkgs; };
+        xpkgs = import nixpkgs {
+          crossSystem = crossSystems.i586_pc_gnu;
+        };
+      in
+      (xpkgs.releaseTools.coverageAnalysis {
+        name = "mpc-gnu";
+        src = tarball;
+        buildInputs = [ gmp_xgnu mpfr_xgnu ];
+        inherit meta succeedOnFailure keepBuildDirectory;
+      }).hostDrv;
+
     # Extra job to build with an MPFR that uses an old GMP.
     build_with_mpfr_with_old_gmp =
       { system ? "x86_64-linux"
+      , tarball ? jobs.tarball
       , mpfr_with_old_gmp
       }:
 
@@ -113,7 +137,7 @@ in
         build = jobs.build { inherit system; };
       in
         pkgs.releaseTools.nixBuild ({
-          src = jobs.tarball;
+          src = tarball;
 
           # We assume that `mpfr_with_old_gmp' has GMP as one of its
           # propagated build inputs.
@@ -126,6 +150,7 @@ in
     # Extra job to build with an MPFR that uses an old GMP & an old MPFR.
     build_with_old_mpfr_and_old_gmp =
       { system ? "x86_64-linux"
+      , tarball ? jobs.tarball
       }:
 
       let
@@ -135,10 +160,11 @@ in
         build = jobs.build { inherit system; };
       in
         pkgs.releaseTools.nixBuild ({
-          src = jobs.tarball;
+          src = tarball;
           buildInputs = [ gmp mpfr ];
           inherit (build) name meta configureFlags preCheck
             succeedOnFailure keepBuildDirectory;
         });
-
-   }
+   };
+in
+  jobs
