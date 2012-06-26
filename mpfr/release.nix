@@ -119,7 +119,7 @@ let
           crossSystem = crossSystems.i586_pc_gnu;
         };
       in
-      (xpkgs.releaseTools.coverageAnalysis {
+      (xpkgs.releaseTools.nixBuild {
         name = "mpfr-gnu";
         src = tarball;
         buildInputs = [ gmp_xgnu ];

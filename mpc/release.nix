@@ -118,7 +118,7 @@ let
           crossSystem = crossSystems.i586_pc_gnu;
         };
       in
-      (xpkgs.releaseTools.coverageAnalysis {
+      (xpkgs.releaseTools.nixBuild {
         name = "mpc-gnu";
         src = tarball;
         buildInputs = [ gmp_xgnu mpfr_xgnu ];
