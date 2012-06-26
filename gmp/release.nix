@@ -14,10 +14,9 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
-{ nixpkgs ? <nixpkgs>
-, gmpSrc ? <gmp> }:
-
 let
+  nixpkgs = <nixpkgs>;
+
   meta = {
     description = "The GNU Multiple Precision Arithmetic Library (GMP)";
 
@@ -49,7 +48,7 @@ let
 in
   import ../gnu-jobs.nix {
     name = "gmp";
-    src  = gmpSrc;
+    src  = <gmp>;
     inherit nixpkgs meta;
     useLatestGnulib = false;
     enableGnuCrossBuild = true;
