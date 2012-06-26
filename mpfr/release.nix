@@ -39,7 +39,7 @@ let
     maintainers = [ ];
   };
 
-  preCheck = "export GMP_CHECK_RANDOMIZE=true";
+  preCheck = "export GMP_CHECK_RANDOMIZE=true;";
 
   # The minimum required GMP version.
   old_gmp = pkgs:
