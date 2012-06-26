@@ -64,7 +64,13 @@ let
       customEnv = {
 
         tarball = pkgs: {
-          buildInputs = [ gmp ]
+          buildInputs =
+            # XXX: The `gmp' parameter above is a "build output (same
+            # system)"; but when performing the `build' job on a system other
+            # than `builtins.currentSystem', we want to make sure the
+            # `tarball' job still uses a GMP for `builtins.currentSystem'.
+            # Thus, explicitly ask for this.
+            let gmp = (import ../gmp/release.nix).build {}; in [ gmp ]
             ++ (with pkgs; [ xz zip texinfo automake111x perl ]);
           autoconfPhase = "autoreconf -vfi";
           patches = [ ./ck-version-info.patch ];
