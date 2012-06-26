@@ -98,10 +98,7 @@ in
 
       let
         pkgs  = import nixpkgs { inherit system; };
-        build = jobs.build {
-          inherit system;
-          inherit (jobs) tarball;
-        };
+        build = jobs.build { inherit system; };
       in
         pkgs.releaseTools.nixBuild ({
           src = jobs.tarball;
@@ -121,10 +118,7 @@ in
       let
         pkgs  = import nixpkgs { inherit system; };
         gmp   = old_gmp pkgs;
-        build = jobs.build {
-          inherit system;
-          inherit (jobs) tarball;
-        };
+        build = jobs.build { inherit system; };
       in
         pkgs.releaseTools.nixBuild ({
           src = jobs.tarball;
