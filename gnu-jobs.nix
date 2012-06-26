@@ -36,7 +36,12 @@ let
     tarball =
       pkgs.releaseTools.makeSourceTarball ({
         name = "${name}-tarball";
-        inherit src meta succeedOnFailure keepBuildDirectory;
+        inherit src meta;
+
+        # XXX: Since other jobs refer to this one directly, let's not
+        # succeed-on-failure, or these other jobs will get triggered just to
+        # fail very quickly.
+        succeedOnFailure = false;
 
         autoconfPhase = ''
           ./bootstrap ${pkgs.lib.optionalString useLatestGnulib "--gnulib-srcdir=../gnulib"} --skip-po --copy
