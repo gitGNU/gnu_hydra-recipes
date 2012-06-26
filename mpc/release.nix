@@ -1,5 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
-   Copyright (C) 2011  Ludovic Courtès <ludo@gnu.org>
+   Copyright (C) 2011, 2012  Ludovic Courtès <ludo@gnu.org>
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -15,7 +15,6 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 { nixpkgs ? { outPath = ../../nixpkgs; }
-, mpcSrc ? { outPath = ../../mpc; }
 , gmp ? (import nixpkgs {}).gmp      # native GMP build
 , gmp_xgnu ? null                     # cross-GNU GMP build
 , mpfr ? (import nixpkgs {}).mpfr    # native MPFR build
@@ -60,7 +59,7 @@ let
   jobs =
     import ../gnu-jobs.nix {
       name = "mpc";
-      src  = mpcSrc;
+      src  = <mpc>;
       inherit nixpkgs meta;
       useLatestGnulib = false;
       enableGnuCrossBuild = true;
@@ -100,16 +99,18 @@ in
     # Extra job to build with an MPFR that uses an old GMP.
     build_with_mpfr_with_old_gmp =
       { system ? "x86_64-linux"
-      , tarball ? jobs.tarball {}
       , mpfr_with_old_gmp
       }:
 
       let
         pkgs  = import nixpkgs { inherit system; };
-        build = jobs.build { inherit tarball system; };
+        build = jobs.build {
+          inherit system;
+          inherit (jobs) tarball;
+        };
       in
         pkgs.releaseTools.nixBuild ({
-          src = tarball;
+          src = jobs.tarball;
 
           # We assume that `mpfr_with_old_gmp' has GMP as one of its
           # propagated build inputs.
@@ -122,17 +123,19 @@ in
     # Extra job to build with an MPFR that uses an old GMP & an old MPFR.
     build_with_old_mpfr_and_old_gmp =
       { system ? "x86_64-linux"
-      , tarball ? jobs.tarball {}
       }:
 
       let
         pkgs  = import nixpkgs { inherit system; };
         gmp   = old_gmp pkgs;
         mpfr  = old_mpfr pkgs;
-        build = jobs.build { inherit tarball system; };
+        build = jobs.build {
+          inherit system;
+          inherit (jobs) tarball;
+        };
       in
         pkgs.releaseTools.nixBuild ({
-          src = tarball;
+          src = jobs.tarball;
           buildInputs = [ gmp mpfr ];
           inherit (build) name meta configureFlags preCheck
             succeedOnFailure keepBuildDirectory;
