@@ -110,15 +110,19 @@ let
       };
 
     xbuild_gnu =
-      { system ? builtins.currentSystem
-      , tarball ? jobs.tarball
-      }:
+      { tarball ? jobs.tarball }:
 
-      let pkgs = import <nixpkgs> {}; in
-      (pkgs.releaseTools.coverageAnalysis {
+      let
+        pkgs = import <nixpkgs> {};
+        crossSystems = (import ../cross-systems.nix) { inherit pkgs; };
+        xpkgs = import nixpkgs {
+          crossSystem = crossSystems.i586_pc_gnu;
+        };
+      in
+      (xpkgs.releaseTools.coverageAnalysis {
         name = "mpfr-gnu";
         src = tarball;
-        buildInputs = [ gmp ];
+        buildInputs = [ gmp_xgnu ];
         inherit meta succeedOnFailure keepBuildDirectory;
       }).hostDrv;
 
