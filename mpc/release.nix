@@ -91,7 +91,14 @@ let
         buildInputs = [ gmp mpfr ]
           ++ (pkgs.lib.optional (useValgrind pkgs.stdenv) pkgs.valgrind);
 
-        inherit preCheck meta succeedOnFailure keepBuildDirectory;
+        preCheck = preCheck +
+          (if useValgrind pkgs.stdenv
+           then ''
+             export VALGRIND="valgrind -q --error-exitcode=1 --suppressions=${./gmp-icore2.supp}"
+           ''
+           else "");
+
+        inherit meta succeedOnFailure keepBuildDirectory;
       };
 
     coverage =

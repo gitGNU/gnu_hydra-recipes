@@ -1,0 +1,7 @@
+# Valgrind suppression file for GMP's uses of core2 instructions.
+
+{
+  __gmpn_copyi_core2
+  Memcheck:Addr8
+  fun:__gmpn_copyi_core2
+}
