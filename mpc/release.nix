@@ -103,7 +103,7 @@ let
       pkgs.releaseTools.coverageAnalysis {
         name = "mpc-coverage";
         src = tarball;
-        CPPFLAGS = "-DNDEBUG=1";                # disable assertions
+        CPPFLAGS = "-DNDEBUG=1";               # disable assertions
         buildInputs = [ gmp mpfr ];
         inherit preCheck meta succeedOnFailure keepBuildDirectory;
       };
