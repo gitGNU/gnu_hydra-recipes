@@ -36,7 +36,8 @@ let
 
     license = "LGPLv3+";
 
-    maintainers = [ ];
+    maintainers =
+      [ "Paul Zimmermann <Paul.Zimmermann@loria.fr>" ];
   };
 
   succeedOnFailure = true;
