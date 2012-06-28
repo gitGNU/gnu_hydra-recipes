@@ -79,7 +79,7 @@ let
       , tarball ? jobs.tarball
       }:
 
-      let pkgs = import <nixpkgs> {}; in
+      let pkgs = import <nixpkgs> { inherit system; }; in
       pkgs.releaseTools.nixBuild {
         name = "mpfr";
         src = tarball;
