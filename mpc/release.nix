@@ -172,7 +172,7 @@ let
           name = "mpc-oldgmpmpfr";
           src = tarball;
           buildInputs = [ gmp mpfr ];
-          inherit (build) name meta configureFlags preCheck
+          inherit (build) meta configureFlags preCheck
             succeedOnFailure keepBuildDirectory;
         });
    };
