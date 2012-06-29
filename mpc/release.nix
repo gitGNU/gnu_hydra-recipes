@@ -156,30 +156,8 @@ let
         inherit meta preCheck succeedOnFailure keepBuildDirectory;
       };
 
-    # Extra job to build with an MPFR that uses an old GMP.
-    build_with_mpfr_with_old_gmp =
-      { system ? "x86_64-linux"
-      , tarball ? jobs.tarball
-      , mpfr_with_old_gmp
-      }:
-
-      let
-        pkgs  = import nixpkgs { inherit system; };
-        build = jobs.build { inherit system; };
-      in
-        pkgs.releaseTools.nixBuild ({
-          src = tarball;
-
-          # We assume that `mpfr_with_old_gmp' has GMP as one of its
-          # propagated build inputs.
-          buildInputs = [ mpfr_with_old_gmp ];
-
-          inherit (build) name meta configureFlags preCheck
-            succeedOnFailure keepBuildDirectory;
-        });
-
     # Extra job to build with an MPFR that uses an old GMP & an old MPFR.
-    build_with_old_mpfr_and_old_gmp =
+    build_with_old_gmp_mpfr =
       { system ? "x86_64-linux"
       , tarball ? jobs.tarball
       }:
@@ -191,6 +169,7 @@ let
         build = jobs.build { inherit system; };
       in
         pkgs.releaseTools.nixBuild ({
+          name = "mpc-oldgmpmpfr";
           src = tarball;
           buildInputs = [ gmp mpfr ];
           inherit (build) name meta configureFlags preCheck
