@@ -132,6 +132,30 @@ let
         inherit meta succeedOnFailure keepBuildDirectory;
       }).hostDrv;
 
+    build_gxx =
+      { system ? builtins.currentSystem
+      , tarball ? jobs.tarball
+      }:
+
+      let pkgs = import <nixpkgs> { inherit system; }; in
+      pkgs.releaseTools.nixBuild {
+        name = "mpc-gxx";
+        src = tarball;
+        configureFlags =
+          # On Cygwin GMP is compiled statically, so build MPC statically.
+          (pkgs.stdenv.lib.optionals pkgs.stdenv.isCygwin
+            [ "--enable-static" "--disable-shared" ]);
+
+        buildInputs = [ gmp mpfr ];
+
+        preConfigure =
+           ''
+             export CC=g++
+           '';
+
+        inherit meta preCheck succeedOnFailure keepBuildDirectory;
+      };
+
     # Extra job to build with an MPFR that uses an old GMP.
     build_with_mpfr_with_old_gmp =
       { system ? "x86_64-linux"
