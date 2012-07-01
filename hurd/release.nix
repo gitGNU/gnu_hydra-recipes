@@ -321,7 +321,7 @@ let
                    cd coreutils-* ;
                    set -e ;
                    export FORCE_UNSAFE_CONFIGURE=1 ; # yes, building as root!
-                   ./configure --prefix="/host/xchg/out" ;
+                   ./configure --prefix="/host/xchg/out" --disable-silent-rules;
                    make ;
                    make check VERBOSE=yes )
                  echo $? > /host/xchg/in-vm-exit
