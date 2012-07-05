@@ -102,11 +102,9 @@ let
       };
 
     coverage =
-      { system ? builtins.currentSystem
-      , tarball ? jobs.tarball
-      }:
+      { tarball ? jobs.tarball }:
 
-      let pkgs = import <nixpkgs> { inherit system; }; in
+      let pkgs = import <nixpkgs> { /* x86_64-linux */ }; in
       pkgs.releaseTools.coverageAnalysis {
         name = "mpc-coverage";
         src = tarball;
