@@ -94,7 +94,7 @@ let
         preCheck = preCheck +
           (if useValgrind pkgs.stdenv
            then ''
-             export VALGRIND="valgrind -q --error-exitcode=1 --suppressions=${./gmp-icore2.supp}"
+             export VALGRIND_SUPPRESSION="${./gmp-icore2.supp}"
            ''
            else "");
 
