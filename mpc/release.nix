@@ -160,15 +160,15 @@ let
       , tarball ? jobs.tarball
       }:
 
-      let
-        pkgs  = import nixpkgs { inherit system; };
-        gmp   = old_gmp pkgs;
-        mpfr  = old_mpfr pkgs;
-        build = jobs.build { inherit system; };
-      in
-        if (system == "x86_64-darwin")
-        then null
-        else
+      if (system == "x86_64-darwin")
+      then null
+      else
+         let
+            pkgs  = import nixpkgs { inherit system; };
+            gmp   = old_gmp pkgs;
+            mpfr  = old_mpfr pkgs;
+            build = jobs.build { inherit system; };
+         in
             pkgs.releaseTools.nixBuild ({
                name = "mpc-oldgmpmpfr";
                src = tarball;
