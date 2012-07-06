@@ -156,7 +156,7 @@ let
 
     # Extra job to build with an MPFR that uses an old GMP & an old MPFR.
     build_with_old_gmp_mpfr =
-      { system ? "x86_64-linux"
+      { system ? builtins.currentSystem
       , tarball ? jobs.tarball
       }:
 
@@ -166,13 +166,16 @@ let
         mpfr  = old_mpfr pkgs;
         build = jobs.build { inherit system; };
       in
-        pkgs.releaseTools.nixBuild ({
-          name = "mpc-oldgmpmpfr";
-          src = tarball;
-          buildInputs = [ gmp mpfr ];
-          inherit (build) meta configureFlags preCheck
-            succeedOnFailure keepBuildDirectory;
-        });
+        if (system == "x86_64-darwin")
+        then null
+        else
+            pkgs.releaseTools.nixBuild ({
+               name = "mpc-oldgmpmpfr";
+               src = tarball;
+               buildInputs = [ gmp mpfr ];
+               inherit (build) meta configureFlags preCheck
+                  succeedOnFailure keepBuildDirectory;
+            });
    };
 in
   jobs
