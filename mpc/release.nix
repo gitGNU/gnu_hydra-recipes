@@ -164,7 +164,7 @@ let
         pkgs  = import nixpkgs { inherit system; };
         gmp   = old_gmp pkgs;
         mpfr  = old_mpfr pkgs;
-        build = jobs.build;
+        build = jobs.build { inherit system; };
       in
         pkgs.releaseTools.nixBuild ({
           name = "mpc-oldgmpmpfr";
