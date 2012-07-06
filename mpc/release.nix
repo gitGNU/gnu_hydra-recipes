@@ -80,6 +80,15 @@ let
       pkgs.releaseTools.nixBuild {
         name = "mpc";
         src = tarball;
+
+        preConfigure =
+           if useValgrind pkgs.stdenv
+           then ''
+             export VALGRIND_SUPPRESSION="${./gmp-icore2.supp}"
+             echo "using \`$VALGRIND_SUPPRESSION' as valgrind suppression file"
+           ''
+           else "";
+
         configureFlags =
           # On Cygwin GMP is compiled statically, so build MPC statically.
           (pkgs.stdenv.lib.optionals pkgs.stdenv.isCygwin
@@ -90,13 +99,6 @@ let
 
         buildInputs = [ gmp mpfr ]
           ++ (pkgs.lib.optional (useValgrind pkgs.stdenv) pkgs.valgrind);
-
-        preCheck = preCheck +
-          (if useValgrind pkgs.stdenv
-           then ''
-             export VALGRIND_SUPPRESSION="${./gmp-icore2.supp}"
-           ''
-           else "");
 
         inherit meta succeedOnFailure keepBuildDirectory;
       };
@@ -149,6 +151,7 @@ let
         preConfigure =
            ''
              export CC=g++
+             echo "using \`$CC' as the compiler"
            '';
 
         inherit meta preCheck succeedOnFailure keepBuildDirectory;
