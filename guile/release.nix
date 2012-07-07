@@ -223,7 +223,7 @@ let
           '';
 
         inherit succeedOnFailure keepBuildDirectory;
-        meta = meta // { schedulingPriority = "100"; };
+        meta = meta // { schedulingPriority = "220"; };
       };
 
     coverage =
