@@ -100,7 +100,7 @@ let
         buildInputs = [ gmp mpfr ]
           ++ (pkgs.lib.optional (useValgrind pkgs.stdenv) pkgs.valgrind);
 
-        inherit meta succeedOnFailure keepBuildDirectory;
+        inherit meta preCheck succeedOnFailure keepBuildDirectory;
       };
 
     coverage =
