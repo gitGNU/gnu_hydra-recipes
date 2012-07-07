@@ -166,8 +166,7 @@ let
         name = "guile-tarball";
         src = <guile>;
         buildInputs = [
-          automake111x
-          autoconf
+          automake autoconf
           flex2535
           gettext_0_17
           git
