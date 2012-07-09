@@ -116,7 +116,7 @@ let
         name = "mpfr-coverage";
         src = tarball;
         buildInputs = [ gmp ];
-        CPPFLAGS = "-DWANT_ASSERT=-1"
+        CPPFLAGS = "-DWANT_ASSERT=-1";
         inherit meta succeedOnFailure keepBuildDirectory;
       };
 
