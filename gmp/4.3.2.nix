@@ -14,8 +14,6 @@ stdenv.mkDerivation rec {
   # `--enable-fat' fails to build.
   preConfigure = "rm -fv config.guess && ln -sv configfsf.guess config.guess";
 
-  configureFlags = (if cxx then [ "--enable-cxx" ] else [ "--disable-cxx" ]);
-
   enableParallelBuilding = true;
   doCheck = true;
 
