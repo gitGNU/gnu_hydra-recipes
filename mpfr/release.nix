@@ -81,7 +81,7 @@ let
       }:
 
       let pkgs = import <nixpkgs> { inherit system; }; in
-      pkgs.releaseTools.nixBuild {
+      pkgs.releaseTools.nixBuild ({
         name = "mpfr";
         src = tarball;
         buildInputs = [ gmp ]
@@ -95,7 +95,16 @@ let
            else "");
 
         inherit meta succeedOnFailure keepBuildDirectory;
-      };
+      }
+
+      //
+
+      # Attempt to make sure GMP is found on Solaris (see
+      # <http://hydra.nixos.org/build/2764423>).
+      (pkgs.stdenv.lib.optionalAttrs pkgs.stdenv.isSunOS {
+        CPPFLAGS = "-I${gmp}/include";
+        LDFLAGS = "-L${gmp}/lib";
+      }));
 
     coverage =
       { system ? builtins.currentSystem
