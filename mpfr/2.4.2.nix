@@ -30,7 +30,7 @@ stdenv.mkDerivation rec {
     '';
 
     license = "LGPLv2+";
-  };
+  }
 
   //
 
