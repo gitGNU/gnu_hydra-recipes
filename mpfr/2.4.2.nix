@@ -32,8 +32,11 @@ stdenv.mkDerivation rec {
     license = "LGPLv2+";
   };
 
-  pkgs.stdenv.lib.optionalAttrs pkgs.stdenv.isSunOS {
+  //
+
+  (pkgs.stdenv.lib.optionalAttrs pkgs.stdenv.isSunOS {
          CPPFLAGS = "-I${gmp}/include";
          LDFLAGS = "-L${gmp}/lib";
-  };
+   }
+  );
 }
