@@ -1,6 +1,6 @@
-{stdenv, fetchurl, gmp}:
+{ stdenv, fetchurl, gmp}:
 
-stdenv.mkDerivation rec {
+stdenv.mkDerivation (rec {
   name = "mpfr-2.4.2";
 
   src = fetchurl {
@@ -30,15 +30,12 @@ stdenv.mkDerivation rec {
     '';
 
     license = "LGPLv2+";
-  }
-
-  //
-
-  let
-    pkgs = import <nixpkgs> { inherit system; };
-  in
-    pkgs.stdenv.lib.optionalAttrs pkgs.stdenv.isSunOS {
-         CPPFLAGS = "-I${gmp}/include";
-         LDFLAGS = "-L${gmp}/lib";
-    };
+  };
 }
+
+//
+
+(stdenv.lib.optionalAttrs stdenv.isSunOS {
+   CPPFLAGS = "-I${gmp}/include";
+   LDFLAGS = "-L${gmp}/lib";
+}))
