@@ -10,10 +10,6 @@ stdenv.mkDerivation rec {
 
   buildNativeInputs = [m4];
 
-  # Even though this isn't recommended, we use this hack because
-  # `--enable-fat' fails to build.
-  preConfigure = "rm -fv config.guess && ln -sv configfsf.guess config.guess";
-
   enableParallelBuilding = true;
   doCheck = true;
 
