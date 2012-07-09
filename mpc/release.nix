@@ -176,28 +176,25 @@ let
       , tarball ? jobs.tarball
       }:
 
-      if (system == "x86_64-darwin")
-      then null
-      else
-         let
-            pkgs  = import nixpkgs { inherit system; };
-            gmp   = old_gmp pkgs;
-            mpfr  = old_mpfr pkgs;
-            build = jobs.build { inherit system; };
-         in
-            pkgs.releaseTools.nixBuild ({
-               name = "mpc-oldgmpmpfr";
-               src = tarball;
-               buildInputs = [ gmp mpfr ];
-               inherit (build) meta configureFlags preCheck
-                  succeedOnFailure keepBuildDirectory;
-            }
-            //
-            # Make sure GMP is found on Solaris
-            (pkgs.stdenv.lib.optionalAttrs pkgs.stdenv.isSunOS {
-            CPPFLAGS = "-I${mpfr}/include -I${gmp}/include";
-            LDFLAGS = "-L${mpfr}/lib -L${gmp}/lib";
-            }));
+      let
+         pkgs  = import nixpkgs { inherit system; };
+         gmp   = old_gmp pkgs;
+         mpfr  = old_mpfr pkgs;
+         build = jobs.build { inherit system; };
+      in
+         pkgs.releaseTools.nixBuild ({
+            name = "mpc-oldgmpmpfr";
+            src = tarball;
+            buildInputs = [ gmp mpfr ];
+            inherit (build) meta configureFlags preCheck
+               succeedOnFailure keepBuildDirectory;
+         }
+         //
+         # Make sure GMP is found on Solaris
+         (pkgs.stdenv.lib.optionalAttrs pkgs.stdenv.isSunOS {
+         CPPFLAGS = "-I${mpfr}/include -I${gmp}/include";
+         LDFLAGS = "-L${mpfr}/lib -L${gmp}/lib";
+         }));
    };
 in
   jobs
