@@ -181,7 +181,15 @@ let
           propagatedBuildInputs = [ gmp ];
           inherit (build) name meta succeedOnFailure keepBuildDirectory;
           inherit preCheck;
-        });
+        }
+
+        //
+
+        # Make sure GMP is found on Solaris
+        (pkgs.stdenv.lib.optionalAttrs pkgs.stdenv.isSunOS {
+         CPPFLAGS = "-I${gmp}/include";
+         LDFLAGS = "-L${gmp}/lib";
+        }));
    };
 in
   jobs

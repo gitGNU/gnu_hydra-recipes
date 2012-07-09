@@ -191,7 +191,13 @@ let
                buildInputs = [ gmp mpfr ];
                inherit (build) meta configureFlags preCheck
                   succeedOnFailure keepBuildDirectory;
-            });
+            }
+            //
+            # Make sure GMP is found on Solaris
+            (pkgs.stdenv.lib.optionalAttrs pkgs.stdenv.isSunOS {
+            CPPFLAGS = "-I${mpfr}/include -I${gmp}/include";
+            LDFLAGS = "-L${mpfr}/lib -L${gmp}/lib";
+            }));
    };
 in
   jobs
