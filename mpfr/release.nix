@@ -52,10 +52,7 @@ let
     };
 
   # Return true if we should use Valgrind on the given platform.
-  useValgrind = stdenv:
-    false         # XXX: disabled due to false positives with GMP's newer asm
-    || stdenv.system == "x86_64-linux"
-    || stdenv.system == "x86_64-darwin";
+  useValgrind = stdenv: stdenv.isLinux || stdenv.isDarwin;
 
   jobs = {
 
