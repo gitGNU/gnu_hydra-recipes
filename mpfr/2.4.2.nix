@@ -34,9 +34,11 @@ stdenv.mkDerivation rec {
 
   //
 
-  (pkgs.stdenv.lib.optionalAttrs pkgs.stdenv.isSunOS {
+  let
+    pkgs = import <nixpkgs> {};
+  in
+    (pkgs.stdenv.lib.optionalAttrs pkgs.stdenv.isSunOS {
          CPPFLAGS = "-I${gmp}/include";
          LDFLAGS = "-L${gmp}/lib";
-   }
-  );
+    });
 }
