@@ -77,7 +77,7 @@ let
       }:
 
       let pkgs = import <nixpkgs> { inherit system; }; in
-      pkgs.releaseTools.nixBuild {
+      pkgs.releaseTools.nixBuild ({
         name = "mpc";
         src = tarball;
 
@@ -101,7 +101,14 @@ let
           ++ (pkgs.lib.optional (useValgrind pkgs.stdenv) pkgs.valgrind);
 
         inherit meta preCheck succeedOnFailure keepBuildDirectory;
-      };
+      }
+      //
+      # Make sure GMP is found on Solaris
+      # (see <http://hydra.nixos.org/build/2764423>).
+      (pkgs.stdenv.lib.optionalAttrs pkgs.stdenv.isSunOS {
+        CPPFLAGS = "-I${gmp}/include";
+        LDFLAGS = "-L${gmp}/lib";
+      }));
 
     coverage =
       { tarball ? jobs.tarball }:
@@ -138,7 +145,7 @@ let
       }:
 
       let pkgs = import <nixpkgs> { inherit system; }; in
-      pkgs.releaseTools.nixBuild {
+      pkgs.releaseTools.nixBuild ({
         name = "mpc-gxx";
         src = tarball;
         configureFlags =
@@ -155,7 +162,13 @@ let
            '';
 
         inherit meta preCheck succeedOnFailure keepBuildDirectory;
-      };
+      }
+      //
+      # Make sure GMP is found on Solaris
+      (pkgs.stdenv.lib.optionalAttrs pkgs.stdenv.isSunOS {
+        CPPFLAGS = "-I${gmp}/include";
+        LDFLAGS = "-L${gmp}/lib";
+      }));
 
     # Extra job to build with an MPFR that uses an old GMP & an old MPFR.
     build_with_old_gmp_mpfr =
