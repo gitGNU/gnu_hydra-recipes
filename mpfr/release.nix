@@ -99,8 +99,8 @@ let
 
       //
 
-      # Attempt to make sure GMP is found on Solaris (see
-      # <http://hydra.nixos.org/build/2764423>).
+      # Make sure GMP is found on Solaris
+      # (see <http://hydra.nixos.org/build/2764423>).
       (pkgs.stdenv.lib.optionalAttrs pkgs.stdenv.isSunOS {
         CPPFLAGS = "-I${gmp}/include";
         LDFLAGS = "-L${gmp}/lib";
@@ -155,7 +155,15 @@ let
             '' export CC=g++
                echo "using \`$CC' as the compiler"
             '';
-        });
+        }
+
+        //
+
+        # Make sure GMP is found on Solaris
+        (pkgs.stdenv.lib.optionalAttrs pkgs.stdenv.isSunOS {
+         CPPFLAGS = "-I${gmp}/include";
+         LDFLAGS = "-L${gmp}/lib";
+        }));
 
     # Extra job to build with an old GMP.
     build_with_old_gmp =
