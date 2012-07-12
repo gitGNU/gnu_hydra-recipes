@@ -144,31 +144,26 @@ let
       , tarball ? jobs.tarball
       }:
 
-      let pkgs = import <nixpkgs> { inherit system; }; in
-      pkgs.releaseTools.nixBuild ({
-        name = "mpc-gxx";
-        src = tarball;
-        configureFlags =
-          # On Cygwin GMP is compiled statically, so build MPC statically.
-          (pkgs.stdenv.lib.optionals pkgs.stdenv.isCygwin
-            [ "--enable-static" "--disable-shared" ]);
+      let
+        pkgs = import <nixpkgs> { inherit system; };
+        build = jobs.build { inherit system tarball; };
+      in
+        # Prepare a variant of the `build' job.
+        pkgs.lib.overrideDerivation build (attrs: {
+          name = "mpc-gxx";
 
-        buildInputs = [ gmp mpfr ];
+          # Disable Valgrind tests.
+          configureFlags =
+            attrs.configureFlags ++ [ "--disable-valgrind-tests" ];
+          buildNativeInputs =
+            (pkgs.lib.filter (x: x != pkgs.valgrind) attrs.buildNativeInputs);
 
-        preConfigure =
-           ''
-             export CC=g++
-             echo "using \`$CC' as the compiler"
-           '';
-
-        inherit meta preCheck succeedOnFailure keepBuildDirectory;
-      }
-      //
-      # Make sure GMP is found on Solaris
-      (pkgs.stdenv.lib.optionalAttrs pkgs.stdenv.isSunOS {
-        CPPFLAGS = "-I${mpfr}/include -I${gmp}/include";
-        LDFLAGS = "-L${mpfr}/lib -L${gmp}/lib";
-      }));
+          preConfigure =
+             ''
+               export CC=g++
+               echo "using \`$CC' as the compiler"
+             '';
+        });
 
     # Extra job to build with an MPFR that uses an old GMP & an old MPFR.
     build_with_old_gmp_mpfr =
