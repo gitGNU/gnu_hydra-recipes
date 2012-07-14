@@ -39,7 +39,7 @@ let
   buildInputsFrom = pkgs: [ pkgs.gnum4 ];
   configureFlagsFor = stdenv:
     [ "--enable-cxx" "--enable-alloca=debug" ]
-    ++ (stdenv.lib.optional (stdenv.system == "x86_64-linux")
+    ++ (stdenv.lib.optional (stdenv.system == "x86_64-linux" || stdenv.system == "x86_64-freebsd")
           [ "--enable-fat" ])
 
     # DLLs fail to build on Cygwin, so don't even try.
