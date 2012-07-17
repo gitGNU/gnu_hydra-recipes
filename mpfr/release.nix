@@ -84,9 +84,7 @@ let
         buildInputs = [ gmp ]
           ++ (pkgs.lib.optional (useValgrind pkgs.stdenv) pkgs.valgrind);
 
-        configureFlags = (pkgs.stdenv.lib.optional (
-              pkgs.stdenv.system == "i686-freebsd"
-           || pkgs.stdenv.system == "x86_64-freebsd")
+        configureFlags = (pkgs.stdenv.lib.optionals pkgs.stdenv.isFreeBSD
           [ "--disable-thread-safe" ]);
 
         preCheck = preCheck +
@@ -188,6 +186,9 @@ let
           propagatedBuildInputs = [ gmp ];
           inherit (build) name meta succeedOnFailure keepBuildDirectory;
           inherit preCheck;
+
+          configureFlags = (pkgs.stdenv.lib.optionals pkgs.stdenv.isFreeBSD
+            [ "--disable-thread-safe" ]);
         }
 
         //
