@@ -155,7 +155,7 @@ let
           inherit (build) name meta succeedOnFailure keepBuildDirectory;
           inherit preCheck;
 
-          configureFlags = (pkgs.stdenv.lib.optionals pkgs.stdenv.isFreeBSD)
+          configureFlags = (pkgs.stdenv.lib.optionals pkgs.stdenv.isFreeBSD
             [ "--disable-thread-safe" ]);
 
           preConfigure =
