@@ -154,6 +154,10 @@ let
           propagatedBuildInputs = [ gmp ];
           inherit (build) name meta succeedOnFailure keepBuildDirectory;
           inherit preCheck;
+
+          configureFlags = (pkgs.stdenv.lib.optionals pkgs.stdenv.isFreeBSD)
+            [ "--disable-thread-safe" ]);
+
           preConfigure =
             '' export CC=g++
                echo "using \`$CC' as the compiler"
