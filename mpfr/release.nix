@@ -84,6 +84,8 @@ let
         buildInputs = [ gmp ]
           ++ (pkgs.lib.optional (useValgrind pkgs.stdenv) pkgs.valgrind);
 
+        configureFlags = [ "--disable-thread-safe" ];
+
         preCheck = preCheck +
           (if useValgrind pkgs.stdenv
            then ''
