@@ -14,7 +14,7 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
-{ nixpkgs ? { outPath = ../../nixpkgs; }
+{ nixpkgs ? <nixpkgs>
 , gmp ? (import nixpkgs {}).gmp      # native GMP build
 , gmp_xgnu ? null                     # cross-GNU GMP build
 , mpfr ? (import nixpkgs {}).mpfr    # native MPFR build
