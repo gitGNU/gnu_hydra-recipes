@@ -54,7 +54,7 @@ let
     };
 
   old_mpfr = pkgs:
-    import ../mpfr/2.4.2.nix {
+    import ../mpfr/3.0.0.nix {
       inherit (pkgs) stdenv fetchurl;
       gmp = old_gmp pkgs;
     };
