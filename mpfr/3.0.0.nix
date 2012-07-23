@@ -5,7 +5,7 @@ stdenv.mkDerivation (rec {
 
   src = fetchurl {
     url = "mirror://gnu/mpfr/${name}.tar.bz2";
-    sha1 = "8ae8bc72ac26a0f17ad9f57c520264c056c64770";
+    sha256 = "07w24h8by7n319p2vwwa1xdcg7qzkd1aqm84lfcbfv2kaff5yklg";
   };
 
   buildInputs = [ gmp ];
