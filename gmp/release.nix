@@ -42,11 +42,7 @@ let
     ++ (stdenv.lib.optional (   stdenv.system == "x86_64-linux"
                              || stdenv.system == "i686-linux"
                              || stdenv.system == "x86_64-freebsd")
-          [ "--enable-fat" ])
-
-    # DLLs fail to build on Cygwin, so don't even try.
-    ++ (stdenv.lib.optionals stdenv.isCygwin
-          [ "--disable-shared" "--enable-static" ]);
+          [ "--enable-fat" ]);
 in
   import ../gnu-jobs.nix {
     name = "gmp";
