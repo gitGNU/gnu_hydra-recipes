@@ -135,11 +135,14 @@ let
           config = {
             packageOverrides = pkgs: {
               # Disable the Guile bindings of GnuTLS since Guile currently
-              # fails to build on non-GNU systems.
-              gnutls2 = pkgs.gnutls2.override {
-                guileBindings = false;
-                guile = null;
-              };
+              # fails to build on OpenIndiana.
+              gnutls =
+                if pkgs.stdenv.isSunOS
+                then (pkgs.gnutls.override {
+                  guileBindings = false;
+                  guile = null;
+                })
+                else pkgs.gnutls;
             };
           };
         };
