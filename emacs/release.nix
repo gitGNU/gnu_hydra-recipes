@@ -47,7 +47,7 @@ let
 
   # Return the list of dependencies.
   buildInputsFrom = pkgs: with pkgs;
-    [ texinfo ncurses pkgconfig x11 ]
+    [ texinfo ncurses pkgconfig x11 guile ]
     ++ (with xorg; [ libXft libXpm ])
 
     # Optional dependencies that fail to build on non-GNU platforms.
@@ -67,18 +67,20 @@ in
 
       tarball = pkgs: {
 	configureFlags ="--with-crt-dir=${pkgs.stdenv.glibc}/lib" ;
-	buildInputs = with pkgs; [ texinfo ncurses bazaar];
+	buildInputs = with pkgs; [ texinfo ncurses bazaar pkgconfig guile ];
+
+        # patches = [ ./bug11251.patch ];
+        # enableParallelBuilding = true;
 
 	autoconfPhase = ''
-	  ./autogen.sh
-	'';
-
-	preConfigure = ''
 	  for i in Makefile.in ./src/Makefile.in ./lib-src/Makefile.in ./leim/Makefile.in; do
 	    substituteInPlace $i --replace /bin/pwd pwd
 	  done
+
+	  ./autogen.sh
 	'';
 
+        configurePhase = ":";
 	distPhase = ''
 	  make bootstrap
 	  ./make-dist --tar
