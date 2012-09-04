@@ -84,7 +84,7 @@ let
         buildInputs = [ gmp ]
           ++ (pkgs.lib.optional (useValgrind pkgs.stdenv) pkgs.valgrind);
 
-        dontDisableStatic = stdenv.isCygwin;
+        dontDisableStatic = pkgs.stdenv.isCygwin;
         configureFlags = (pkgs.stdenv.lib.optionals pkgs.stdenv.isFreeBSD
           [ "--disable-thread-safe" ]);
 
