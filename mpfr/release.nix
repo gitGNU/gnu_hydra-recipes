@@ -86,7 +86,8 @@ let
 
         dontDisableStatic = pkgs.stdenv.isCygwin;
         configureFlags = (pkgs.stdenv.lib.optionals pkgs.stdenv.isFreeBSD
-          [ "--disable-thread-safe" ]);
+          [ "--disable-thread-safe" ])
+          ++ (pkgs.stdenv.lib.optional pkgs.stdenv.isCygwin "--disable-shared");
 
         preCheck = preCheck +
           (if useValgrind pkgs.stdenv
@@ -151,11 +152,9 @@ let
         pkgs.releaseTools.nixBuild ({
           src = tarball;
           propagatedBuildInputs = [ gmp ];
-          inherit (build) name meta succeedOnFailure keepBuildDirectory;
+          inherit (build) name configureFlags meta
+            succeedOnFailure keepBuildDirectory;
           inherit preCheck;
-
-          configureFlags = (pkgs.stdenv.lib.optionals pkgs.stdenv.isFreeBSD
-            [ "--disable-thread-safe" ]);
 
           preConfigure =
             '' export CC=g++
@@ -185,11 +184,9 @@ let
         pkgs.releaseTools.nixBuild ({
           src = tarball;
           propagatedBuildInputs = [ gmp ];
-          inherit (build) name meta succeedOnFailure keepBuildDirectory;
+          inherit (build) name meta configureFlags
+            succeedOnFailure keepBuildDirectory;
           inherit preCheck;
-
-          configureFlags = (pkgs.stdenv.lib.optionals pkgs.stdenv.isFreeBSD
-            [ "--disable-thread-safe" ]);
         }
 
         //
