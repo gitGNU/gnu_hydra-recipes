@@ -81,9 +81,8 @@ let
       pkgs.releaseTools.nixBuild ({
         name = "mpfr";
         src = tarball;
-        buildInputs =
-          pkgs.lib.optional (useValgrind pkgs.stdenv) pkgs.valgrind;
-        propagatedBuildInputs = [ gmp ];
+        buildInputs = [ gmp ]
+          ++ (pkgs.lib.optional (useValgrind pkgs.stdenv) pkgs.valgrind);
 
         dontDisableStatic = pkgs.stdenv.isCygwin;
         configureFlags = (pkgs.stdenv.lib.optionals pkgs.stdenv.isFreeBSD
@@ -136,7 +135,7 @@ let
       (xpkgs.releaseTools.nixBuild {
         name = "mpfr-gnu";
         src = tarball;
-        propagatedBuildInputs = [ gmp_xgnu ];
+        buildInputs = [ gmp_xgnu ];
         inherit meta succeedOnFailure keepBuildDirectory;
       }).hostDrv;
 
