@@ -15,9 +15,7 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 { nixpkgs ? <nixpkgs>
-, gmp ? (import nixpkgs {}).gmp      # native GMP build
-, gmp_xgnu ? null                     # cross-GNU GMP build
-, mpfr ? (import nixpkgs {}).mpfr    # native MPFR build
+, mpfr ? (import ../mpfr/release.nix {}).build {}  # native MPFR build
 , mpfr_xgnu ? null                    # cross-GNU MPFR build
 }:
 
@@ -38,7 +36,7 @@ let
     maintainers = [  "Andreas Enge <andreas.enge@inria.fr>" ];
   };
 
-  succeedOnFailure = true;
+  succeedOnFailure = false;
   keepBuildDirectory = true;
 
   preCheck = "export GMP_CHECK_RANDOMIZE=true";
@@ -60,12 +58,16 @@ let
     };
 
   jobs = {
+    # Note: Don't specify which GMP to use.  Instead, always use whichever
+    # GMP is propagated by MPFR, to guarantee consistency and avoid linking
+    # against two different GMPs.
+
     tarball =
       let pkgs = import <nixpkgs> {}; in
       pkgs.releaseTools.sourceTarball {
         name = "mpc-tarball";
         src  = <mpc>;
-        buildInputs = [ gmp mpfr ]
+        buildInputs = [ mpfr ]
           ++ (with pkgs; [ subversion texinfo automake111x ]);
         autoconfPhase = "autoreconf -vfi";
         inherit meta succeedOnFailure keepBuildDirectory;
@@ -97,7 +99,7 @@ let
           ++ (pkgs.lib.optional (useValgrind pkgs.stdenv)
                 "--enable-valgrind-tests");
 
-        buildInputs = [ gmp mpfr ]
+        buildInputs = [ mpfr ]
           ++ (pkgs.lib.optional (useValgrind pkgs.stdenv) pkgs.valgrind);
 
         inherit meta preCheck succeedOnFailure keepBuildDirectory;
@@ -106,8 +108,11 @@ let
       # Make sure GMP is found on Solaris
       # (see <http://hydra.nixos.org/build/2764423>).
       (pkgs.stdenv.lib.optionalAttrs pkgs.stdenv.isSunOS {
-        CPPFLAGS = "-I${mpfr}/include -I${gmp}/include";
-        LDFLAGS = "-L${mpfr}/lib -L${gmp}/lib";
+        postUnpack =
+          '' export CPPFLAGS="-I${mpfr}/include -I`cat ${mpfr}/nix-support/propagated*inputs`/include"
+             export LDFLAGS="-L${mpfr}/lib -L`cat ${mpfr}/nix-support/propagated*inputs`/lib"
+             echo "CPPFLAGS is \`$CPPFLAGS', and LDFLAGS is \`$LDFLAGS"
+          '';
       }));
 
     coverage =
@@ -118,7 +123,7 @@ let
         name = "mpc-coverage";
         src = tarball;
         CPPFLAGS = "-DNDEBUG=1";               # disable assertions
-        buildInputs = [ gmp mpfr ];
+        buildInputs = [ mpfr ];
         inherit preCheck meta succeedOnFailure keepBuildDirectory;
       };
 
@@ -135,7 +140,7 @@ let
       (xpkgs.releaseTools.nixBuild {
         name = "mpc-gnu";
         src = tarball;
-        buildInputs = [ gmp_xgnu mpfr_xgnu ];
+        buildInputs = [ mpfr_xgnu ];
         inherit meta succeedOnFailure keepBuildDirectory;
       }).hostDrv;
 
