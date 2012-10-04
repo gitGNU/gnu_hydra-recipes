@@ -38,6 +38,9 @@ let
         name = "${name}-tarball";
         inherit src meta;
 
+        version = src.gitTag or src.rev or "unknown";
+        versionSuffix = "";
+
         # XXX: Since other jobs refer to this one directly, let's not
         # succeed-on-failure, or these other jobs will get triggered just to
         # fail very quickly.
