@@ -81,6 +81,7 @@ in
           xz
           help2man
           (m4 pkgs)
+          graphviz
         ];
         dontBuild = false;
       } ;
