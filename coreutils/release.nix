@@ -63,8 +63,6 @@ let
         dontBuild = false;
 
         autoconfPhase = ''
-          sed 's|/usr/bin/perl|${pkgs.perl}/bin/perl|' -i src/wheel-gen.pl
-
           git config submodule.gnulib.url "${<gnulib>}"
 
           # By default `bootstrap' tries to download `.po' files from the
