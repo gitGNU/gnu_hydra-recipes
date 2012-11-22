@@ -85,7 +85,7 @@ let
         src = jobs.tarball;
         buildInputs = buildInputsFrom pkgs ;
         configureFlags = let stdenv = pkgs.stdenv; in
-          [ "--enable-install-program=arch,hostname,su" ]
+          [ "--enable-install-program=arch,hostname" ]
           ++ (stdenv.lib.optional stdenv.isLinux [ "--enable-gcc-warnings" ]);
         inherit meta succeedOnFailure keepBuildDirectory;
       };
@@ -101,7 +101,7 @@ let
         src = jobs.tarball;
         buildInputs = [ pkgs.gmp ];
         buildNativeInputs = with pkgs; [ perl xz ];
-        configureFlags = [ "--enable-install-program=arch,hostname,su" ];
+        configureFlags = [ "--enable-install-program=arch,hostname" ];
         doCheck = false;
         inherit meta succeedOnFailure keepBuildDirectory;
       }).hostDrv;
@@ -110,7 +110,7 @@ let
       pkgs.releaseTools.coverageAnalysis {
         name = "coreutils-coverage";
         src = jobs.tarball;
-        configureFlags = [ "--enable-install-program=arch,hostname,su" ];
+        configureFlags = [ "--enable-install-program=arch,hostname" ];
         buildInputs = buildInputsFrom pkgs;
         postCheck =
           # Remove the file that confuses lcov.
