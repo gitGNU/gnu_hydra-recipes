@@ -127,9 +127,9 @@ let
         buildInputs = buildInputsFrom pkgs ++ [ pkgs.texinfo pkgs.texLive ];
         doCheck = false;
 
-        buildPhase = "make -C doc html pdf";
+        buildPhase = "make html pdf";
         installPhase =
-          '' make -C doc install-html install-pdf
+          '' make install-html-am install-pdf-am
 
              ensureDir "$out/nix-support"
              echo "doc manual $out/share/doc/coreutils/coreutils.html" >> "$out/nix-support/hydra-build-products"
