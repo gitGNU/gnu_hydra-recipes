@@ -326,20 +326,6 @@ let
         //
         { meta = meta // { schedulingPriority = 20; }; });
 
-    # Check what it's like to build with an old compiler.
-    build_gcc42 =
-      let
-        pkgs = import nixpkgs {};                 # x86_64-linux
-        build = jobs.build {};
-      in
-        (pkgs.lib.overrideDerivation build (attrs: {
-          name = "guile-gcc42";
-          preUnpack = "gcc --version";
-          buildInputs = attrs.buildInputs ++ [ pkgs.gcc42 ];
-        })
-        //
-        { meta = meta // { schedulingPriority = 20; }; });
-
     # Check what it's like to build with another C compiler
     /* build_tinycc =
       { tarball ? jobs.tarball {}
