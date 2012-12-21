@@ -63,14 +63,10 @@ in
 
     customEnv = {
       tarball = pkgs: {
+        patches = [ ./tar-should-not-expect-a-root-user.patch ];
         autoconfPhase = ''
           export GNULIB_TOOL="../gnulib/gnulib-tool"
           ./autogen.sh
-          # archive.dir.tar is not under version control; use empty
-          # tarball for building
-          : > dummy
-          tar cf gettext-tools/misc/archive.dir.tar dummy
-          rm -f dummy
         '';
         dontBuild = false;
         buildInputs = with pkgs; [

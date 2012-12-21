@@ -1,0 +1,17 @@
+Make it so that `make dist' doesn't fail if a `root' user cannot be found,
+which is the case in NixOS chroot builds.
+
+diff --git a/configure.ac  b/configure.ac 
+index 7c8d2c0..b1cfafc 100644
+--- a/configure.ac 
++++ b/configure.ac 
+@@ -24,9 +24,6 @@ AC_CONFIG_AUX_DIR([build-aux])
+ gl_INIT_PACKAGE([gettext], [$VERSION_NUMBER])
+ AM_INIT_AUTOMAKE([silent-rules])
+
+-dnl Override automake's tar command used for creating distributions.
+-am__tar='${AMTAR} chof - --owner=root --group=root "$$tardir"'
+-
+ dnl Checks for programs.
+
+ dnl Checks for libraries.
