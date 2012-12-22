@@ -72,7 +72,6 @@ in
           : > dummy
           tar cf gettext-tools/misc/archive.dir.tar dummy
           rm -f dummy        '';
-        dontBuild = false;
         buildInputs = with pkgs; [
           bison
           gettext_0_18 # needed for bootstrap
