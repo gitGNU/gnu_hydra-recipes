@@ -83,5 +83,9 @@ in
           wget
         ];
       };
+
+      build = pkgs: {
+        buildInputs = with pkgs; lib.optional (!stdenv.isLinux) libiconv;
+      };
     };
   }
