@@ -59,7 +59,7 @@ in
 
       tarball = pkgs: {
 	buildInputs = (buildInputsFrom pkgs)
-          ++ (with pkgs; [ texinfo automake111x bison26 ]);
+          ++ (with pkgs; [ texinfo automake111x bison26 flex ]);
         autoconfPhase = "./.bootstrap";
         configureFlags = [ "--enable-maintainer-mode" ];
       };
