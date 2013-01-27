@@ -23,6 +23,7 @@ let
   meta = {
     description = "GNU Smalltalk is a free implementation of the Smalltalk-80 language.";
     homepage = http://smalltalk.gnu.org/;
+    maintainers = [ "Holger Hans Peter Freyther <holger@freyther.de>" ];
   };
   libsigsegv_patched = pkgs: pkgs.lib.overrideDerivation pkgs.libsigsegv (args: { NIX_CFLAGS_COMPILE = "-fPIC"; });
   buildInputs = pkgs: with pkgs; [ zip unzip libffi (libsigsegv_patched pkgs) libtool];
@@ -59,10 +60,12 @@ in
 
       build = pkgs: {
         buildInputs = buildInputs pkgs;
+        inherit meta;
       };
 
       coverage = pkgs: {
         buildInputs = buildInputs pkgs;
+        inherit meta;
       };
     };
   }
