@@ -36,6 +36,7 @@ in
     customEnv = {
       tarball = pkgs: {
         autoconfPhase = ''
+          patchShebangs build-aux
           sed -i 's|GST_HAVE_LIB(libffi|GST_HAVE_LIB(ffi|' configure.ac
           autoreconf -vi
         '';
