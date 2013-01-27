@@ -57,6 +57,7 @@ in
       build = pkgs: {
         buildInputs = buildInputs pkgs;
       };
+
       coverage = pkgs: {
         buildInputs = buildInputs pkgs;
       };
