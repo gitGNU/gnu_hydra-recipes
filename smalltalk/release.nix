@@ -31,13 +31,16 @@ in
     name = "smalltalk";
     src  = smalltalk;
     inherit nixpkgs meta;
-    enableGnuCrossBuild = true;
 
     customEnv = {
       tarball = pkgs: {
         autoconfPhase = ''
+          # /usr/bin/env references in some build-aux scripts
           patchShebangs build-aux
+
+          # configure fails that it cannot find libffi otherwise
           sed -i 's|GST_HAVE_LIB(libffi|GST_HAVE_LIB(ffi|' configure.ac
+
           autoreconf -vi
         '';
         buildInputs = with pkgs; [
