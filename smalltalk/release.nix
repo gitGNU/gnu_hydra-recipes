@@ -24,8 +24,8 @@ let
     description = "GNU Smalltalk is a free implementation of the Smalltalk-80 language.";
     homepage = http://smalltalk.gnu.org/;
   };
-  libsigsegv_patched = pkgs.lib.overrideDerivation pkgs.libsigsegv (args: { NIX_CFLAGS_COMPILE = "-fPIC"; });
-  buildInputs = pkgs: with pkgs; [ zip unzip libffi libsigsegv_patched libtool];
+  libsigsegv_patched = pkgs: [pkgs.lib.overrideDerivation pkgs.libsigsegv (args: { NIX_CFLAGS_COMPILE = "-fPIC"; });
+  buildInputs = pkgs: with pkgs; [ zip unzip libffi (libsigsegv_patched pkgs) libtool];
 in
   import ../gnu-jobs.nix {
     name = "smalltalk";
@@ -55,6 +55,9 @@ in
       };
 
       build = pkgs: {
+        buildInputs = buildInputs pkgs;
+      };
+      coverage = pkgs: {
         buildInputs = buildInputs pkgs;
       };
     };
