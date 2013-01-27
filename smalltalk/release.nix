@@ -26,7 +26,7 @@ let
     maintainers = [ "Holger Hans Peter Freyther <holger@freyther.de>" ];
   };
   libsigsegv_patched = pkgs: pkgs.lib.overrideDerivation pkgs.libsigsegv (args: { NIX_CFLAGS_COMPILE = "-fPIC"; });
-  buildInputs = pkgs: with pkgs; [ zip unzip libffi (libsigsegv_patched pkgs) libtool];
+  buildInputs = pkgs: with pkgs; [ zip unzip libffi (libsigsegv_patched pkgs) libtool sqlite readline ncurses expat gdbm freeglut];
 in
   import ../gnu-jobs.nix {
     name = "smalltalk";
