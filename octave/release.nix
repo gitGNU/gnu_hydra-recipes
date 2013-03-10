@@ -52,7 +52,7 @@ let
 	  cp -Rv ${gnulib} ../gnulib
 	  chmod -R 755 ../gnulib
 
-	  ./autogen.sh --gnulib-srcdir=../gnulib --skip-po --copy
+	  ./bootstrap --gnulib-srcdir=../gnulib --skip-po --copy
 	'';
 
         configureFlags =
