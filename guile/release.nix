@@ -173,6 +173,7 @@ let
           gnum4  # this should be a propagated build input of Autotools
           texinfo
           xz
+          gperf                            # for Gnulib's iconv-related stuff
           (texLiveAggregationFun {
             paths = [ texLive texLiveCMSuper ];
           })
