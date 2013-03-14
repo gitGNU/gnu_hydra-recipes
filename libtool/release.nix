@@ -118,7 +118,7 @@ let
 
         inherit preCheck succeedOnFailure keepBuildDirectory;
 
-      }).hostDrv;
+      }).crossDrv;
 
     manual =
       { tarball ? jobs.tarball {}

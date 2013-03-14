@@ -36,18 +36,18 @@ let userPkgs = pkgs; in
       translators =
         [ # SMB shares installed by `runOnGNU'.
           { node = "/host/xchg";
-            command = "${pkgs.gnu.smbfs.hostDrv}/hurd/smbfs "
+            command = "${pkgs.gnu.smbfs.crossDrv}/hurd/smbfs "
               + "-s 10.0.2.4 -r smb://10.0.2.4/xchg -u root -p ''";
           }
           { node = "/host/store";
-            command = "${pkgs.gnu.smbfs.hostDrv}/hurd/smbfs "
+            command = "${pkgs.gnu.smbfs.crossDrv}/hurd/smbfs "
               + "-s 10.0.2.4 -r smb://10.0.2.4/store -u root -p ''";
           }
         ];
       environment = pkgs:
         [ mach hurd ]
         ++ (with pkgs;
-            map (p: p.hostDrv)
+            map (p: p.crossDrv)
              [ gnused gnugrep findutils diffutils
                bash gcc gnumake gawk
                gnutar gzip bzip2 xz

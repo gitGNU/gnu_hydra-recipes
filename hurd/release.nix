@@ -64,20 +64,20 @@ let
       '' sed -i daemons/{runttys,getty}.c \
              -e "s|/bin/login|$out/bin/login|g"
 
-         sed -e 's|/bin/bash|${pkgs.bashInteractive.hostDrv}/bin/bash|g' \
+         sed -e 's|/bin/bash|${pkgs.bashInteractive.crossDrv}/bin/bash|g' \
              -i utils/login.c
       '';
     postBuild = "make hurd.msgids -C hurd"; # for `rpctrace'
     postInstall =
-      '' sed -e 's|/bin/bash|${pkgs.bashInteractive.hostDrv}/bin/bash|g' \
-             -e "s|^PATH=|PATH=$out/bin:$out/sbin:${pkgs.coreutils.hostDrv}/bin:${pkgs.gnused.hostDrv}/bin:/run/current-system/sw/bin:/run/current-system/sw/sbin:|g" \
+      '' sed -e 's|/bin/bash|${pkgs.bashInteractive.crossDrv}/bin/bash|g' \
+             -e "s|^PATH=|PATH=$out/bin:$out/sbin:${pkgs.coreutils.crossDrv}/bin:${pkgs.gnused.hostDrv}/bin:/run/current-system/sw/bin:/run/current-system/sw/sbin:|g" \
              -i "$out/libexec/"{rc,runsystem} "$out/sbin/MAKEDEV"
 
          sed -e "s|/sbin/fsck|$out/sbin/fsck|g" \
              -i "$out/libexec/rc"
 
          sed -e "s|/bin/login|$out/bin/login|g" \
-             -e "s|/bin/fmt|${pkgs.coreutils.hostDrv}/bin/fmt|g" \
+             -e "s|/bin/fmt|${pkgs.coreutils.crossDrv}/bin/fmt|g" \
              -i "$out/bin/sush"
 
          mkdir -p "$out/share/msgids"
@@ -145,7 +145,7 @@ let
             dontStrip dontCrossStrip NIX_STRIP_DEBUG;
         }
         //
-        (hurdExtraAttrs pkgs))).hostDrv;
+        (hurdExtraAttrs pkgs))).crossDrv;
 
     # Same without dependency on Parted.
     xbuild_without_parted =
@@ -179,15 +179,15 @@ let
           config.packageOverrides = overrides;
         };
       in
-       pkgs.gnu.hurdCross.hostDrv;
+       pkgs.gnu.hurdCross.crossDrv;
 
     # A QEMU disk image with GNU/Hurd on partition 1.
     qemu_image =
       { xbuild ? (jobs.xbuild_without_parted {})
-      , mach ? xpkgs.gnu.mach.hostDrv
-      , coreutils ? xpkgs.coreutils.hostDrv
+      , mach ? xpkgs.gnu.mach.crossDrv
+      , coreutils ? xpkgs.coreutils.crossDrv
       , inetutils ? ((import ../inetutils/release.nix {}).xbuild_gnu {}) # XXX
-      , guile ? xpkgs.guile.hostDrv
+      , guile ? xpkgs.guile.crossDrv
       }:
 
       let
@@ -195,7 +195,7 @@ let
           [ { /* SMB share installed by QEMU when run with:
                  "qemu img.qcow2 -net nic -net user,smb=/path/to/shared/dir"  */
               node = "/host";
-              command = "${xpkgs.gnu.smbfs.hostDrv}/hurd/smbfs "
+              command = "${xpkgs.gnu.smbfs.crossDrv}/hurd/smbfs "
                 + "-s 10.0.2.4 -r smb://10.0.2.4/qemu -u root -p '' ";
             }
             { node = "/ftp:";
@@ -206,7 +206,7 @@ let
         environment = pkgs:
           [ mach xbuild coreutils inetutils guile ]
           ++ (with pkgs;
-              map (p: p.hostDrv)
+              map (p: p.crossDrv)
                 [ glibc
                   bashInteractive gnugrep
                   gnused findutils diffutils gawk
@@ -215,8 +215,8 @@ let
                   gnutar gzip bzip2 xz
                   gnu.mig_raw gnu.smbfs gnu.unionfs
                ])
-          ++ [ (pkgs.wget.override { gnutls = null; perl = null; }).hostDrv
-               (pkgs.shadow.override { pam = null; }).hostDrv
+          ++ [ (pkgs.wget.override { gnutls = null; perl = null; }).crossDrv
+               (pkgs.shadow.override { pam = null; }).crossDrv
              ];
       in
         qemuImage {
@@ -228,7 +228,7 @@ let
     # Tests run on GNU in a fresh QEMU image.
     qemu_tests =
       { xbuild ? (jobs.xbuild_without_parted {})
-      , mach ? xpkgs.gnu.mach.hostDrv
+      , mach ? xpkgs.gnu.mach.crossDrv
       , tarball ? jobs.tarball
       , glibcTarball ? (import ../glibc/release.nix { glibcHurd = <glibc>; }).tarball {}
       , machTarball ? (import ../gnumach/release.nix {}).tarball
@@ -282,7 +282,7 @@ let
 
                ( tar xvf "${jobs.tarball}/tarballs/"*.tar.gz ;
                  cd hurd-* ;
-                 export PATH="${pkgs.gawk.hostDrv}/bin:$PATH" ;
+                 export PATH="${pkgs.gawk.crossDrv}/bin:$PATH" ;
                  set -e ;
                  ./configure --without-parted --prefix="/host/xchg/out" ;
                  make                             # sequential build
@@ -300,7 +300,7 @@ let
 
                ( tar xvf "${jobs.tarball}/tarballs/"*.tar.gz ;
                  cd hurd-* ;
-                 export PATH="${pkgs.gawk.hostDrv}/bin:$PATH" ;
+                 export PATH="${pkgs.gawk.crossDrv}/bin:$PATH" ;
                  set -e ;
                  ./configure --without-parted --prefix="/host/xchg/out" ;
                  make -j4                         # stress it!
@@ -334,7 +334,7 @@ let
       { tarball ? jobs.tarball
       , mach ? ((import ../gnumach/release.nix {}).build {})
       , inetutils ? ((import ../inetutils/release.nix {}).xbuild_gnu {}) # XXX
-      , guile ? xpkgs.guile.hostDrv
+      , guile ? xpkgs.guile.crossDrv
       }:
 
       let
@@ -357,7 +357,7 @@ let
           [ { /* SMB share installed by QEMU when run with:
                  "qemu img.qcow2 -net nic -net user,smb=/path/to/shared/dir"  */
               node = "/host";
-              command = "${xpkgs.gnu.smbfs.hostDrv}/hurd/smbfs "
+              command = "${xpkgs.gnu.smbfs.crossDrv}/hurd/smbfs "
                 + "-s 10.0.2.4 -r smb://10.0.2.4/qemu -u root -p '' ";
             }
             { node = "/ftp:";
@@ -368,7 +368,7 @@ let
         environment = pkgs:                     # a stripped-down environment
           [ mach hurd inetutils guile ]
           ++ (with pkgs;
-              map (p: p.hostDrv)
+              map (p: p.crossDrv)
                 [ glibc coreutils
                   bashInteractive gnugrep
                   gnused findutils diffutils

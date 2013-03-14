@@ -137,7 +137,7 @@ let
         src = tarball;
         buildInputs = [ gmp_xgnu ];
         inherit meta succeedOnFailure keepBuildDirectory;
-      }).hostDrv;
+      }).crossDrv;
 
     # Extra job with `g++' as the C compiler.
     build_with_gxx =

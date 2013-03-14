@@ -180,7 +180,7 @@ let
           configureFlags =
             [ "--with-ncurses-include-dir=${pkgs.ncurses}/include" ];
           doCheck = false;
-        }).hostDrv;
+        }).crossDrv;
 
     coverage =
       { tarball ? jobs.tarball {}

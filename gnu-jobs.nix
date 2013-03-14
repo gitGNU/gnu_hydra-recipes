@@ -99,7 +99,7 @@ let
         inherit name succeedOnFailure keepBuildDirectory;
       }
       //
-      (pkgs.lib.optionalAttrs (customEnv ? xbuild_gnu) (customEnv.xbuild_gnu crosspkgs)))).hostDrv;
+      (pkgs.lib.optionalAttrs (customEnv ? xbuild_gnu) (customEnv.xbuild_gnu crosspkgs)))).crossDrv;
   }));
 
 in jobs

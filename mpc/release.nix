@@ -137,7 +137,7 @@ let
         src = tarball;
         buildInputs = [ gmp_xgnu mpfr_xgnu ];
         inherit meta succeedOnFailure keepBuildDirectory;
-      }).hostDrv;
+      }).crossDrv;
 
     build_gxx =
       { system ? builtins.currentSystem

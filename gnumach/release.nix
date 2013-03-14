@@ -83,7 +83,7 @@ let
 
           buildNativeInputs = [ pkgs.gnu.mig ];
           inherit meta succeedOnFailure keepBuildDirectory;
-        }).hostDrv;
+        }).crossDrv;
   };
 in
   jobs

@@ -137,7 +137,7 @@ let
 
         configureFlags =
           # Trick to have -I...-libunistring/include in CPPFLAGS.
-          [ "--with-libunistring-prefix=${crosspkgs.libunistring.hostDrv}" ] ++
+          [ "--with-libunistring-prefix=${crosspkgs.libunistring.crossDrv}" ] ++
           (configureFlags crosspkgs);
 
         makeFlags = [ "V=1" ];
@@ -155,7 +155,7 @@ let
         doCheck = false;
         meta = meta // { schedulingPriority = "50"; };
         inherit buildOutOfSourceTree succeedOnFailure keepBuildDirectory;
-      }).hostDrv;
+      }).crossDrv;
 
   jobs = rec {
 
@@ -371,7 +371,7 @@ let
         (xpkgs:
            # `AI_ALL' & co. are missing on MinGW, so `net_db.c' won't build.
            [ "--disable-networking"
-             "--with-libiconv-prefix=${xpkgs.libiconv.hostDrv}"
+             "--with-libiconv-prefix=${xpkgs.libiconv.crossDrv}"
            ]);
 
     xbuild_mipsel_linux_gnu =

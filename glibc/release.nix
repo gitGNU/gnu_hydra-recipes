@@ -138,7 +138,7 @@ let
         doCheck = false;
         inherit propagatedBuildNativeInputs CPATH preConfigure meta
           succeedOnFailure keepBuildDirectory;
-      }).hostDrv;
+      }).crossDrv;
 
   hurd_patches =
     # Patch set to apply to upstream glibc.

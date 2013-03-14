@@ -104,7 +104,7 @@ let
         configureFlags = [ "--enable-install-program=arch,hostname" ];
         doCheck = false;
         inherit meta succeedOnFailure keepBuildDirectory;
-      }).hostDrv;
+      }).crossDrv;
 
     coverage =
       pkgs.releaseTools.coverageAnalysis {

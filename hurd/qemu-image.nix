@@ -22,7 +22,7 @@
 , rcExtraCode ? ""                                # appended to /libexec/rc
 , translators ? []                                # node/command attr sets
 , environment ? (pkgs: [ mach hurd ]
-                  ++ (map (p: p.hostDrv)
+                  ++ (map (p: p.crossDrv)
                           (with pkgs;
                             [ glibc bashInteractive coreutils
                               findutils gnused gnutar gzip
@@ -154,7 +154,7 @@ in
       mkdir /mnt/bin /mnt/dev /mnt/tmp
       ln -sv "${hurd}/hurd" /mnt/hurd
 
-      ln -sv "${pkgs.bashInteractive.hostDrv}/bin/bash" /mnt/bin/sh
+      ln -sv "${pkgs.bashInteractive.crossDrv}/bin/bash" /mnt/bin/sh
 
       # Do we really have all we need?
       loader="`"${pkgs.patchelf}/bin/patchelf" --print-interpreter /mnt/hurd/init`"
@@ -185,7 +185,7 @@ EOF
 
       # Users.
       cat > /mnt/etc/passwd <<EOF
-root:x:0:0:root:/root:${pkgs.bashInteractive.hostDrv}/bin/bash
+root:x:0:0:root:/root:${pkgs.bashInteractive.crossDrv}/bin/bash
 EOF
       cat > /mnt/etc/shadow <<EOF
 root::::::::
