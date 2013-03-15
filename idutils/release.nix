@@ -63,7 +63,7 @@ in
     customEnv = {
 
       tarball = pkgs: {
-        buildNativeInputs = [ pkgs.xz ];
+        nativeBuildInputs = [ pkgs.xz ];
 	buildInputs = with pkgs; [
 	  automake111x
 	  texinfo
@@ -79,15 +79,15 @@ in
       };
 
       build = pkgs: {
-        buildNativeInputs = [ pkgs.xz ];
+        nativeBuildInputs = [ pkgs.xz ];
       };
 
       coverage = pkgs: {
-        buildNativeInputs = [ pkgs.xz ];
+        nativeBuildInputs = [ pkgs.xz ];
       };
 
       xbuild_gnu = pkgs: {
-        buildNativeInputs = [ pkgs.xz ];
+        nativeBuildInputs = [ pkgs.xz ];
       };
 
     };

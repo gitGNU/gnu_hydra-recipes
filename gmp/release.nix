@@ -75,7 +75,7 @@ in
       };
 
       xbuild_gnu = pkgs: {
-        buildNativeInputs = (buildInputsFrom pkgs);
+        nativeBuildInputs = (buildInputsFrom pkgs);
         configureFlags = configureFlagsFor pkgs.stdenv;
       };
     };

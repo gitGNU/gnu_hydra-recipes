@@ -100,7 +100,7 @@ let
         name = "coreutils" ;
         src = jobs.tarball;
         buildInputs = [ pkgs.gmp ];
-        buildNativeInputs = with pkgs; [ perl xz ];
+        nativeBuildInputs = with pkgs; [ perl xz ];
         configureFlags = [ "--enable-install-program=arch,hostname" ];
         doCheck = false;
         inherit meta succeedOnFailure keepBuildDirectory;

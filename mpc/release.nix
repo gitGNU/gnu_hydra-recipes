@@ -155,8 +155,8 @@ let
           # Disable Valgrind tests.
           configureFlags =
             attrs.configureFlags ++ [ "--disable-valgrind-tests" ];
-          buildNativeInputs =
-            (pkgs.lib.filter (x: x != pkgs.valgrind) attrs.buildNativeInputs);
+          nativeBuildInputs =
+            (pkgs.lib.filter (x: x != pkgs.valgrind) attrs.nativeBuildInputs);
 
           preConfigure =
              ''

@@ -134,7 +134,7 @@ let
 
         makeFlags = ''vardbdir="$out/var/db"'';
 
-        buildNativeInputs = (buildInputsFrom pkgs) ++ extraBuildInputs;
+        nativeBuildInputs = (buildInputsFrom pkgs) ++ extraBuildInputs;
         doCheck = false;
         inherit propagatedBuildNativeInputs CPATH preConfigure meta
           succeedOnFailure keepBuildDirectory;

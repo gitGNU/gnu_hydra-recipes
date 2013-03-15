@@ -99,7 +99,7 @@ let
         postAutoconf = "rm -f svn-revision";  # useless, from `autoconfPhase'
         configureFlags = "--build=i586-pc-gnu";  # cheat
 
-        buildNativeInputs = with pkgs;
+        nativeBuildInputs = with pkgs;
           [ git gnu.machHeaders gnu.mig texinfo ];
         buildInputs = with pkgs;
           [ parted /* not the cross-GNU one */
@@ -135,7 +135,7 @@ let
             '';
 
           propagatedBuildNativeInputs = [ pkgs.gnu.machHeaders ];
-          buildNativeInputs = [ pkgs.gnu.mig ];
+          nativeBuildInputs = [ pkgs.gnu.mig ];
           buildInputs =
             (with pkgs; [ libuuid ncurses xorg.libpciaccess ])
             ++ (pkgs.stdenv.lib.optional (parted != null) parted);

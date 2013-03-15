@@ -61,6 +61,6 @@ in
           ++ [ xz ];
       } // pkgs.lib.optionalAttrs stdenv.isDarwin { LDFLAGS="-L${libiconv}/lib -liconv"; } );
 
-      xbuild_gnu = pkgs: { buildNativeInputs = [ pkgs.xz ]; };
+      xbuild_gnu = pkgs: { nativeBuildInputs = [ pkgs.xz ]; };
     };
   }

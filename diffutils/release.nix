@@ -63,16 +63,16 @@ in
       };
 
       build = pkgs: {
-        buildNativeInputs = [ pkgs.xz ];
+        nativeBuildInputs = [ pkgs.xz ];
       };
 
       coverage = pkgs: {
-        buildNativeInputs = [ pkgs.xz ];
+        nativeBuildInputs = [ pkgs.xz ];
 	meta = meta // { schedulingPriority = 50; };
       };
 
       xbuild_gnu = pkgs: {
-        buildNativeInputs = [ pkgs.xz ];
+        nativeBuildInputs = [ pkgs.xz ];
 	meta = meta // { schedulingPriority = 10; };
       };
     };

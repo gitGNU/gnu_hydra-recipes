@@ -111,7 +111,7 @@ let
       (pkgs.releaseTools.nixBuild {
 	name = "libtool" ;
 	src = tarball;
-        buildNativeInputs = [ autoconf automake ];
+        nativeBuildInputs = [ autoconf automake ];
 
         # The test suite can run in cross-compilation mode.
         doCheck = true;

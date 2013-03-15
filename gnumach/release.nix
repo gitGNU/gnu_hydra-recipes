@@ -81,7 +81,7 @@ let
               "--enable-kdb"
             ];
 
-          buildNativeInputs = [ pkgs.gnu.mig ];
+          nativeBuildInputs = [ pkgs.gnu.mig ];
           inherit meta succeedOnFailure keepBuildDirectory;
         }).crossDrv;
   };

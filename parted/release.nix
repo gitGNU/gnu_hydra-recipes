@@ -88,7 +88,7 @@ in
             gnu.hurdCrossIntermediate
           ];
 
-	buildNativeInputs = with pkgs; [ gettext_0_18 ];
+	nativeBuildInputs = with pkgs; [ gettext_0_18 ];
 	configureFlags =
 	  [ "--disable-device-mapper"
 	    "--enable-static" # The Hurd wants libparted.a

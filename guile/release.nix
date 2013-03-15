@@ -142,7 +142,7 @@ let
 
         makeFlags = [ "V=1" ];
 
-        buildNativeInputs =
+        nativeBuildInputs =
           [ native_guile crosspkgs.gawk crosspkgs.makeWrapper ];
 
         buildInputs = [ libgc ] ++
