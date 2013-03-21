@@ -154,7 +154,11 @@ let
 
           # XXX: ncurses fails to build on MinGW.
           ++ (crosspkgs.stdenv.lib.optional (to != crossSystems.i686_pc_mingw32)
-                crosspkgs.readline);
+                crosspkgs.readline)
+
+          # Try building with pthread support on MinGW.
+          ++ (crosspkgs.stdenv.lib.optional (to == crossSystems.i686_pc_mingw32)
+                crosspkgs.windows.pthreads);
 
         doCheck = false;
         meta = meta // { schedulingPriority = "50"; };
