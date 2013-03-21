@@ -56,7 +56,8 @@ let
 
       # Explicitly link against libgcc_s, to work around the infamous
       # "libgcc_s.so.1 must be installed for pthread_cancel to work".
-      ++ [ "LDFLAGS=-lgcc_s" ]
+      # Note that `libgcc_s' is not found on Darwin (and not needed?).
+      ++ (stdenv.lib.optional stdenv.isLinux [ "LDFLAGS=-lgcc_s" ])
 
      # FIXME: Commented because of:
      # libunistring-0.9.3/include/unistr.h:197:7: error: "CONFIG_UNICODE_SAFETY" is not defined
