@@ -282,6 +282,10 @@ let
             then false
             else buildOutOfSourceTree;
 
+          # Explicitly link against libgcc_s, to work around the infamous
+          # "libgcc_s.so.1 must be installed for pthread_cancel to work".
+          LDFLAGS = "-lgcc_s";
+
           inherit succeedOnFailure keepBuildDirectory;
           meta = meta // { schedulingPriority = "150"; };
         };
