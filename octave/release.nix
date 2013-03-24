@@ -26,7 +26,7 @@ let
   buildInputsFrom = pkgs: with pkgs;
     [ gfortran readline ncurses perl qhull blas liblapack pcre imagemagick
       gnuplot fftw zlib ghostscript transfig xfig pstoedit hdf5 texinfo
-      qrupdate suitesparse curl fltk13 texLive qhull
+      qrupdate suitesparse curl fltk13 texLive
     ];
 
   succeedOnFailure = true;
