@@ -27,7 +27,7 @@ let
     [ gfortran readline ncurses perl qhull blas liblapack pcre imagemagick
       gnuplot zlib ghostscript transfig xfig pstoedit hdf5 texinfo
       qrupdate suitesparse curl fltk13 texLive fftw fftwSinglePrec
-      openjdk
+      glpk openjdk
     ];
 
   succeedOnFailure = true;
