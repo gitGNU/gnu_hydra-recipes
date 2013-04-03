@@ -242,9 +242,14 @@ let
         name = "guile-coverage";
         src = jobs.tarball;
         buildInputs = buildInputsFrom pkgs;
-        patches = [
-          "${nixpkgs}/pkgs/development/interpreters/guile/disable-gc-sensitive-tests.patch" 
-        ];
+
+        patchPhase =
+          '' if [ ! -d module ]
+             then
+               # Patch for 1.8.
+               patch -p1 <  "${nixpkgs}/pkgs/development/interpreters/guile/disable-gc-sensitive-tests.patch"
+             fi
+          '';
 
         checkPhase =
           '' make check || \
