@@ -1,5 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
-   Copyright (C) 2011, 2012  Ludovic Courtès <ludo@gnu.org>
+   Copyright (C) 2011, 2012, 2013  Ludovic Courtès <ludo@gnu.org>
    Copyright (C) 2011  Rob Vermaas <rob.vermaas@gmail.com>
 
    This program is free software: you can redistribute it and/or modify
@@ -47,7 +47,7 @@ let
 
   # Return the list of dependencies.
   buildInputsFrom = pkgs: with pkgs;
-    [ texinfo ncurses pkgconfig x11 guile ]
+    [ texinfo ncurses pkgconfig x11 ]
     ++ (with xorg; [ libXft libXpm ])
 
     # Optional dependencies that fail to build on non-GNU platforms.
@@ -67,7 +67,7 @@ in
 
       tarball = pkgs: {
 	configureFlags ="--with-crt-dir=${pkgs.stdenv.glibc}/lib" ;
-	buildInputs = with pkgs; [ texinfo ncurses bazaar pkgconfig guile ];
+	buildInputs = with pkgs; [ texinfo ncurses bazaar pkgconfig ];
 
         # patches = [ ./bug11251.patch ];
         # enableParallelBuilding = true;
