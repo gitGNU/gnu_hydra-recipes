@@ -54,8 +54,8 @@ let
     ++ (stdenv.lib.optionals stdenv.isLinux
          [ gtkLibs.gtk librsvg dbus gnutls libpng libjpeg libungif libtiff ])
 
-    # Fallback for Darwin.
-    ++ (stdenv.lib.optional stdenv.isDarwin xlibs.libXaw);
+    # Fallback for non-GNU systems.
+    ++ (stdenv.lib.optional (!stdenv.isLinux) xlibs.libXaw);
 
 in
   import ../gnu-jobs.nix {
