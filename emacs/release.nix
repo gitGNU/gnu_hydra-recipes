@@ -100,13 +100,13 @@ in
 	    "--x-includes=${xlibs.libX11}/include"
 	  ]
 	  ++
-	  (if stdenv.isDarwin || stdenv.system == "i686-cygwin" then
+	  (if stdenv.isLinux then
+	     (stdenv.lib.optional (stdenv ? glibc)
+	       [ "--with-crt-dir=${stdenv.glibc}/lib" ])
+	   else
 	     [ "--with-xpm=no" "--with-jpeg=no" "--with-png=no"
 	       "--with-gif=no" "--with-tiff=no"
-	     ]
-	   else
-	     (stdenv.lib.optional (stdenv ? glibc)
-	       [ "--with-crt-dir=${stdenv.glibc}/lib" ]));
+	     ]);
       };
 
       coverage = pkgs: {
