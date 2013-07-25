@@ -66,6 +66,7 @@ in
     customEnv = rec {
 
       tarball = pkgs: {
+	# FIXME This option only exists in the emacs-24 branch, not trunk.
 	configureFlags ="--with-crt-dir=${pkgs.stdenv.glibc}/lib" ;
 	buildInputs = with pkgs; [ texinfo ncurses bazaar pkgconfig ];
 
@@ -83,7 +84,7 @@ in
         configurePhase = ":";
 	distPhase = ''
 	  make bootstrap
-	  ./make-dist --tar
+	  ./make-dist --tar --tests
 	  ensureDir $out/tarballs
 	  cp -pvd *.tar.gz $out/tarballs
 	'';
