@@ -92,7 +92,7 @@ in
 
       build = pkgs: {
 	buildInputs = buildInputsFrom pkgs;
-
+	doCheck = false;
 	configureFlags =
 	  with pkgs;
 	  [ # Make sure `configure' doesn't pick /usr/lib on impure platforms
@@ -112,6 +112,7 @@ in
 
       coverage = pkgs: {
 	buildInputs = buildInputsFrom pkgs;
+	doCheck = true;
 	configureFlags ="--with-crt-dir=${pkgs.stdenv.glibc}/lib --enable-profiling" ;
       };
 
