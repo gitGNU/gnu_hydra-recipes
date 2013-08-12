@@ -116,5 +116,17 @@ in
 	configureFlags ="--with-crt-dir=${pkgs.stdenv.glibc}/lib --enable-profiling" ;
       };
 
+      manual = pkgs: {
+        buildInputs = (buildInputsFrom pkgs)
+          ++ [ pkgs.texinfo pkgs.texLive ];
+	doCheck = false;
+        buildPhase = "make docs";
+        installPhase = ''
+          make install-doc
+          ensureDir "$out/nix-support"
+          echo "doc manual $out/share/doc/emacs/emacs.html index.html" >> "$out/nix-support/hydra-build-products"
+          echo "doc-pdf manual $out/share/doc/emacs/emacs.pdf" >> "$out/nix-support/hydra-build-products"
+       '';
+      };
     };
   }
