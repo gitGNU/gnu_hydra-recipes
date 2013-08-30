@@ -19,6 +19,10 @@
 
 let
   meta = {
+    description = "GNU Octave, a high-level language for numerical computations";
+    homepage = http://www.octave.org/;
+    license = "GPLv3+";
+    maintainers = [ "Mike Miller <mtmiller@ieee.org>" ];
   };
 
   pkgs = import nixpkgs {};
