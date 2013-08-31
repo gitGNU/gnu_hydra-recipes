@@ -30,9 +30,13 @@ let
   buildInputsFrom = pkgs: with pkgs;
     [ gfortran readline ncurses perl qhull blas liblapack pcre pkgconfig
       gnuplot zlib ghostscript transfig xfig pstoedit hdf5 texinfo
-      qrupdate suitesparse curl fltk13 texLive fftw fftwSinglePrec
+      qrupdate suitesparse curl texLive fftw fftwSinglePrec
       glpk graphicsmagick openjdk
-    ];
+    ]
+
+    # Optional dependencies for building native graphics on Mesa platforms.
+    ++ (lib.optionals (lib.elem stdenv.system lib.platforms.mesaPlatforms)
+         [ fltk13 fontconfig freetype mesa ]);
 
   succeedOnFailure = true;
   keepBuildDirectory = true;
