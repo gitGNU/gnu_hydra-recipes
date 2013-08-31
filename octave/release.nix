@@ -28,10 +28,10 @@ let
   pkgs = import nixpkgs {};
 
   buildInputsFrom = pkgs: with pkgs;
-    [ gfortran readline ncurses perl qhull blas liblapack pcre imagemagick
+    [ gfortran readline ncurses perl qhull blas liblapack pcre pkgconfig
       gnuplot zlib ghostscript transfig xfig pstoedit hdf5 texinfo
       qrupdate suitesparse curl fltk13 texLive fftw fftwSinglePrec
-      glpk openjdk
+      glpk graphicsmagick openjdk
     ];
 
   succeedOnFailure = true;
