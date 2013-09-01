@@ -31,7 +31,7 @@ let
     [ gfortran readline ncurses perl qhull blas liblapack pcre pkgconfig
       gnuplot zlib ghostscript transfig xfig pstoedit hdf5 texinfo
       qrupdate suitesparse curl texLive fftw fftwSinglePrec
-      glpk graphicsmagick openjdk
+      bzip2 glpk graphicsmagick openjdk
     ]
 
     # Optional dependencies for building native graphics on Mesa platforms.
