@@ -71,6 +71,11 @@ let
 
 	buildInputs = [
 	  flex2535 git gperf bison automake111x mercurial] ++ buildInputsFrom pkgs ;
+
+        # Fontconfig needs a config file to build the manual.
+        preBuild = ''
+          export FONTCONFIG_FILE="${fontconfig}/etc/fonts/fonts.conf"
+        '';
       };
 
     build =
@@ -84,6 +89,11 @@ let
 	src = tarball;
 	inherit meta succeedOnFailure keepBuildDirectory;
 	buildInputs = buildInputsFrom pkgs;
+
+        # Fontconfig needs a config file to run the test suite.
+        preCheck = ''
+          export FONTCONFIG_FILE="${fontconfig}/etc/fonts/fonts.conf"
+        '';
       };
 
     coverage =
@@ -95,6 +105,11 @@ let
 	src = tarball;
 	inherit meta;
 	buildInputs = buildInputsFrom pkgs;
+
+        # Fontconfig needs a config file to run the test suite.
+        preCheck = ''
+          export FONTCONFIG_FILE="${fontconfig}/etc/fonts/fonts.conf"
+        '';
       };
 
   };
