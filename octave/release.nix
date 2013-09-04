@@ -36,10 +36,18 @@ let
 
     # Optional dependencies for building native graphics on Mesa platforms.
     ++ (lib.optionals (lib.elem stdenv.system lib.platforms.mesaPlatforms)
-         [ fltk13 fontconfig freetype mesa ]);
+         [ fltk13 fontconfig freefont_ttf freetype mesa ]);
 
   succeedOnFailure = true;
   keepBuildDirectory = true;
+
+  # Octave needs a working font configuration to build the manual and to
+  # run the test suite.
+  fontsConf = makeFontsConf {
+    fontDirectories = [
+      freefont_ttf
+    ];
+  };
 
   jobs = rec {
 
@@ -74,7 +82,7 @@ let
 
         # Fontconfig needs a config file to build the manual.
         preBuild = ''
-          export FONTCONFIG_FILE="${fontconfig}/etc/fonts/fonts.conf"
+          export FONTCONFIG_FILE="${fontsConf}"
         '';
       };
 
@@ -92,7 +100,7 @@ let
 
         # Fontconfig needs a config file to run the test suite.
         preCheck = ''
-          export FONTCONFIG_FILE="${fontconfig}/etc/fonts/fonts.conf"
+          export FONTCONFIG_FILE="${fontsConf}"
         '';
       };
 
@@ -108,7 +116,7 @@ let
 
         # Fontconfig needs a config file to run the test suite.
         preCheck = ''
-          export FONTCONFIG_FILE="${fontconfig}/etc/fonts/fonts.conf"
+          export FONTCONFIG_FILE="${fontsConf}"
         '';
       };
 
