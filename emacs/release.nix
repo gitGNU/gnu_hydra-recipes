@@ -84,7 +84,7 @@ in
         configurePhase = ":";
 	distPhase = ''
 	  make bootstrap
-	  ./make-dist --tar --tests
+	  ./make-dist --tar --tests --no-update
 	  ensureDir $out/tarballs
 	  cp -pvd *.tar.gz $out/tarballs
 	'';
