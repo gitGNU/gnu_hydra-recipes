@@ -43,9 +43,9 @@ let
 
   # Octave needs a working font configuration to build the manual and to
   # run the test suite.
-  fontsConf = makeFontsConf {
+  FONTCONFIG_FILE = pkgs.makeFontsConf {
     fontDirectories = [
-      freefont_ttf
+      "${freefont_ttf}/share/fonts/truetype"
     ];
   };
 
@@ -79,11 +79,6 @@ let
 
 	buildInputs = [
 	  flex2535 git gperf bison automake111x mercurial] ++ buildInputsFrom pkgs ;
-
-        # Fontconfig needs a config file to build the manual.
-        preBuild = ''
-          export FONTCONFIG_FILE="${fontsConf}"
-        '';
       };
 
     build =
@@ -97,11 +92,6 @@ let
 	src = tarball;
 	inherit meta succeedOnFailure keepBuildDirectory;
 	buildInputs = buildInputsFrom pkgs;
-
-        # Fontconfig needs a config file to run the test suite.
-        preCheck = ''
-          export FONTCONFIG_FILE="${fontsConf}"
-        '';
       };
 
     coverage =
@@ -113,11 +103,6 @@ let
 	src = tarball;
 	inherit meta;
 	buildInputs = buildInputsFrom pkgs;
-
-        # Fontconfig needs a config file to run the test suite.
-        preCheck = ''
-          export FONTCONFIG_FILE="${fontsConf}"
-        '';
       };
 
   };
