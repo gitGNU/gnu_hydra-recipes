@@ -45,7 +45,7 @@ let
   # run the test suite.
   FONTCONFIG_FILE = pkgs.makeFontsConf {
     fontDirectories = [
-      "${freefont_ttf}/share/fonts/truetype"
+      "${pkgs.freefont_ttf}/share/fonts/truetype"
     ];
   };
 
