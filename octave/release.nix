@@ -59,7 +59,7 @@ let
       releaseTools.makeSourceTarball {
 	name = "octave-tarball";
 	src = octave;
-	inherit meta succeedOnFailure keepBuildDirectory;
+	inherit meta succeedOnFailure keepBuildDirectory FONTCONFIG_FILE;
 	dontBuild = false;
 
 	autoconfPhase = ''
@@ -90,7 +90,7 @@ let
       releaseTools.nixBuild {
 	name = "octave" ;
 	src = tarball;
-	inherit meta succeedOnFailure keepBuildDirectory;
+	inherit meta succeedOnFailure keepBuildDirectory FONTCONFIG_FILE;
 	buildInputs = buildInputsFrom pkgs;
       };
 
@@ -101,7 +101,7 @@ let
       releaseTools.coverageAnalysis {
 	name = "octave-coverage";
 	src = tarball;
-	inherit meta;
+	inherit meta FONTCONFIG_FILE;
 	buildInputs = buildInputsFrom pkgs;
       };
 
