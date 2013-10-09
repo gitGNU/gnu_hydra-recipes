@@ -40,6 +40,8 @@ in
     src  = wget;
     inherit nixpkgs meta; 
 
+    systems = ["x86_64-linux" "i686-linux" "i686-freebsd" "x86_64-darwin"];
+
     customEnv = {
         
       tarball = pkgs: {

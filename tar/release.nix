@@ -51,6 +51,8 @@ in
     src  = tarSrc;
     inherit nixpkgs meta; 
     enableGnuCrossBuild = true;
+
+    systems = ["x86_64-darwin" "i686-linux" "x86_64-linux" "i686-freebsd"];
     
     customEnv = {
         

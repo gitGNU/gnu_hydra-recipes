@@ -54,6 +54,8 @@ in
     src  = cppi;
     inherit nixpkgs meta;
 
+    systems = ["x86_64-linux" "i686-linux" "x86_64-freebsd" "x86_64-darwin"];
+
     customEnv = {
       tarball = pkgs: {
         buildInputs = with pkgs; [ git texinfo bison cvs man rsync perl cpio automake111x xz gperf help2man gettext_0_18 flex];

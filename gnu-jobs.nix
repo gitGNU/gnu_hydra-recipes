@@ -23,6 +23,7 @@
 , nixpkgs
 , enableGnuCrossBuild ? false
 , useLatestGnulib ? true
+, systems ? [ "i686-linux" "x86_64-linux" ]
 }:
 
 let
@@ -63,20 +64,21 @@ let
       // ( pkgs.lib.optionalAttrs (customEnv ? tarball) (customEnv.tarball pkgs) ) );
 
     build =
-      { system ? builtins.currentSystem }:
+      pkgs.lib.genAttrs systems (system:
 
-      let pkgs = import nixpkgs {inherit system;};
-      in with pkgs;
-      releaseTools.nixBuild ({
-        src = jobs.tarball;
+        let pkgs = import nixpkgs {inherit system;};
+        in with pkgs;
+        releaseTools.nixBuild ({
+          src = jobs.tarball;
 
-        # Use a low priority on Cygwin.  See
-        # <https://github.com/NixOS/hydra/issues/15> for details.
-        meta = meta //
-          (lib.optionalAttrs stdenv.isCygwin { schedulingPriority = 1; });
+          # Use a low priority on Cygwin.  See
+          # <https://github.com/NixOS/hydra/issues/15> for details.
+          meta = meta //
+            (lib.optionalAttrs stdenv.isCygwin { schedulingPriority = 1; });
 
-        inherit name succeedOnFailure keepBuildDirectory;
-      } // ( pkgs.lib.optionalAttrs (customEnv ? build) (customEnv.build pkgs)) );
+          inherit name succeedOnFailure keepBuildDirectory;
+        } // ( pkgs.lib.optionalAttrs (customEnv ? build) (customEnv.build pkgs)) )
+      );
 
     coverage =
       pkgs.releaseTools.coverageAnalysis ({

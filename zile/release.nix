@@ -57,6 +57,8 @@ in
     name = "zile";
     src  = zile;
     inherit nixpkgs meta; 
+
+    systems = ["x86_64-linux" "i686-linux" "x86_64-darwin"];
     
     customEnv = {
         

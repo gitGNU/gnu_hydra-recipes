@@ -55,6 +55,8 @@ in
     useLatestGnulib = false;
     enableGnuCrossBuild = true;
 
+    systems = ["i686-freebsd" "i686-solaris" "x86_64-darwin" "x86_64-linux" "i686-linux" "x86_64-freebsd"];
+
     customEnv = {
 
       tarball = pkgs: {

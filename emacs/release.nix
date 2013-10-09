@@ -63,6 +63,9 @@ in
     src  = emacs;
     inherit nixpkgs meta;
     useLatestGnulib = false;
+
+    systems = [ "x86_64-linux" "x86_64-darwin" "i686-linux" "i686-freebsd" ];
+
     customEnv = rec {
 
       tarball = pkgs: {
