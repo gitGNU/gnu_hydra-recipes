@@ -15,6 +15,8 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
+{ systems ? [ "x86_64-linux" "i686-linux" ] }:
+
 let
   meta = {
     description = "GNU Guile 2.0, an embeddable Scheme implementation";
@@ -276,7 +278,7 @@ let
 
     # The default build, executed on all platforms.
     build =
-      { system ? "x86_64-linux" }:
+      pkgs.lib.genAttrs systems (system:
 
       let pkgs = import nixpkgs { inherit system; };
       in
@@ -298,13 +300,13 @@ let
 
           inherit succeedOnFailure keepBuildDirectory;
           meta = meta // { schedulingPriority = "150"; };
-        };
+        });
 
     # Building without pthread support.  Do this for all values of SYSTEM,
     # because pthread support tends to be buggy, so `--without-thread' builds
     # allows us to see what's wrong aside from pthread support.
     build_without_threads =
-      { system ? builtins.currentSystem }:
+      pkgs.lib.genAttrs systems (system:
 
       let
         build = jobs.build { inherit system; };
@@ -312,19 +314,7 @@ let
         pkgs.lib.overrideDerivation build (attrs: {
           name = "guile-without-threads";
           configureFlags = attrs.configureFlags ++ [ "--without-threads" ];
-        });
-
-    # Building with GCC 4.7.
-    build_gcc47 =
-      let
-        pkgs = import nixpkgs {};                 # x86_64-linux
-        build = jobs.build {};
-      in
-        pkgs.lib.overrideDerivation build (attrs: {
-          name = "guile-gcc47";
-          preUnpack = "gcc --version";
-          buildInputs = attrs.buildInputs ++ [ pkgs.gcc47 ];
-        });
+        }));
 
     # Building with Clang.
     build_clang =
