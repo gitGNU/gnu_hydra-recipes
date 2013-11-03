@@ -15,7 +15,8 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
-{ nixpkgs ? <nixpkgs> }:
+{ nixpkgs ? <nixpkgs>
+, systems ? [ "x86_64-linux" "i686-linux" ] }:
 
 let
   meta = {
@@ -82,17 +83,18 @@ let
       };
 
     build =
-      { system ? "x86_64-linux"
-      , tarball ? jobs.tarball {}
-      }:
-      let pkgs = import nixpkgs { inherit system;} ;
-      in with pkgs;
-      releaseTools.nixBuild {
-	name = "octave" ;
-	src = tarball;
-	inherit meta succeedOnFailure keepBuildDirectory FONTCONFIG_FILE;
-	buildInputs = buildInputsFrom pkgs;
-      };
+      { tarball ? jobs.tarball {} }:
+      (pkgs.lib.genAttrs systems (system:
+
+        let pkgs = import nixpkgs { inherit system; };
+        in with pkgs;
+        releaseTools.nixBuild {
+          name = "octave" ;
+          src = tarball;
+          inherit meta succeedOnFailure keepBuildDirectory FONTCONFIG_FILE;
+          buildInputs = buildInputsFrom pkgs;
+        }
+      ));
 
     coverage =
       { tarball ? jobs.tarball {} }:
