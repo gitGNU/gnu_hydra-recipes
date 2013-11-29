@@ -1,5 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
-   Copyright (C) 2009, 2010, 2011, 2012  Ludovic Courtès <ludo@gnu.org>
+   Copyright (C) 2009, 2010, 2011, 2012, 2013  Ludovic Courtès <ludo@gnu.org>
    Copyright (C) 2009, 2010  Rob Vermaas <rob.vermaas@gmail.com>
 
    This program is free software: you can redistribute it and/or modify
@@ -87,6 +87,7 @@ let
         configureFlags = let stdenv = pkgs.stdenv; in
           [ "--enable-install-program=arch,hostname" ]
           ++ (stdenv.lib.optional stdenv.isLinux [ "--enable-gcc-warnings" ]);
+        makeFlags = [ "VERBOSE=yes" "RUN_EXPENSIVE_TESTS=yes" ];
         inherit meta succeedOnFailure keepBuildDirectory;
       };
 
