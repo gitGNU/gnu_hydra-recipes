@@ -70,6 +70,7 @@ in
 
       tarball = pkgs: {
 	# FIXME This option only exists in the emacs-24 branch, not trunk.
+	# FIXME Move --enable-check-lisp-object-type here from coverage?
 	configureFlags ="--with-crt-dir=${pkgs.stdenv.glibc}/lib" ;
 	buildInputs = with pkgs; [ texinfo ncurses bazaar pkgconfig ];
 
@@ -86,7 +87,7 @@ in
 
         configurePhase = ":";
 	distPhase = ''
-	  make bootstrap
+	  make
 	  ./make-dist --tar --tests --no-update
 	  ensureDir $out/tarballs
 	  cp -pvd *.tar.gz $out/tarballs
@@ -116,7 +117,7 @@ in
       coverage = pkgs: {
 	buildInputs = buildInputsFrom pkgs;
 	doCheck = true;
-	configureFlags ="--with-crt-dir=${pkgs.stdenv.glibc}/lib --enable-profiling" ;
+	configureFlags ="--with-crt-dir=${pkgs.stdenv.glibc}/lib --enable-profiling --enable-check-lisp-object-type" ;
       };
 
       manual = pkgs: {
