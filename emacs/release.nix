@@ -87,7 +87,7 @@ in
 
         configurePhase = ":";
 	distPhase = ''
-	  make
+	  make info all
 	  ./make-dist --tar --tests --no-update
 	  ensureDir $out/tarballs
 	  cp -pvd *.tar.gz $out/tarballs
