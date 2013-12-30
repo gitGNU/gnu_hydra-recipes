@@ -18,7 +18,7 @@
 { meta
 , name
 , src
-, customEnv
+, customEnv ? {}
 , customJobs ? pkgs: {}
 , nixpkgs
 , enableGnuCrossBuild ? false
