@@ -1,5 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
-   Copyright (C) 2012  Rob Vermaas <rob.vermaas@gmail.com>
+   Copyright (C) 2012, 2013  Rob Vermaas <rob.vermaas@gmail.com>
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@ let
     # Those who will receive email notifications.
     maintainers = [
       "Reuben Thomas <rrt@sc3d.org>"
+      "Sami Kerola <kerolasa@iki.fi>"
     ];
   };
 in
@@ -43,9 +44,6 @@ in
     systems = ["x86_64-linux" "i686-linux" "x86_64-darwin" "x86_64-freebsd"];
     customEnv = {
       tarball = pkgs: {
-        autoconfPhase = ''
-          ./autogen.sh
-        '';
         dontBuild = false;
         buildInputs = with pkgs; [gettext help2man texinfo];
       };
