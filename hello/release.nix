@@ -45,7 +45,7 @@ in
     customEnv = {
       tarball = pkgs: {
         dontBuild = false;
-        buildInputs = with pkgs; [gettext help2man texinfo];
+        buildInputs = with pkgs; [gettext help2man texinfo git perl];
       };
     };
   }
