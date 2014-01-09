@@ -359,24 +359,26 @@ let
      */
 
 
-    xbuild_gnu =
-      # Cross build to GNU.
-      makeCrossBuild "x86_64-linux" crossSystems.i586_pc_gnu
-        (xpkgs:
-           # On GNU, libgc depends on libpthread, but the cross linker doesn't
-           # know where to find libpthread, which leads to erroneous test failures
-           # in `configure', where `-pthread' and `-lpthread' aren't explicitly
-           # passed.  So it needs some help (XXX).
-           [ "LDFLAGS=-Wl,-rpath-link=${xpkgs.gnu.libpthreadCross}/lib" ]);
+    # XXX: Temporarily disabled since GNU Hurd is broken in Nixpkgs.
+    # xbuild_gnu =
+    #   # Cross build to GNU.
+    #   makeCrossBuild "x86_64-linux" crossSystems.i586_pc_gnu
+    #     (xpkgs:
+    #        # On GNU, libgc depends on libpthread, but the cross linker doesn't
+    #        # know where to find libpthread, which leads to erroneous test failures
+    #        # in `configure', where `-pthread' and `-lpthread' aren't explicitly
+    #        # passed.  So it needs some help (XXX).
+    #        [ "LDFLAGS=-Wl,-rpath-link=${xpkgs.gnu.libpthreadCross}/lib" ]);
 
-    xbuild_mingw =
-      # Cross build to MinGW.
-      makeCrossBuild "i686-linux" crossSystems.i686_pc_mingw32
-        (xpkgs:
-           # `AI_ALL' & co. are missing on MinGW, so `net_db.c' won't build.
-           [ "--disable-networking"
-             "--with-libiconv-prefix=${xpkgs.libiconv.crossDrv}"
-           ]);
+    # XXX: Temporarily disabled since MinGW is broken in Nixpkgs.
+    # xbuild_mingw =
+    #   # Cross build to MinGW.
+    #   makeCrossBuild "i686-linux" crossSystems.i686_pc_mingw32
+    #     (xpkgs:
+    #        # `AI_ALL' & co. are missing on MinGW, so `net_db.c' won't build.
+    #        [ "--disable-networking"
+    #          "--with-libiconv-prefix=${xpkgs.libiconv.crossDrv}"
+    #        ]);
 
     xbuild_mipsel_linux_gnu =
       # Cross build to `mipsel-linux-gnu' (Ben Nanonote).
