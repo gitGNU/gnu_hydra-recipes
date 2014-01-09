@@ -1,5 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
-   Copyright (C) 2009, 2010, 2011, 2012, 2013  Ludovic Courtès <ludo@gnu.org>
+   Copyright (C) 2009, 2010, 2011, 2012, 2013, 2014  Ludovic Courtès <ludo@gnu.org>
    Copyright (C) 2009  Rob Vermaas <rob.vermaas@gmail.com>
 
    This program is free software: you can redistribute it and/or modify
@@ -128,7 +128,7 @@ let
     ];
 
   makeCrossBuild = from: to: configureFlags:
-    { native_guile ? jobs.build {}  # a native Guile build
+    { native_guile ? (builtins.getAttr from jobs.build) # a native Guile build
     }:
 
     let
@@ -309,7 +309,7 @@ let
       pkgs.lib.genAttrs systems (system:
 
       let
-        build = jobs.build { inherit system; };
+        build = builtins.getAttr system jobs.build;
       in
         pkgs.lib.overrideDerivation build (attrs: {
           name = "guile-without-threads";
@@ -320,7 +320,7 @@ let
     build_clang =
       let
         pkgs = import nixpkgs {};                 # x86_64-linux
-        build = jobs.build {};
+        build = jobs.build.x86_64-linux;
       in
         (pkgs.lib.overrideDerivation build (attrs: {
           name = "guile-clang";
