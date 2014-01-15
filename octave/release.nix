@@ -77,7 +77,7 @@ let
           [ "--with-qhull-includedir=${qhull}/include"
             "--with-qhull-libdir=${qhull}/lib"
             "--with-java-homedir=${openjdk}"
-            "--with-java-includedir=${openjdk}"
+            "--with-java-includedir=${openjdk}/include"
           ];
 
 	buildInputs = [
