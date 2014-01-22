@@ -80,8 +80,8 @@ let
             "--with-java-includedir=${openjdk}/include"
           ];
 
-	buildInputs = [
-	  flex2535 git gperf bison automake114x mercurial] ++ buildInputsFrom pkgs ;
+        buildInputs = [
+          flex git gperf bison automake114x mercurial] ++ buildInputsFrom pkgs ;
       };
 
     build =
