@@ -178,7 +178,7 @@ let
         src = <guile>;
         buildInputs = [
           automake113x autoconf
-          flex2535
+          flex
           gettext_0_17
           git
           gnum4  # this should be a propagated build input of Autotools
