@@ -15,8 +15,6 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
-{ systems ? [ "x86_64-linux" "i686-linux" ] }:
-
 let
   meta = {
     description = "GNU Guile 2.0, an embeddable Scheme implementation";
@@ -36,6 +34,10 @@ let
     # Those who will receive email notifications.
     maintainers = [ "guile-commits@gnu.org" ];
   };
+
+  # Systems we want to build for.
+  systems = [ "x86_64-linux" "i686-linux" "x86_64-freebsd"
+              "x86_64-darwin" "i686-sunos" "i686-cygwin" ];
 
   nixpkgs = <nixpkgs>;
   pkgs = import nixpkgs {};
