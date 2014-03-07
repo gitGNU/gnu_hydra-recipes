@@ -1,5 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
-   Copyright (C) 2011, 2012  Ludovic Courtès <ludo@gnu.org>
+   Copyright (C) 2011, 2012, 2014  Ludovic Courtès <ludo@gnu.org>
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -14,14 +14,17 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
-{ nixpkgs ? <nixpkgs>
-, gmp ? (import nixpkgs {}).gmp      # native GMP build
+{ gmp ? (import <nixpkgs> {}).gmp      # native GMP build
 , gmp_xgnu ? null                     # cross-GNU GMP build
-, mpfr ? (import nixpkgs {}).mpfr    # native MPFR build
+, mpfr ? (import <nixpkgs> {}).mpfr    # native MPFR build
 , mpfr_xgnu ? null                    # cross-GNU MPFR build
 }:
 
 let
+  # Systems we want to build for.
+  systems = [ "x86_64-linux" "i686-linux" "x86_64-freebsd"
+              "x86_64-darwin" "i686-sunos" "i686-cygwin" ];
+
   meta = {
     description = "GNU MPC, a library for multi-precision complex numbers";
 
@@ -37,6 +40,8 @@ let
 
     maintainers = [  "Andreas Enge <andreas.enge@inria.fr>" ];
   };
+
+  pkgs = import <nixpkgs> {};
 
   succeedOnFailure = true;
   keepBuildDirectory = true;
@@ -72,14 +77,12 @@ let
       };
 
     build =
-      { system ? builtins.currentSystem
-      , tarball ? jobs.tarball
-      }:
+      pkgs.lib.genAttrs systems (system:
 
       let pkgs = import <nixpkgs> { inherit system; }; in
       pkgs.releaseTools.nixBuild ({
         name = "mpc";
-        src = tarball;
+        src = jobs.tarball;
 
         preConfigure =
            if useValgrind pkgs.stdenv
@@ -108,7 +111,7 @@ let
       (pkgs.stdenv.lib.optionalAttrs pkgs.stdenv.isSunOS {
         CPPFLAGS = "-I${mpfr}/include -I${gmp}/include";
         LDFLAGS = "-L${mpfr}/lib -L${gmp}/lib";
-      }));
+      })));
 
     coverage =
       { tarball ? jobs.tarball }:
@@ -122,22 +125,22 @@ let
         inherit preCheck meta succeedOnFailure keepBuildDirectory;
       };
 
-    xbuild_gnu =
-      { tarball ? jobs.tarball }:
+    # xbuild_gnu =
+    #   { tarball ? jobs.tarball }:
 
-      let
-        pkgs = import <nixpkgs> {};
-        crossSystems = (import ../cross-systems.nix) { inherit pkgs; };
-        xpkgs = import nixpkgs {
-          crossSystem = crossSystems.i586_pc_gnu;
-        };
-      in
-      (xpkgs.releaseTools.nixBuild {
-        name = "mpc-gnu";
-        src = tarball;
-        buildInputs = [ gmp_xgnu mpfr_xgnu ];
-        inherit meta succeedOnFailure keepBuildDirectory;
-      }).crossDrv;
+    #   let
+    #     pkgs = import <nixpkgs> {};
+    #     crossSystems = (import ../cross-systems.nix) { inherit pkgs; };
+    #     xpkgs = import nixpkgs {
+    #       crossSystem = crossSystems.i586_pc_gnu;
+    #     };
+    #   in
+    #   (xpkgs.releaseTools.nixBuild {
+    #     name = "mpc-gnu";
+    #     src = tarball;
+    #     buildInputs = [ gmp_xgnu mpfr_xgnu ];
+    #     inherit meta succeedOnFailure keepBuildDirectory;
+    #   }).crossDrv;
 
     build_gxx =
       { system ? builtins.currentSystem
@@ -172,7 +175,7 @@ let
       }:
 
       let
-         pkgs  = import nixpkgs { inherit system; };
+         pkgs  = import <nixpkgs> { inherit system; };
          gmp   = old_gmp pkgs;
          mpfr  = old_mpfr pkgs;
          build = jobs.build { inherit system; };
