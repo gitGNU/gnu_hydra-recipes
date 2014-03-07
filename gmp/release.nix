@@ -1,5 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
-   Copyright (C) 2011, 2012, 2013  Ludovic Courtès <ludo@gnu.org>
+   Copyright (C) 2011, 2012, 2013, 2014  Ludovic Courtès <ludo@gnu.org>
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ in
 
       tarball = pkgs: {
 	buildInputs = (buildInputsFrom pkgs)
-          ++ (with pkgs; [ texinfo automake111x bison26 flex ]);
+          ++ (with pkgs; [ texinfo automake111x bison flex ]);
         autoconfPhase = "./.bootstrap";
         configureFlags = [ "--enable-maintainer-mode" ];
       };
