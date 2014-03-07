@@ -1,5 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
-   Copyright (C) 2011, 2012, 2013  Ludovic Courtès <ludo@gnu.org>
+   Copyright (C) 2011, 2012, 2013, 2014  Ludovic Courtès <ludo@gnu.org>
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -14,12 +14,15 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
-{ nixpkgs ? <nixpkgs>
-, gmp ? (import nixpkgs {}).gmp      # native GMP build
+{ gmp ? (import <nixpkgs> {}).gmp      # native GMP build
 , gmp_xgnu ? null                     # cross-GNU GMP build
 }:
 
 let
+  # Systems we want to build for.
+  systems = [ "x86_64-linux" "i686-linux" "x86_64-freebsd"
+              "x86_64-darwin" "i686-sunos" "i686-cygwin" ];
+
   meta = {
     description = "GNU MPFR";
 
@@ -43,6 +46,8 @@ let
   keepBuildDirectory = true;
 
   preCheck = "export GMP_CHECK_RANDOMIZE=true;";
+
+  pkgs = import <nixpkgs> {};
 
   # The minimum required GMP version.
   old_gmp = pkgs:
@@ -72,14 +77,12 @@ let
       };
 
     build =
-      { system ? builtins.currentSystem
-      , tarball ? jobs.tarball
-      }:
+      pkgs.lib.genAttrs systems (system:
 
       let pkgs = import <nixpkgs> { inherit system; }; in
       pkgs.releaseTools.nixBuild ({
         name = "mpfr";
-        src = tarball;
+        src = jobs.tarball;
         buildInputs = [ gmp ]
           ++ (pkgs.lib.optional (useValgrind pkgs.stdenv) pkgs.valgrind);
 
@@ -105,51 +108,41 @@ let
       (pkgs.stdenv.lib.optionalAttrs pkgs.stdenv.isSunOS {
         CPPFLAGS = "-I${gmp}/include";
         LDFLAGS = "-L${gmp}/lib";
-      }));
+      })));
 
     coverage =
-      { system ? builtins.currentSystem
-      , tarball ? jobs.tarball
-      }:
-
       let pkgs = import <nixpkgs> {}; in
       pkgs.releaseTools.coverageAnalysis {
         name = "mpfr-coverage";
-        src = tarball;
+        src = jobs.tarball;
         buildInputs = [ gmp ];
         CPPFLAGS = "-DWANT_ASSERT=-1";
         inherit meta succeedOnFailure keepBuildDirectory;
       };
 
     xbuild_gnu =
-      { tarball ? jobs.tarball }:
-
       let
         pkgs = import <nixpkgs> {};
         crossSystems = (import ../cross-systems.nix) { inherit pkgs; };
-        xpkgs = import nixpkgs {
+        xpkgs = import <nixpkgs> {
           crossSystem = crossSystems.i586_pc_gnu;
         };
       in
       (xpkgs.releaseTools.nixBuild {
         name = "mpfr-gnu";
-        src = tarball;
+        src = jobs.tarball;
         buildInputs = [ gmp_xgnu ];
         inherit meta succeedOnFailure keepBuildDirectory;
       }).crossDrv;
 
     # Extra job with `g++' as the C compiler.
     build_with_gxx =
-      { system ? "x86_64-linux"
-      , tarball ? jobs.tarball
-      }:
-
       let
-        pkgs  = import nixpkgs { inherit system; };
-        build = jobs.build { inherit system; };
+        pkgs  = import <nixpkgs> {};
+        build = jobs.build.x86_64-linux;
       in
         pkgs.releaseTools.nixBuild ({
-          src = tarball;
+          src = jobs.tarball;
           propagatedBuildInputs = [ gmp ];
           inherit (build) name configureFlags meta
             succeedOnFailure keepBuildDirectory;
@@ -171,17 +164,13 @@ let
 
     # Extra job to build with an old GMP.
     build_with_old_gmp =
-      { system ? "x86_64-linux"
-      , tarball ? jobs.tarball
-      }:
-
       let
-        pkgs  = import nixpkgs { inherit system; };
+        pkgs  = import <nixpkgs> {};
         gmp   = old_gmp pkgs;
-        build = jobs.build { inherit system; };
+        build = jobs.build.x86_64-linux;
       in
         pkgs.releaseTools.nixBuild ({
-          src = tarball;
+          src = jobs.tarball;
           propagatedBuildInputs = [ gmp ];
           inherit (build) name meta configureFlags
             succeedOnFailure keepBuildDirectory;
