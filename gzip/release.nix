@@ -1,5 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
-   Copyright (C) 2010  Ludovic Courtès <ludo@gnu.org>
+   Copyright (C) 2010, 2014  Ludovic Courtès <ludo@gnu.org>
    Copyright (C) 2010  Rob Vermaas <rob.vermaas@gmail.com>
 
    This program is free software: you can redistribute it and/or modify
@@ -62,7 +62,7 @@ in
     inherit nixpkgs meta; 
     enableGnuCrossBuild = true;
 
-    systems = ["x86_64-darwin" "i686-freebsd" "i686-linux" "x86_64-linux" "i686-cygwin"];
+    systems = [ "x86_64-darwin" "i686-freebsd" "i686-linux" "x86_64-linux" ];
 
     customEnv = {
         
