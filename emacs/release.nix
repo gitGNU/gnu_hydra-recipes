@@ -69,9 +69,8 @@ in
     customEnv = rec {
 
       tarball = pkgs: {
-	# FIXME This option only exists in the emacs-24 branch, not trunk.
 	# FIXME Move --enable-check-lisp-object-type here from coverage?
-	configureFlags ="--with-crt-dir=${pkgs.stdenv.glibc}/lib" ;
+	configureFlags = "";
 	buildInputs = with pkgs; [ texinfo ncurses bazaar pkgconfig ];
 
         # patches = [ ./bug11251.patch ];
@@ -117,7 +116,7 @@ in
       coverage = pkgs: {
 	buildInputs = buildInputsFrom pkgs;
 	doCheck = true;
-	configureFlags ="--with-crt-dir=${pkgs.stdenv.glibc}/lib --enable-profiling --enable-check-lisp-object-type" ;
+	configureFlags = "--enable-profiling --enable-check-lisp-object-type" ;
       };
 
       manual = pkgs: {
