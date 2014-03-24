@@ -320,9 +320,11 @@ let
 
     # Building with Clang.
     build_clang =
+      pkgs.lib.genAttrs [ "x86_64-linux" "i686-linux" ] (system:
+
       let
-        pkgs = import nixpkgs {};                 # x86_64-linux
-        build = jobs.build.x86_64-linux;
+        pkgs = import nixpkgs { inherit system };
+        build = builtins.getAttr system jobs.build;
       in
         (pkgs.lib.overrideDerivation build (attrs: {
           name = "guile-clang";
@@ -331,7 +333,7 @@ let
           CC = "${pkgs.clang}/bin/clang";
         })
         //
-        { meta = meta // { schedulingPriority = 20; }; });
+        { meta = meta // { schedulingPriority = 20; }; }));
 
     # Check what it's like to build with another C compiler
     /* build_tinycc =
