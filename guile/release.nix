@@ -323,7 +323,7 @@ let
       pkgs.lib.genAttrs [ "x86_64-linux" "i686-linux" ] (system:
 
       let
-        pkgs = import nixpkgs { inherit system };
+        pkgs = import nixpkgs { inherit system; };
         build = builtins.getAttr system jobs.build;
       in
         (pkgs.lib.overrideDerivation build (attrs: {
