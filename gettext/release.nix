@@ -79,6 +79,7 @@ in
           gettext_0_18 # needed for bootstrap
           git
           gperf
+          groff
           help2man
           perl
           texinfo
