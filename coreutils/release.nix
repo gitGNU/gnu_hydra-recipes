@@ -39,6 +39,9 @@ let
       ];
   };
 
+  # Systems we want to build for.
+  systems = [ "x86_64-linux" "i686-linux" "x86_64-freebsd" ];
+
   pkgs = import nixpkgs {};
   crossSystems = (import ../cross-systems.nix) { inherit pkgs; };
 
@@ -76,20 +79,21 @@ let
       };
 
     build =
-      { system ? "x86_64-linux" }:
+      # Return a 'build.SYSTEM' job for all of SYSTEMS.
+      pkgs.lib.genAttrs systems (system:
 
-      let pkgs = import nixpkgs {inherit system;};
+      let pkgs = import nixpkgs { inherit system; };
       in
       pkgs.releaseTools.nixBuild {
         name = "coreutils" ;
         src = jobs.tarball;
-        buildInputs = buildInputsFrom pkgs ;
+        buildInputs = buildInputsFrom pkgs;
         configureFlags = let stdenv = pkgs.stdenv; in
           [ "--enable-install-program=arch,hostname" ]
           ++ (stdenv.lib.optional stdenv.isLinux [ "--enable-gcc-warnings" ]);
         makeFlags = [ "VERBOSE=yes" "RUN_EXPENSIVE_TESTS=yes" ];
         inherit meta succeedOnFailure keepBuildDirectory;
-      };
+      });
 
     xbuild_gnu =
       # Cross build to GNU.
