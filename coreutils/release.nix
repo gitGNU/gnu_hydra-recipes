@@ -1,5 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
-   Copyright (C) 2009, 2010, 2011, 2012, 2013  Ludovic Courtès <ludo@gnu.org>
+   Copyright (C) 2009, 2010, 2011, 2012, 2013, 2014  Ludovic Courtès <ludo@gnu.org>
    Copyright (C) 2009, 2010  Rob Vermaas <rob.vermaas@gmail.com>
 
    This program is free software: you can redistribute it and/or modify
@@ -113,6 +113,7 @@ let
         src = jobs.tarball;
         configureFlags = [ "--enable-install-program=arch,hostname" ];
         buildInputs = buildInputsFrom pkgs;
+        makeFlags = [ "VERBOSE=yes" "RUN_EXPENSIVE_TESTS=yes" ];
         postCheck =
           # Remove the file that confuses lcov.
           '' rm -fv 'src/<built-in>.'*
