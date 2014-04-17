@@ -54,7 +54,7 @@ in
     src  = cppi;
     inherit nixpkgs meta;
 
-    systems = ["x86_64-linux" "i686-linux" "x86_64-freebsd" "x86_64-darwin"];
+    systems = ["x86_64-linux" "i686-linux" "x86_64-darwin"];
 
     customEnv = {
       tarball = pkgs: {

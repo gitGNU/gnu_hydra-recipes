@@ -64,7 +64,7 @@ in
     inherit nixpkgs meta;
     useLatestGnulib = false;
 
-    systems = [ "x86_64-linux" "x86_64-darwin" "i686-linux" "i686-freebsd" ];
+    systems = [ "x86_64-linux" "x86_64-darwin" "i686-linux"];
 
     customEnv = rec {
 

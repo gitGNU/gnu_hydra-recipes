@@ -40,7 +40,7 @@ in
     inherit nixpkgs meta;
     enableGnuCrossBuild = true;
 
-    systems = ["x86_64-darwin" "i686-freebsd" "x86_64-linux" "i686-linux" "i686-solaris"];
+    systems = ["x86_64-darwin" "x86_64-linux" "i686-linux" "i686-solaris"];
 
     customEnv = {
       tarball = pkgs: {

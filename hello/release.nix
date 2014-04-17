@@ -41,7 +41,7 @@ in
     src  = hello;
     inherit nixpkgs meta;
     enableGnuCrossBuild = true;
-    systems = ["x86_64-linux" "i686-linux" "x86_64-darwin" "x86_64-freebsd"];
+    systems = ["x86_64-linux" "i686-linux" "x86_64-darwin"];
     customEnv = {
       tarball = pkgs: {
         dontBuild = false;

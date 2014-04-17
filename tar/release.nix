@@ -52,7 +52,7 @@ in
     inherit nixpkgs meta; 
     enableGnuCrossBuild = true;
 
-    systems = ["x86_64-darwin" "i686-linux" "x86_64-linux" "i686-freebsd"];
+    systems = ["x86_64-darwin" "i686-linux" "x86_64-linux"];
     
     customEnv = {
         

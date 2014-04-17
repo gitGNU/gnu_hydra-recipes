@@ -43,7 +43,7 @@ in
     src  = libredwgSrc;
     inherit nixpkgs meta;
 
-    systems = ["x86_64-darwin" "i686-freebsd" "x86_64-linux" "i686-linux"];
+    systems = ["x86_64-darwin" "x86_64-linux" "i686-linux"];
     
     customEnv = {
         

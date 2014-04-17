@@ -20,7 +20,7 @@
 
 let
   # Systems we want to build for.
-  systems = [ "x86_64-linux" "i686-linux" "x86_64-freebsd"
+  systems = [ "x86_64-linux" "i686-linux"
               "x86_64-darwin" "i686-sunos" ];
 
   meta = {
