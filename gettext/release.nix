@@ -67,13 +67,16 @@ in
       tarball = pkgs: {
         patches = [ ./tar-should-not-expect-a-root-user.patch ];
         autoconfPhase = ''
-          export GNULIB_TOOL="../gnulib/gnulib-tool"
-          ./autogen.sh
-          # archive.dir.tar is not under version control; use empty
-          # tarball for building
+          # archive.dir.tar is not under version control; prepare an empty
+          # tarball before building
           : > dummy
           tar cf gettext-tools/misc/archive.dir.tar dummy
-          rm -f dummy        '';
+          rm -f dummy
+          # fetch gnulib from the local repository
+          git config submodule.gnulib.url "${<gnulib>}"
+          export GNULIB_SRCDIR="${<gnulib>}"
+          ./autogen.sh
+        '';
         buildInputs = with pkgs; [
           bison
           gettext_0_18 # needed for bootstrap
