@@ -65,7 +65,10 @@ in
 
     customEnv = {
       tarball = pkgs: {
-        patches = [ ./tar-should-not-expect-a-root-user.patch ];
+        patches = [
+	  ./tar-should-not-expect-a-root-user.patch
+	  ./tar-no-long-file-name.patch
+	];
         dontBuild = false;
         autoconfPhase = ''
           # archive.dir.tar is not under version control; prepare an empty

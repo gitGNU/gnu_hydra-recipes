@@ -1,0 +1,28 @@
+If VERSION is taken from 'git describe', the filename in the tarball
+can be longer than 99, which causes an error with tar v7.
+
+diff --git a/gettext-runtime/intl-csharp/Makefile.am b/gettext-runtime/intl-csharp/Makefile.am
+index c39e118..4985fc6 100644
+--- a/gettext-runtime/intl-csharp/Makefile.am
++++ b/gettext-runtime/intl-csharp/Makefile.am
+@@ -72,13 +72,13 @@ intl-csharp.texi: intl.cs
+ 
+ all-doc: $(srcdir)/csharpdoc/index.html
+ 
+-DOC_FILES = \
+-  csharpdoc/index.html \
+-  csharpdoc/namespaces.html \
+-  csharpdoc/begin.html \
+-  csharpdoc/GNU_Gettext.html \
+-  csharpdoc/GNU_Gettext_GettextResourceManager.html \
+-  csharpdoc/GNU_Gettext_GettextResourceSet.html
++# DOC_FILES = \
++#   csharpdoc/index.html \
++#   csharpdoc/namespaces.html \
++#   csharpdoc/begin.html \
++#   csharpdoc/GNU_Gettext.html \
++#   csharpdoc/GNU_Gettext_GettextResourceManager.html \
++#   csharpdoc/GNU_Gettext_GettextResourceSet.html
+ 
+ EXTRA_DIST += $(DOC_FILES)
+ 
