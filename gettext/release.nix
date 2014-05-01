@@ -82,6 +82,7 @@ in
           ./autogen.sh
         '';
         buildInputs = with pkgs; [
+          automake114x
           bison
           gettext_0_18 # needed for bootstrap
           git
