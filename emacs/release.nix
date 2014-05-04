@@ -105,8 +105,7 @@ in
 	  ]
 	  ++
 	  (if stdenv.isLinux then
-	     (stdenv.lib.optional (stdenv ? glibc)
-	       [ "--with-crt-dir=${stdenv.glibc}/lib" ])
+	     [ "" ]
 	   else
 	     [ "--with-xpm=no" "--with-jpeg=no" "--with-png=no"
 	       "--with-gif=no" "--with-tiff=no"
