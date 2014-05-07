@@ -52,8 +52,8 @@ let
 
     # Optional dependencies that fail to build on non-GNU platforms.
     ++ (stdenv.lib.optionals stdenv.isLinux
-         [ gtkLibs.gtk librsvg acl dbus gnutls libpng libjpeg libungif
-           libtiff libxml2 ])
+         [ gtkLibs.gtk librsvg acl dbus gnutls gpm libselinux imagemagick
+           libpng libjpeg libungif libtiff libxml2 ])
 
     # Fallback for non-GNU systems.
     ++ (stdenv.lib.optional (!stdenv.isLinux) xlibs.libXaw);
