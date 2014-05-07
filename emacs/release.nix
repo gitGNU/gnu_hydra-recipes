@@ -114,7 +114,7 @@ in
       };
 
       coverage = pkgs: {
-	buildInputs = buildInputsFrom pkgs;
+	buildInputs = with pkgs; [ bazaar perl python ] ++ buildInputsFrom pkgs;
 	doCheck = true;
 	configureFlags = "--enable-profiling --enable-check-lisp-object-type" ;
       };
