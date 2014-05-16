@@ -96,6 +96,14 @@ let
           src = tarball;
           inherit meta succeedOnFailure keepBuildDirectory FONTCONFIG_FILE;
           buildInputs = buildInputsFrom pkgs;
+
+          configureFlags =
+            [ "--enable-openmp"
+              "--with-qhull-includedir=${qhull}/include"
+              "--with-qhull-libdir=${qhull}/lib"
+              "--with-java-homedir=${openjdk}"
+              "--with-java-includedir=${openjdk}/include"
+            ];
         }
       ));
 
