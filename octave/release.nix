@@ -32,7 +32,7 @@ let
     [ gfortran readline ncurses perl qhull blas liblapack pcre pkgconfig
       gnuplot zlib ghostscript transfig xfig pstoedit hdf5 texinfo
       qrupdate suitesparse curl texLive fftw fftwSinglePrec
-      bzip2 glpk graphicsmagick openjdk qt4
+      bzip2 glpk graphicsmagick openjdk qt4 xvfb_run
     ]
 
     # Optional dependencies for building native graphics on Mesa platforms.
@@ -96,6 +96,7 @@ let
           src = tarball;
           inherit meta succeedOnFailure keepBuildDirectory FONTCONFIG_FILE;
           buildInputs = buildInputsFrom pkgs;
+          checkPhase = "xvfb-run make check";
 
           configureFlags =
             [ "--enable-openmp"
@@ -116,6 +117,7 @@ let
 	src = tarball;
 	inherit meta FONTCONFIG_FILE;
 	buildInputs = buildInputsFrom pkgs;
+        checkPhase = "xvfb-run make check";
       };
 
   };
