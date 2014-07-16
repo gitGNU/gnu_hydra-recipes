@@ -34,6 +34,8 @@ let
       "Assaf Gordon <assafgordon@gmail.com>"
     ];
   };
+
+  buildInputs = pkgs: with pkgs; [gettext help2man texinfo git gperf perl];
 in
   import ../gnu-jobs.nix {
     name = "datamash";
@@ -44,7 +46,10 @@ in
     customEnv = {
       tarball = pkgs: {
         dontBuild = false;
-        buildInputs = with pkgs; [gettext help2man texinfo git gperf perl];
+        inherit buildInputs;
+      };
+      build = pkgs: {
+        inherit buildInputs;
       };
     };
   }
