@@ -49,7 +49,7 @@ in
         buildInputs = buildInputs pkgs;
       };
       build = pkgs: {
-        buildInputs = buildInputs pkgs ++ [ pkgs.which ];
+        buildInputs = with pkgs; [ perl which ];
         preConfigure = ''
           patchShebangs .
         '';
