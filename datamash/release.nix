@@ -54,5 +54,11 @@ in
           patchShebangs .
         '';
       };
+      coverage = pkgs: {
+        buildInputs = with pkgs; [ perl which ];
+        preConfigure = ''
+          patchShebangs .
+        '';
+      };
     };
   }
