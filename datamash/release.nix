@@ -49,7 +49,10 @@ in
         buildInputs = buildInputs pkgs;
       };
       build = pkgs: {
-        buildInputs = buildInputs pkgs;
+        buildInputs = buildInputs pkgs ++ [ pkgs.which ];
+        preConfigure = ''
+          patchShebangs .
+        '';
       };
     };
   }
