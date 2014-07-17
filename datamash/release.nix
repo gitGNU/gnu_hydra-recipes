@@ -46,10 +46,10 @@ in
     customEnv = {
       tarball = pkgs: {
         dontBuild = false;
-        inherit buildInputs;
+        buildInputs = buildInputs pkgs;
       };
       build = pkgs: {
-        inherit buildInputs;
+        buildInputs = buildInputs pkgs;
       };
     };
   }
