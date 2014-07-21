@@ -41,7 +41,6 @@ in
     name = "datamash";
     src  = datamash;
     inherit nixpkgs meta;
-    enableGnuCrossBuild = true;
     systems = ["x86_64-linux" "i686-linux" "x86_64-darwin"];
     customEnv = {
       tarball = pkgs: {
