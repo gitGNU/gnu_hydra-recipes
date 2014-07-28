@@ -1,5 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
-   Copyright (C) 2011  Thien-Thi Nguyen
+   Copyright (C) 2011-2014  Thien-Thi Nguyen
    Copyright (C) 2010  Ludovic Courtès <ludo@gnu.org>
    Copyright (C) 2010  Rob Vermaas <rob.vermaas@gmail.com>
 
@@ -41,7 +41,7 @@ let
 
     # Those who will receive email notifications.
     maintainers = [
-      "Thien-Thi Nguyen <ttn@gnuvola.org>"
+      "Thien-Thi Nguyen <ttn@gnu.org>"
     ];
   };
 
