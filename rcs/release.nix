@@ -57,7 +57,7 @@ in
     customEnv = {
 
       tarball = pkgs: {
-        buildInputs = with pkgs; [ automake autoconf ed texinfo emacs groff];
+        buildInputs = with pkgs; [ automake autoconf ed texinfo emacs groff lzip];
         autoconfPhase = ''
           export PATH=$PATH:../gnulib
           sh autogen.sh
