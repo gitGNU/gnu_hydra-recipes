@@ -117,6 +117,11 @@ in
 	buildInputs = with pkgs; [ bazaar perl python ] ++ buildInputsFrom pkgs;
 	doCheck = true;
 	configureFlags = "--enable-profiling --enable-check-lisp-object-type" ;
+	checkPhase = ''
+          make check 
+          ensureDir "$out/nix-support"         
+          echo "report test-output" "$out/test/automated/*.log" >> "$out/nix-support/hydra-build-products"
+	'';
       };
 
       manual = pkgs: {
