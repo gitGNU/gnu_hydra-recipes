@@ -120,7 +120,7 @@ in
 	checkPhase = ''
           make check 
           ensureDir "$out/nix-support"         
-          for log in "$out/test/automated/"*.log; do [ -e "$log" ] || break; echo "echo report test-output $log" >> "$out/nix-support/hydra-build-products"; done
+          for log in "$out/test/automated/"*.log; do [ -e "$log" ] || break; echo "report test-output $log" >> "$out/nix-support/hydra-build-products"; done
 	'';
       };
 
