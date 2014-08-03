@@ -120,7 +120,7 @@ in
 	checkPhase = ''
           make -C test/automated check-tar
           ensureDir "$out/nix-support"         
-          echo "file test-logs test/automated/logs.tar" >> "$out/nix-support/hydra-build-products"
+          echo "file test-logs $out/test/automated/logs.tar" >> "$out/nix-support/hydra-build-products"
 	'';
       };
 
