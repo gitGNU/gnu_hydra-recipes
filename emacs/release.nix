@@ -119,8 +119,14 @@ in
 	configureFlags = "--enable-profiling --enable-check-lisp-object-type" ;
 	checkPhase = ''
           make -C test/automated check-tar
-          ensureDir "$out/nix-support"         
-          echo "file test-logs $out/test/automated/logs.tar" >> "$out/nix-support/hydra-build-products"
+          ensureDir "$out/nix-support"
+          if [ -f test/automated/logs.tar ]; then
+            emacsver=$(./src/emacs --version | sed -n 's/^GNU Emacs \([0-9\.]*\)\.[0-9]$/\1/p')
+            logdir="$out/share/emacs/$emacsver"
+            mkdir -p "$logdir"
+            cp test/automated/logs.tar "$logdir/test-logs.tar"
+            echo "file test-logs $logdir/test-logs.tar" >> "$out/nix-support/hydra-build-products"
+          fi
 	'';
       };
 
