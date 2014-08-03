@@ -118,9 +118,9 @@ in
 	doCheck = true;
 	configureFlags = "--enable-profiling --enable-check-lisp-object-type" ;
 	checkPhase = ''
-          make check 
+          make -C test/automated check-tar
           ensureDir "$out/nix-support"         
-          for log in "$out/test/automated/"*.log; do [ -e "$log" ] || break; echo "report test-output $log" >> "$out/nix-support/hydra-build-products"; done
+          echo "file test-logs test/automated/logs.tar" >> "$out/nix-support/hydra-build-products"
 	'';
       };
 
