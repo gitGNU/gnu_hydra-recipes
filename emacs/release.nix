@@ -114,6 +114,7 @@ in
       };
 
       coverage = pkgs: {
+	LOCALE_ARCHIVE = "${pkgs.glibcLocales}/lib/locale/locale-archive";
 	buildInputs = with pkgs; [ bazaar perl python ] ++ buildInputsFrom pkgs;
 	doCheck = true;
 	configureFlags = "--enable-profiling --enable-check-lisp-object-type" ;
