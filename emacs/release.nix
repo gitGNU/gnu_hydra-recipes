@@ -89,7 +89,7 @@ in
 	distPhase = ''
 	  make info all
 	  ./make-dist --tar --tests --no-update
-	  ensureDir $out/tarballs
+	  mkdir -p $out/tarballs
 	  cp -pvd *.tar.gz $out/tarballs
 	'';
       } ;
@@ -120,7 +120,7 @@ in
 	configureFlags = "--enable-profiling --enable-check-lisp-object-type" ;
 	checkPhase = ''
           make check
-          ensureDir "$out/nix-support"
+          mkdir -p "$out/nix-support"
           for log in test/automated/*.log; do
             [ -f $log ] || break
             emacsver=$(./src/emacs --version | sed -n 's/^GNU Emacs \([0-9\.]*\)\.[0-9]$/\1/p')
@@ -140,7 +140,7 @@ in
         buildPhase = "make docs";
         installPhase = ''
           make install-doc
-          ensureDir "$out/nix-support"
+          mkdir -p "$out/nix-support"
           echo "doc manual $out/share/doc/emacs/emacs.html index.html" >> "$out/nix-support/hydra-build-products"
           echo "doc-pdf manual $out/share/doc/emacs/emacs.pdf" >> "$out/nix-support/hydra-build-products"
        '';
