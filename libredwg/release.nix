@@ -1,4 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
+   Copyright (C) 2014  Thien-Thi Nguyen
    Copyright (C) 2010  Ludovic Courtès <ludo@gnu.org>
    Copyright (C) 2010  Rob Vermaas <rob.vermaas@gmail.com>
 
@@ -25,8 +26,8 @@ let
     description = "GNU LibreDWG, a free C library to handle DWG files.";
 
     longDescription =
-      '' GNU LibreDWG is a free C library to handle DWG files. It aims to be a free 
-         replacement for the OpenDWG libraries. DWG is the native file format of AutoCAD. 
+      '' GNU LibreDWG is a free C library to handle DWG files. It aims to be a free
+         replacement for the OpenDWG libraries. DWG is the native file format of AutoCAD.
       '';
 
     homepage = http://www.gnu.org/software/libredwg/;
@@ -34,7 +35,8 @@ let
     license = "GPLv3+";
 
     maintainers =
-     [ 
+     [
+      "Thien-Thi Nguyen <ttn@gnu.org>"
      ];
   };
 in
@@ -44,9 +46,9 @@ in
     inherit nixpkgs meta;
 
     systems = ["x86_64-darwin" "x86_64-linux" "i686-linux"];
-    
+
     customEnv = {
-        
+
       tarball = pkgs: {
         buildInputs = with pkgs; [ gettext_0_17 texinfo automake111x python
                                    swig libxml2 ];
@@ -55,15 +57,14 @@ in
           . autogen.sh
         '';
       } ;
-      
+
       build = pkgs: ({
         buildInputs = with pkgs; [ python swig libxml2 ];
       } // pkgs.lib.optionalAttrs (pkgs.stdenv.system == "i686-freebsd") { NIX_LDFLAGS="-lpthread"; } );
-      
+
       coverage = pkgs: {
         buildInputs = with pkgs; [ python swig libxml2 ];
       } ;
-      
-    };   
-  }
 
+    };
+  }
