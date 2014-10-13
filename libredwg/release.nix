@@ -48,7 +48,8 @@ in
     customEnv = {
         
       tarball = pkgs: {
-        buildInputs = with pkgs; [ gettext_0_17 texinfo automake111x python swig ];
+        buildInputs = with pkgs; [ gettext_0_17 texinfo automake111x python
+                                   swig libxml2 ];
         dontBuild = false;
         autoconfPhase = ''
           . autogen.sh
@@ -56,11 +57,11 @@ in
       } ;
       
       build = pkgs: ({
-        buildInputs = with pkgs; [ python swig ];
+        buildInputs = with pkgs; [ python swig libxml2 ];
       } // pkgs.lib.optionalAttrs (pkgs.stdenv.system == "i686-freebsd") { NIX_LDFLAGS="-lpthread"; } );
       
       coverage = pkgs: {
-        buildInputs = with pkgs; [ python swig ];
+        buildInputs = with pkgs; [ python swig libxml2 ];
       } ;
       
     };   
