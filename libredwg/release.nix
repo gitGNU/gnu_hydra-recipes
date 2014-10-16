@@ -51,7 +51,7 @@ in
 
       tarball = pkgs: {
         buildInputs = with pkgs; [ gettext_0_17 texinfo automake111x python
-                                   swig libxml2 ];
+                                   swig libxml2 dejagnu ];
         dontBuild = false;
         autoconfPhase = ''
           . autogen.sh
@@ -59,11 +59,11 @@ in
       } ;
 
       build = pkgs: ({
-        buildInputs = with pkgs; [ python swig libxml2 ];
+        buildInputs = with pkgs; [ python swig libxml2 dejagnu ];
       } // pkgs.lib.optionalAttrs (pkgs.stdenv.system == "i686-freebsd") { NIX_LDFLAGS="-lpthread"; } );
 
       coverage = pkgs: {
-        buildInputs = with pkgs; [ python swig libxml2 ];
+        buildInputs = with pkgs; [ python swig libxml2 dejagnu ];
       } ;
 
     };
