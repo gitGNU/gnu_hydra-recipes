@@ -22,6 +22,11 @@
 let
   pkgs = import nixpkgs {};
 
+  /* This is adapted from (find-file "../autoconf/release.nix")
+     -- see var ‘buildInputsFrom’.  "v" is for validation.
+     Note, however, that we always use parens around the callsite.  */
+  vdeps = pkgs: with pkgs; [ python swig libxml2 dejagnu ];
+
   meta = {
     description = "GNU LibreDWG, a free C library to handle DWG files.";
 
@@ -50,8 +55,7 @@ in
     customEnv = {
 
       tarball = pkgs: {
-        buildInputs = with pkgs; [ gettext_0_17 texinfo automake111x python
-                                   swig libxml2 dejagnu ];
+        buildInputs = [ gettext_0_17 texinfo automake111x ] ++ (vdeps pkgs);
         dontBuild = false;
         autoconfPhase = ''
           . autogen.sh
@@ -59,11 +63,11 @@ in
       } ;
 
       build = pkgs: ({
-        buildInputs = with pkgs; [ python swig libxml2 dejagnu ];
+        buildInputs = (vdeps pkgs);
       } // pkgs.lib.optionalAttrs (pkgs.stdenv.system == "i686-freebsd") { NIX_LDFLAGS="-lpthread"; } );
 
       coverage = pkgs: {
-        buildInputs = with pkgs; [ python swig libxml2 dejagnu ];
+        buildInputs = (vdeps pkgs);
       } ;
 
     };
