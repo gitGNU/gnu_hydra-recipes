@@ -24,7 +24,7 @@ let
 
   /* This is adapted from (find-file "../autoconf/release.nix")
      -- see var ‘buildInputsFrom’.  "v" is for validation.
-     Note, however, that we never use parens around the callsite.  */
+     Note, however, that we only sometimes use parens around the callsite.  */
   vdeps = pkgs: with pkgs; [ python swig libxml2 dejagnu ];
 
   meta = {
@@ -55,8 +55,8 @@ in
     customEnv = {
 
       tarball = pkgs: {
-        buildInputs = with pkgs; [ gettext_0_17 texinfo automake111x ]
-	              ++ vdeps pkgs;
+        buildInputs = (with pkgs; [ gettext_0_17 texinfo automake111x ])
+	              ++ (vdeps pkgs);
         dontBuild = false;
         autoconfPhase = ''
           . autogen.sh
