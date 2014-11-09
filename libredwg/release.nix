@@ -25,7 +25,7 @@ let
   /* This is adapted from (find-file "../autoconf/release.nix")
      -- see var ‘buildInputsFrom’.  "v" is for validation.
      Note, however, that we only sometimes use parens around the callsite.  */
-  vdeps = pkgs: with pkgs; [ python swig libxml2 dejagnu ];
+  vdeps = pkgs: with pkgs; [ pkgconfig python swig libxml2 dejagnu ];
 
   meta = {
     description = "GNU LibreDWG, a free C library to handle DWG files.";
