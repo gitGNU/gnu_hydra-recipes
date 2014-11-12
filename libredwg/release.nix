@@ -50,7 +50,14 @@ in
     src  = libredwgSrc;
     inherit nixpkgs meta;
 
-    systems = ["x86_64-darwin" "x86_64-linux" "i686-linux"];
+    systems = [
+      /* As of 2014-11-12, we omit this because:
+         "‘dejagnu-1.5.1’ ... is not supported on ‘x86_64-darwin’"
+         Maybe it will return later.  */
+      # "x86_64-darwin"
+      "x86_64-linux"
+      "i686-linux"
+    ];
 
     customEnv = {
 
