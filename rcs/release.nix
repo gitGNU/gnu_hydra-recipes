@@ -62,6 +62,7 @@ in
     customEnv = {
 
       tarball = pkgs: {
+        nativeBuildInputs = [ pkgs.xz ];
         buildInputs = with pkgs; [ automake autoconf ed texinfo emacs groff lzip];
         autoconfPhase = ''
           export PATH=$PATH:../gnulib
@@ -71,11 +72,13 @@ in
       } ;
 
       build = pkgs: {
+        nativeBuildInputs = [ pkgs.xz ];
         buildInputs = [pkgs.ed];
         inherit configureFlags;
       };
 
       coverage = pkgs: {
+        nativeBuildInputs = [ pkgs.xz ];
         buildInputs = [pkgs.ed];
         inherit configureFlags;
       };
