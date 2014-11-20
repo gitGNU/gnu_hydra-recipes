@@ -55,7 +55,6 @@ in
     name = "cpio";
     src  = cpioSrc;
     inherit nixpkgs meta;
-    enableGnuCrossBuild = true;
 
     systems = ["x86_64-darwin" "x86_64-linux" "i686-linux"];
 

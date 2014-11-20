@@ -39,7 +39,6 @@ in
     name = "patch";
     src  = patchSrc;
     inherit nixpkgs meta; 
-    enableGnuCrossBuild = true;
 
     systems = ["i686-linux" "x86_64-linux" "x86_64-darwin"];
     

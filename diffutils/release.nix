@@ -38,7 +38,6 @@ in
     name = "diffutils";
     src  = diffutils;
     inherit nixpkgs meta;
-    enableGnuCrossBuild = true;
 
     systems = ["x86_64-darwin" "x86_64-linux" "i686-linux" "i686-solaris"];
 

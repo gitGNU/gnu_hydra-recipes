@@ -51,7 +51,6 @@ in
     name = "parted";
     src  = partedSrc;
     inherit nixpkgs meta;
-    enableGnuCrossBuild = true;
 
     customEnv = {
 
