@@ -40,7 +40,7 @@ let
   };
 
   # Systems we want to build for.
-  systems = [ "x86_64-linux" "i686-linux" ];
+  systems = [ "x86_64-linux" "i686-linux" "x86_64-darwin" ];
 
   pkgs = import nixpkgs {};
   crossSystems = (import ../cross-systems.nix) { inherit pkgs; };
