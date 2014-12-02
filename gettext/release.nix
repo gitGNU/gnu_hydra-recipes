@@ -88,6 +88,8 @@ in
           gperf
           groff
           help2man
+          libcroco
+          libunistring
           perl
           texinfo
           wget
