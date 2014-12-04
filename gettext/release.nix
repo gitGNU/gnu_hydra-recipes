@@ -80,6 +80,8 @@ in
           export GNULIB_SRCDIR="${<gnulib>}"
           ./autogen.sh
         '';
+	configureFlags =
+	  "--with-libcroco-0.6-prefix=${libcroco}";
         buildInputs = with pkgs; [
           automake114x
           bison
