@@ -80,26 +80,15 @@ in
           export GNULIB_SRCDIR="${<gnulib>}"
           ./autogen.sh
         '';
-	preDist = ''
-	  (cd gettext-tools/examples/po && make update-po)
-	'';
-        configureFlags =
-          [ "--with-libcroco-0.6-prefix=${pkgs.libcroco}"
-            "--with-libglib-2.0-prefix=${pkgs.glib}"
-            "--with-libxml2-prefix=${pkgs.libxml2}"
-            "--with-libunistring-prefix=${pkgs.libunistring}" ];
         buildInputs = with pkgs; [
           automake114x
           bison
           gettext_0_18 # needed for bootstrap
           git
-          glib
           gperf
           groff
           help2man
-          libcroco
           libunistring
-          libxml2
           perl
           texinfo
           wget
