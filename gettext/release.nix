@@ -81,7 +81,7 @@ in
           ./autogen.sh
         '';
 	configureFlags =
-	  "--with-libcroco-0.6-prefix=${libcroco}";
+	  "--with-libcroco-0.6-prefix=${pkgs.libcroco}";
         buildInputs = with pkgs; [
           automake114x
           bison
