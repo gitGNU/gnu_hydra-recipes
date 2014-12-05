@@ -80,6 +80,9 @@ in
           export GNULIB_SRCDIR="${<gnulib>}"
           ./autogen.sh
         '';
+	preDist = ''
+	  (cd gettext-tools/examples/po && make update-po)
+	'';
         configureFlags =
           [ "--with-libcroco-0.6-prefix=${pkgs.libcroco}"
             "--with-libglib-2.0-prefix=${pkgs.glib}"
