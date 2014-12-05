@@ -53,6 +53,10 @@ let
     maintainers = [
       "Daiki Ueno <ueno@gnu.org>"
     ];
+
+    buildInputsFrom = pkgs: with pkgs;
+      [ expat libunistring ]
+      ++ (stdenv.lib.optional (!stdenv.isLinux) libiconv);
   };
 in
   import ../gnu-jobs.nix {
@@ -88,15 +92,10 @@ in
           gperf
           groff
           help2man
-          libunistring
           perl
           texinfo
           wget
         ];
-      };
-
-      build = pkgs: {
-        buildInputs = with pkgs; lib.optional (!stdenv.isLinux) libiconv;
       };
     };
   }
