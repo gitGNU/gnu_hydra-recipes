@@ -53,20 +53,20 @@ let
     maintainers = [
       "Daiki Ueno <ueno@gnu.org>"
     ];
-
-    buildInputsFrom = pkgs: with pkgs;
-      [ expat libunistring ]
-      ++ (stdenv.lib.optional (!stdenv.isLinux) libiconv);
-
-    checkPhase =
-      # The `ld' test suite assumes that expat is in the loader's
-      # search path, so help it.
-      let dollar = "\$"; in
-      '' export LD_LIBRARY_PATH="${pkgs.expat}/lib${dollar}{LD_LIBRARY_PATH+:}$LD_LIBRARY_PATH"
-         echo "\$LD_LIBRARY_PATH is \`$LD_LIBRARY_PATH'"
-         make -k check
-      '';
   };
+
+  buildInputsFrom = pkgs: with pkgs;
+    [ expat libunistring ]
+    ++ (stdenv.lib.optional (!stdenv.isLinux) libiconv);
+
+  checkPhase =
+    # The `ld' test suite assumes that expat is in the loader's
+    # search path, so help it.
+    let dollar = "\$"; in
+    '' export LD_LIBRARY_PATH="${pkgs.expat}/lib${dollar}{LD_LIBRARY_PATH+:}$LD_LIBRARY_PATH"
+       echo "\$LD_LIBRARY_PATH is \`$LD_LIBRARY_PATH'"
+       make -k check
+    '';
 in
   import ../gnu-jobs.nix {
     name = "gettext";
