@@ -101,6 +101,7 @@ in
           gperf
           groff
           help2man
+          lzip
           perl
           texinfo
           wget
