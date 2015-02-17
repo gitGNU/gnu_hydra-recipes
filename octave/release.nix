@@ -23,7 +23,7 @@ let
     description = "GNU Octave, a high-level language for numerical computations";
     homepage = http://www.octave.org/;
     license = "GPLv3+";
-    maintainers = [ "Octave Maintainers <maintainers@octave.org>" ];
+    maintainers = [ "Octave Maintainers <octave-maintainers@gnu.org>" ];
   };
 
   pkgs = import nixpkgs {};
