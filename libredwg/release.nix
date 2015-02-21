@@ -64,7 +64,7 @@ in
     customEnv = {
 
       tarball = pkgs: {
-        buildInputs = (with pkgs; [ gettext_0_17 texinfo automake111x ])
+        buildInputs = (with pkgs; [ gettext_0_17 texinfo automake ])
 	              ++ (vdeps pkgs);
         dontBuild = false;
         autoconfPhase = ''
