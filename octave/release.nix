@@ -74,8 +74,7 @@ let
 	'';
 
         configureFlags =
-          [ "--enable-openmp"
-            "--with-qhull-includedir=${qhull}/include"
+          [ "--with-qhull-includedir=${qhull}/include"
             "--with-qhull-libdir=${qhull}/lib"
             "--with-java-homedir=${openjdk}"
             "--with-java-includedir=${openjdk}/include"
@@ -107,8 +106,7 @@ let
           checkPhase = "xvfb-run make check";
 
           configureFlags =
-            [ "--enable-openmp"
-              "--with-qhull-includedir=${qhull}/include"
+            [ "--with-qhull-includedir=${qhull}/include"
               "--with-qhull-libdir=${qhull}/lib"
               "--with-java-homedir=${openjdk}"
               "--with-java-includedir=${openjdk}/include"
