@@ -33,6 +33,7 @@ let
       gnuplot zlib ghostscript transfig xfig pstoedit hdf5 texinfo
       qrupdate suitesparse curl texLive fftw fftwSinglePrec
       bzip2 glpk graphicsmagick openjdk qt4 xvfb_run
+      libsndfile portaudio
     ]
 
     # Optional dependencies for building native graphics on Mesa platforms.
