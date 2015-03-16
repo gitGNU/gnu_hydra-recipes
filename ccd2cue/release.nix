@@ -54,4 +54,12 @@ in
     name = "ccd2cue";
     src  = ccd2cue;
     systems = ["i686-linux" "x86_64-linux"];
+
+    customEnv = {
+      tarball = pkgs: {
+        buildInputs = with pkgs; [
+          gettext automake113x autoconf texinfo help2man perl git
+        ];
+      } ;
+    };
   }
