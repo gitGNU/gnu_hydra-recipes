@@ -48,55 +48,73 @@ let
       "--with-shishi=${pkgs.shishi}"
     ];
 
+  pkgs = import nixpkgs {};
 
   succeedOnFailure = true;
   keepBuildDirectory = true;
 
-in
-  import ../gnu-jobs.nix {
-    name = "inetutils";
-    src  = inetutilsSrc;
-    inherit nixpkgs meta;
+  jobs =
+    (import ../gnu-jobs.nix {
+      name = "inetutils";
+      src  = inetutilsSrc;
+      inherit nixpkgs meta;
 
-    systems = [ "i686-linux" "x86_64-linux" ];
+      systems = [ "i686-linux" "x86_64-linux" ];
 
-    customEnv = {
+      customEnv = {
 
-      tarball = pkgs: {
-        dontBuild = false;
+        tarball = pkgs: {
+          dontBuild = false;
 
-        doCheck = false;
+          doCheck = false;
 
-        configureFlags = configureFlagsFor pkgs;
+          configureFlags = configureFlagsFor pkgs;
 
+          buildInputs = (buildInputsFrom pkgs)
+            ++ (with pkgs;
+                [ autoconf automake111x bison perl git
+                  texinfo help2man gnum4
+                ]);
+
+          inherit meta;
+        } ;
+
+        build = pkgs: {
+          configureFlags = configureFlagsFor pkgs;
+          buildInputs = buildInputsFrom pkgs;
+
+          inherit meta succeedOnFailure keepBuildDirectory;
+          # needed for /etc/protocols in tests
+          __noChroot = true;
+        } ;
+
+        coverage = pkgs: {
+          configureFlags = configureFlagsFor pkgs;
+          buildInputs = buildInputsFrom pkgs;
+
+          inherit meta succeedOnFailure keepBuildDirectory;
+          # needed for /etc/protocols in tests
+          __noChroot = true;
+        } ;
+      };
+    }) // {
+      manual = pkgs.releaseTools.nixBuild {
+        name = "inetutils-manual";
+        src = jobs.tarball;
         buildInputs = (buildInputsFrom pkgs)
-          ++ (with pkgs;
-              [ autoconf automake111x bison perl git
-                texinfo help2man gnum4
-              ]);
+          ++ [ pkgs.texinfo pkgs.texLive ];
 
+        buildPhase = "make -C doc html pdf";
+        doCheck = false;
+        installPhase =
+          '' make -C doc install-html install-pdf
+
+             ensureDir "$out/nix-support"
+             echo "doc manual $out/share/doc/inetutils/inetutils.html index.html" >> "$out/nix-support/hydra-build-products"
+             echo "doc-pdf manual $out/share/doc/inetutils/inetutils.pdf" >> "$out/nix-support/hydra-build-products"
+          '';
         inherit meta;
-
-      } ;
-
-      build = pkgs: {
-        configureFlags = configureFlagsFor pkgs;
-        buildInputs = buildInputsFrom pkgs;
-
-        inherit meta succeedOnFailure keepBuildDirectory;
-        # needed for /etc/protocols in tests
-        __noChroot = true;
-      } ;
-
-      coverage = pkgs: {
-        configureFlags = configureFlagsFor pkgs;
-        buildInputs = buildInputsFrom pkgs;
-
-        inherit meta succeedOnFailure keepBuildDirectory;
-        # needed for /etc/protocols in tests
-        __noChroot = true;
-      } ;
-
+      };
     };
-  }
 
+in jobs
