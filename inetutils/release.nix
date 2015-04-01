@@ -15,7 +15,9 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
-{ nixpkgs ? <nixpkgs> }:
+{ nixpkgs ? <nixpkgs>
+, inetutilsSrc ? { outPath = <inetutils>; }
+}:
 
 let
   meta = {
@@ -34,14 +36,6 @@ let
     maintainers = [ "build-inetutils@gnu.org" "ludo@gnu.org" ];
   };
 
-  # Work around `AM_SILENT_RULES'.
-  preBuild = "export V=99";
-
-  pkgs = import nixpkgs {};
-  crossSystems = (import ../cross-systems.nix) { inherit pkgs; };
-
-  inherit (pkgs) releaseTools;
-
   buildInputsFrom = pkgs: with pkgs;
     [ readline ncurses shishi ] ++
 
@@ -49,177 +43,60 @@ let
     # `netstat'.
     (lib.optional stdenv.isLinux nettools);
 
-  # Return a pre-configure phase for PKGS.
-  preConfigureFor = pkgs:
-    if pkgs.stdenv.isLinux
-    then
-      ''
-        export PATH=$PATH:${pkgs.nettools}/sbin
-        export USER=`${pkgs.coreutils}/bin/whoami`
-      ''
-    else "";
+  configureFlagsFor = pkgs:
+    [ "--with-ncurses-include-dir=${pkgs.ncurses}/include"
+      "--with-shishi=${pkgs.shishi}"
+    ];
+
 
   succeedOnFailure = true;
   keepBuildDirectory = true;
 
-  jobs = rec {
+in
+  import ../gnu-jobs.nix {
+    name = "inetutils";
+    src  = inetutilsSrc;
+    inherit nixpkgs meta;
 
-    tarball =
-      { inetutilsSrc ? { outPath = <inetutils>; }
-      , gnulibSrc ? { outPath = <gnulib>; }
-      }:
+    systems = [ "i686-linux" "x86_64-linux" ];
 
-      releaseTools.sourceTarball {
+    customEnv = {
 
-	name = "inetutils-tarball";
-	src = inetutilsSrc;
-
-        # "make dist" alone won't work, so run "make" before.
-        # http://lists.gnu.org/archive/html/bug-inetutils/2010-01/msg00004.html
+      tarball = pkgs: {
         dontBuild = false;
 
         doCheck = false;
 
-        configureFlags =
-          [ "--with-ncurses-include-dir=${pkgs.ncurses}/include"
-            "--with-shishi=${pkgs.shishi}"
-          ];
+        configureFlags = configureFlagsFor pkgs;
 
-        autoconfPhase = ''
-          cp -Rv "${gnulibSrc}" ../gnulib
-          chmod -R 755 ../gnulib
-
-          ./bootstrap --gnulib-srcdir=../gnulib --copy
-        '';
-
-	buildInputs = (buildInputsFrom pkgs)
+        buildInputs = (buildInputsFrom pkgs)
           ++ (with pkgs;
               [ autoconf automake111x bison perl git
                 texinfo help2man gnum4
               ]);
 
-        inherit preBuild meta succeedOnFailure keepBuildDirectory;
-      };
+        inherit meta;
 
-    build =
-      { tarball ? jobs.tarball {}
-      , system ? "x86_64-linux"
-      }:
+      } ;
 
-      let pkgs = import nixpkgs { inherit system; };
-      in
-        pkgs.releaseTools.nixBuild {
-          name = "inetutils";
-          src = tarball;
-          VERBOSE = 1;
-          buildInputs = (with pkgs; [ readline ncurses ]
-            ++ (lib.optionals stdenv.isLinux [ nettools procps ]));
-          configureFlags =
-            [ "--with-ncurses-include-dir=${pkgs.ncurses}/include" ];
+      build = pkgs: {
+        configureFlags = configureFlagsFor pkgs;
+        buildInputs = buildInputsFrom pkgs;
 
-          preConfigure = preConfigureFor pkgs;
-          inherit preBuild meta succeedOnFailure keepBuildDirectory;
-
-          # needed because make check need /etc/protocols
-          __noChroot=true; 
-        };
-
-    build_shishi =
-      { tarball ? jobs.tarball {}
-      , system ? "x86_64-linux"
-      }:
-
-      let
-        pkgs = import nixpkgs {
-          inherit system;
-          config = {
-            packageOverrides = pkgs: {
-              # Disable the Guile bindings of GnuTLS since Guile currently
-              # fails to build on OpenIndiana.
-              gnutls =
-                if pkgs.stdenv.isSunOS
-                then (pkgs.gnutls.override {
-                  guileBindings = false;
-                  guile = null;
-                })
-                else pkgs.gnutls;
-            };
-          };
-        };
-      in
-        pkgs.releaseTools.nixBuild {
-          name = "inetutils";
-          src = tarball;
-          buildInputs = (with pkgs; [ readline ncurses ]
-            ++ (lib.optionals stdenv.isLinux [ nettools procps ]));
-          configureFlags =
-            [ "--with-ncurses-include-dir=${pkgs.ncurses}/include"
-              "--with-shishi=${pkgs.shishi}"
-            ];
-
-          preConfigure = preConfigureFor pkgs;
-          inherit preBuild meta;
-
-          # needed because make check need /etc/protocols
-          __noChroot=true;
-        };
-
-    xbuild_gnu =
-      # Cross build to GNU.
-      { tarball ? jobs.tarball {}
-      }:
-
-      let pkgs = import nixpkgs {
-            crossSystem = crossSystems.i586_pc_gnu;
-          };
-      in
-        (pkgs.releaseTools.nixBuild {
-          name = "inetutils" ;
-          src = tarball;
-          buildInputs = with pkgs; [ ncurses readline ];
-          configureFlags =
-            [ "--with-ncurses-include-dir=${pkgs.ncurses}/include" ];
-          doCheck = false;
-        }).crossDrv;
-
-    coverage =
-      { tarball ? jobs.tarball {}
-      }:
-
-      releaseTools.coverageAnalysis {
-	name = "inetutils-coverage";
-	src = tarball;
-	buildInputs = buildInputsFrom pkgs;
-        configureFlags =
-          [ "--with-ncurses-include-dir=${pkgs.ncurses}/include"
-            "--with-shishi=${pkgs.shishi}"
-          ];
-        preConfigure = preConfigureFor pkgs;
+        inherit meta succeedOnFailure keepBuildDirectory;
+        # needed for /etc/protocols in tests
         __noChroot = true;
-        inherit preBuild meta;
-      };
+      } ;
 
-    manual =
-      { tarball ? jobs.tarball {}
-      }:
+      coverage = pkgs: {
+        configureFlags = configureFlagsFor pkgs;
+        buildInputs = buildInputsFrom pkgs;
 
-      releaseTools.nixBuild {
-        name = "inetutils-manual";
-        src = tarball;
-        buildInputs = (buildInputsFrom pkgs)
-          ++ [ pkgs.texinfo pkgs.texLive ];
+        inherit meta succeedOnFailure keepBuildDirectory;
+        # needed for /etc/protocols in tests
+        __noChroot = true;
+      } ;
 
-        buildPhase = "make -C doc html pdf";
-        doCheck = false;
-        installPhase =
-          '' make -C doc install-html install-pdf
+    };
+  }
 
-             ensureDir "$out/nix-support"
-             echo "doc manual $out/share/doc/inetutils/inetutils.html index.html" >> "$out/nix-support/hydra-build-products"
-             echo "doc-pdf manual $out/share/doc/inetutils/inetutils.pdf" >> "$out/nix-support/hydra-build-products"
-          '';
-        inherit preBuild meta;
-      };
-  };
-
-in jobs
