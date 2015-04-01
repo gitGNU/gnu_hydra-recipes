@@ -84,8 +84,6 @@ let
           buildInputs = buildInputsFrom pkgs;
 
           inherit meta succeedOnFailure keepBuildDirectory;
-          # needed for /etc/protocols in tests
-          __noChroot = true;
         } ;
 
         coverage = pkgs: {
@@ -93,8 +91,6 @@ let
           buildInputs = buildInputsFrom pkgs;
 
           inherit meta succeedOnFailure keepBuildDirectory;
-          # needed for /etc/protocols in tests
-          __noChroot = true;
         } ;
       };
     }) // {
