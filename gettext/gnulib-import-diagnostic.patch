@@ -1,0 +1,14 @@
+diff --git a/autogen.sh b/autogen.sh
+index c990dca..f79b003 100755
+--- a/autogen.sh
++++ b/autogen.sh
+@@ -152,7 +152,8 @@ if ! $skip_gnulib; then
+       java
+       javacomp-script
+     '
+-    $GNULIB_TOOL --dir=gettext-runtime --lib=libgrt --source-base=gnulib-lib --m4-base=gnulib-m4 --no-libtool --local-dir=gnulib-local --local-symlink \
++    echo "Running gnulib-tool for gettext-runtime `pwd`"
++    sh -x $GNULIB_TOOL --dir=gettext-runtime --lib=libgrt --source-base=gnulib-lib --m4-base=gnulib-m4 --no-libtool --local-dir=gnulib-local --local-symlink \
+       --import $GNULIB_MODULES_RUNTIME_FOR_SRC $GNULIB_MODULES_RUNTIME_OTHER || exit $?
+     # In gettext-runtime/libasprintf:
+     GNULIB_MODULES_LIBASPRINTF='

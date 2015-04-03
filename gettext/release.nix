@@ -80,6 +80,7 @@ in
         patches = [
 	  ./tar-should-not-expect-a-root-user.patch
 	  ./tar-no-long-file-name.patch
+	  ./gnulib-import-diagnostic.patch
 	];
         dontBuild = false;
         autoconfPhase = ''
@@ -91,7 +92,7 @@ in
           # fetch gnulib from the local repository
           git config submodule.gnulib.url "${<gnulib>}"
           export GNULIB_SRCDIR="${<gnulib>}"
-          ./autogen.sh
+          sh -x ./autogen.sh
         '';
         buildInputs = with pkgs; [
           automake114x
