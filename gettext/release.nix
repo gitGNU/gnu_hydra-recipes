@@ -97,7 +97,7 @@ in
         buildInputs = with pkgs; [
           automake114x
           bison
-          gettext_0_18 # needed for bootstrap
+          gettext_0_19 # needed for bootstrap
           git
           gperf
           groff
