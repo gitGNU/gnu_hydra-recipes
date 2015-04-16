@@ -84,6 +84,11 @@ let
           buildInputs = buildInputsFrom pkgs;
 
           inherit meta succeedOnFailure keepBuildDirectory;
+
+          # A few system files are needed during chrooted testing.
+          __impureHostDeps = [ "/etc/nsswitch.conf" "/etc/protocols"
+                               "/etc/services"
+                             ];
         } ;
 
         coverage = pkgs: {
@@ -91,6 +96,11 @@ let
           buildInputs = buildInputsFrom pkgs;
 
           inherit meta succeedOnFailure keepBuildDirectory;
+
+          # A few system files are needed during chrooted testing.
+          __impureHostDeps = [ "/etc/nsswitch.conf" "/etc/protocols"
+                               "/etc/services"
+                             ];
         } ;
       };
     }) // {
