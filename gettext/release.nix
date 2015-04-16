@@ -94,10 +94,15 @@ in
           export GNULIB_SRCDIR="${<gnulib>}"
           sh -x ./autogen.sh
         '';
+        distPhase = ''
+          export PATH="$PWD/gettext-tools/src:$PWD/gettext-tools/misc:$PATH"
+          export gettext_datadir="$PWD/gettext-tools/misc"
+          make dist
+        '';
         buildInputs = with pkgs; [
           automake114x
           bison
-          gettext_0_19 # needed for bootstrap
+          gettext_0_18 # needed for bootstrap
           git
           gperf
           groff
