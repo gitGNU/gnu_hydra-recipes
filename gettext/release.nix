@@ -80,19 +80,13 @@ in
         patches = [
 	  ./tar-should-not-expect-a-root-user.patch
 	  ./tar-no-long-file-name.patch
-	  ./gnulib-import-diagnostic.patch
 	];
         dontBuild = false;
         autoconfPhase = ''
-          # archive.dir.tar is not under version control; prepare an empty
-          # tarball before building
-          : > dummy
-          tar cf gettext-tools/misc/archive.dir.tar dummy
-          rm -f dummy
           # fetch gnulib from the local repository
           git config submodule.gnulib.url "${<gnulib>}"
           export GNULIB_SRCDIR="${<gnulib>}"
-          sh -x ./autogen.sh
+          ./autogen.sh
         '';
         distPhase = ''
           export PATH="$PWD/gettext-tools/src:$PWD/gettext-tools/misc:$PATH"
