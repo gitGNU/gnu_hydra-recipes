@@ -59,7 +59,7 @@ let
         src = <coreutils>;
 
         buildInputs = (with pkgs;
-          [ automake111x bison gettext_0_18
+          [ automake111x bison gettext_0_19
             git gperf texinfo rsync cvs
           ]) ++ buildInputsFrom pkgs;
 
