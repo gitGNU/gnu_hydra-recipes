@@ -72,7 +72,7 @@ in
       tarball = pkgs: {
 	# FIXME Move --enable-check-lisp-object-type here from coverage?
 	configureFlags = "";
-	buildInputs = with pkgs; [ texinfo ncurses pkgconfig perl ];
+	buildInputs = with pkgs; [ texinfo ncurses pkgconfig perl git ];
 
         # patches = [ ./bug11251.patch ];
         # enableParallelBuilding = true;
