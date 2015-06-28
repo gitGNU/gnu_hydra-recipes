@@ -83,20 +83,20 @@ in
 	];
         dontBuild = false;
         autoconfPhase = ''
+          # archive.dir.tar is not under version control; prepare an empty
+          # tarball before building
+          : > dummy
+          tar cf gettext-tools/misc/archive.dir.tar dummy
+          rm -f dummy
           # fetch gnulib from the local repository
           git config submodule.gnulib.url "${<gnulib>}"
           export GNULIB_SRCDIR="${<gnulib>}"
           ./autogen.sh
         '';
-        distPhase = ''
-          export PATH="$PWD/gettext-tools/src:$PWD/gettext-tools/misc:$PATH"
-          export gettext_datadir="$PWD/gettext-tools/misc"
-          make dist
-        '';
         buildInputs = with pkgs; [
           automake114x
           bison
-          gettext_0_18 # needed for bootstrap
+          gettext_0_19 # needed for bootstrap
           git
           gperf
           groff
