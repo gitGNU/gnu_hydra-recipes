@@ -28,6 +28,8 @@ let
 
   pkgs = import nixpkgs {};
 
+  texLive = pkgs.texLiveAggregationFun { paths = [ pkgs.texLive pkgs.texLiveCMSuper ]; };
+
   buildInputsFrom = pkgs: with pkgs;
     [ gfortran readline ncurses perl qhull blas liblapack pcre pkgconfig
       gnuplot zlib ghostscript transfig xfig pstoedit hdf5 texinfo
