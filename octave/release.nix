@@ -33,7 +33,7 @@ let
   buildInputsFrom = pkgs: with pkgs;
     [ gfortran readline ncurses perl qhull blas liblapack pcre pkgconfig
       gnuplot zlib ghostscript transfig xfig pstoedit hdf5 texinfo
-      arpack qrupdate suitesparse curl texLive fftw fftwSinglePrec
+      qrupdate suitesparse curl texLive fftw fftwSinglePrec
       bzip2 glpk graphicsmagick openjdk qscintilla qt4 xvfb_run
       libsndfile portaudio
     ]
