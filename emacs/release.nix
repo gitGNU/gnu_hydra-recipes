@@ -121,15 +121,15 @@ in
 	checkPhase = ''
           make check
           mkdir -p "$out/nix-support"
-          for log in test/automated/*.log; do
-            [ -f $log ] || break
+          find test -name '*.log' > test.tmp
+          if test -s test.tmp; then
             emacsver=$(./src/emacs --version | sed -n 's/^GNU Emacs \([0-9\.]*\)\.[0-9]$/\1/p')
             logdir="$out/share/emacs/$emacsver"
             mkdir -p "$logdir"
-            tar -cf "$logdir/test-logs.tar" test/automated/*.log
+            tar -c -f "$logdir/test-logs.tar" -T test.tmp
             echo "file test-logs $logdir/test-logs.tar" >> "$out/nix-support/hydra-build-products"
-            break
-          done
+          fi
+          rm -f test.tmp
 	'';
       };
 
