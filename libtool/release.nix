@@ -57,7 +57,7 @@ let
       releaseTools.sourceTarball {
 	name = "libtool-tarball";
 	src = libtoolSrc;
-        bootstrapBuildInputs = [ autoconf automake gnum4 ];
+        bootstrapBuildInputs = [ autoconf automake ];
 	buildInputs = with pkgs; [ git texinfo help2man lzma ];
 
         # help2man wants to run `libtoolize --help'.
