@@ -53,6 +53,15 @@ let
     ];
   };
 
+  configureFlagsFor = pkgs:
+  [ "--disable-silent-rules"
+    "--with-blas=blas"
+    "--with-java-homedir=${pkgs.openjdk}"
+    "--with-java-includedir=${pkgs.openjdk}/include"
+    "--with-qhull-includedir=${pkgs.qhull}/include"
+    "--with-qhull-libdir=${pkgs.qhull}/lib"
+  ];
+
   jobs = rec {
 
     tarball =
@@ -76,14 +85,7 @@ let
 	  ./bootstrap --gnulib-srcdir=../gnulib --skip-po --copy
 	'';
 
-        configureFlags =
-          [ "--disable-silent-rules"
-            "--with-blas=blas"
-            "--with-java-homedir=${openjdk}"
-            "--with-java-includedir=${openjdk}/include"
-            "--with-qhull-includedir=${qhull}/include"
-            "--with-qhull-libdir=${qhull}/lib"
-          ];
+        configureFlags = configureFlagsFor pkgs;
 
         buildInputs = [
           automake114x
@@ -109,15 +111,7 @@ let
           inherit meta succeedOnFailure keepBuildDirectory FONTCONFIG_FILE;
           buildInputs = buildInputsFrom pkgs;
           checkPhase = "xvfb-run make check";
-
-          configureFlags =
-            [ "--disable-silent-rules"
-              "--with-blas=blas"
-              "--with-java-homedir=${openjdk}"
-              "--with-java-includedir=${openjdk}/include"
-              "--with-qhull-includedir=${qhull}/include"
-              "--with-qhull-libdir=${qhull}/lib"
-            ];
+          configureFlags = configureFlagsFor pkgs;
         }
       ));
 
@@ -131,6 +125,7 @@ let
 	inherit meta FONTCONFIG_FILE;
 	buildInputs = buildInputsFrom pkgs;
         checkPhase = "xvfb-run make check";
+        configureFlags = configureFlagsFor pkgs;
       };
 
   };
