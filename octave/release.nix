@@ -77,10 +77,12 @@ let
 	'';
 
         configureFlags =
-          [ "--with-qhull-includedir=${qhull}/include"
-            "--with-qhull-libdir=${qhull}/lib"
+          [ "--disable-silent-rules"
+            "--with-blas=blas"
             "--with-java-homedir=${openjdk}"
             "--with-java-includedir=${openjdk}/include"
+            "--with-qhull-includedir=${qhull}/include"
+            "--with-qhull-libdir=${qhull}/lib"
           ];
 
         buildInputs = [
@@ -109,10 +111,12 @@ let
           checkPhase = "xvfb-run make check";
 
           configureFlags =
-            [ "--with-qhull-includedir=${qhull}/include"
-              "--with-qhull-libdir=${qhull}/lib"
+            [ "--disable-silent-rules"
+              "--with-blas=blas"
               "--with-java-homedir=${openjdk}"
               "--with-java-includedir=${openjdk}/include"
+              "--with-qhull-includedir=${qhull}/include"
+              "--with-qhull-libdir=${qhull}/lib"
             ];
         }
       ));
