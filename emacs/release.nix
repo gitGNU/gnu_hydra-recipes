@@ -71,9 +71,8 @@ in
 
       tarball = pkgs: {
 	# FIXME Move --enable-check-lisp-object-type here from coverage?
-        # FIXME has no effect?
 	configureFlags = "--with-gnutls=no";
-	buildInputs = with pkgs; [ texinfo ncurses pkgconfig perl git gnutls ];
+	buildInputs = with pkgs; [ texinfo ncurses pkgconfig perl git ];
 
         # patches = [ ./bug11251.patch ];
         # enableParallelBuilding = true;
@@ -86,7 +85,6 @@ in
 	  ./autogen.sh
 	'';
 
-        configurePhase = ":";
 	distPhase = ''
 	  make info all
 	  ./make-dist --tar --tests --no-update
