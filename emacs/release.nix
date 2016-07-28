@@ -71,8 +71,9 @@ in
 
       tarball = pkgs: {
 	# FIXME Move --enable-check-lisp-object-type here from coverage?
+        # FIXME has no effect?
 	configureFlags = "--with-gnutls=no";
-	buildInputs = with pkgs; [ texinfo ncurses pkgconfig perl git ];
+	buildInputs = with pkgs; [ texinfo ncurses pkgconfig perl git gnutls ];
 
         # patches = [ ./bug11251.patch ];
         # enableParallelBuilding = true;
