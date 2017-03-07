@@ -1,5 +1,5 @@
 /* Continuous integration of GNU with Hydra/Nix.
-   Copyright (C) 2009, 2010, 2011, 2012, 2013, 2014  Ludovic Courtès <ludo@gnu.org>
+   Copyright (C) 2009, 2010, 2011, 2012, 2013, 2014, 2017  Ludovic Courtès <ludo@gnu.org>
    Copyright (C) 2009  Rob Vermaas <rob.vermaas@gmail.com>
 
    This program is free software: you can redistribute it and/or modify
@@ -185,7 +185,7 @@ let
           git
           gnum4  # this should be a propagated build input of Autotools
           texinfo
-          xz
+          xz lzip
           gperf                            # for Gnulib's iconv-related stuff
           (texLiveAggregationFun {
             paths = [ texLive texLiveCMSuper ];
