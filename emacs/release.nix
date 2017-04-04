@@ -109,7 +109,7 @@ in
 	   else
 	     [ "--with-xpm=no" "--with-jpeg=no" "--with-png=no"
 	       "--with-gif=no" "--with-tiff=no"
-	     ]);
+	     ])
 	  ++ stdenv.lib.optional (stdenv.isDarwin) "CC=gcc";
       };
 
